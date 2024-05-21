@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             //add role column
-            $table->string('role')->after('password');
-            $table->string('site')->after('role');
+            $table->enum('role', ['admin', 'manager', 'user'])->after('password');
+            $table->enum('site', ['Ploufragan', 'Quimper', 'Brest', 'Fougeres', 'Combourg'])->after('role');
             $table->boolean('approved')->default(false)->after('site');
         });
     }
