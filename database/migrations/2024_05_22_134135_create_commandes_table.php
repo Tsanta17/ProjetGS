@@ -21,7 +21,7 @@ return new class extends Migration
             $table->unsignedBigInteger('budget_disponible');
             $table->timestamps();
 
-            // Définir les clés étrangères
+            // // Définir les clés étrangères
             $table->foreign('fournisseur_id')->references('fournisseur_id')->on('fournisseurs')->onDelete('cascade');
             $table->foreign('site_id')->references('site_id')->on('sites')->onDelete('cascade');
         });
