@@ -1,8 +1,11 @@
 <?php
 
+use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+
 use Inertia\Inertia;
 
 /*
@@ -25,14 +28,40 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
+
+    //DASHBOARD
+    Route::get('/dashboard', function () {
+        $user = Auth::user();
+        if ($user->role === 'admin') {
+            return Inertia::render('Dashboard');
+        } else if ($user->role === 'manager') {
+
+            return Inertia::render('Manager');
+        } else if ($user->role === 'user') {
+
+            return Inertia::render('Service');
+        }
+    })->name('dashboard');
+
+    Route::get('/manager', [ArticleController::class, 'index']);
+
+
+    //PROFIL
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    //ARTICLES
+    Route::get('/articles', [ArticleController::class, 'create']);
+    Route::post('/ajoutArticle', [ArticleController::class, 'store']);
+    Route::get('/editArticle/{id}', [ArticleController::class, 'edit']);
+    Route::post('/updateArticle/{id}', [ArticleController::class, 'update']);
+    Route::get('/destroyArticle/{id}', [ArticleController::class, 'destroy']);
 });
+
+
+
 
 require __DIR__ . '/auth.php';
