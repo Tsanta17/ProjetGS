@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Fournisseur;
 use App\Models\Roles;
 use App\Models\Sites;
 use App\Models\User;
@@ -26,6 +27,7 @@ class RegisteredUserController extends Controller
      */
     public function create(): Response
     {
+        //recuperer la liste des roles et la liste des sites
         $roles = Roles::all('name');
         $sites = Sites::all('nom_site');
         return Inertia::render('Auth/Register', [
@@ -41,15 +43,29 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        //verification des données
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => 'required',
+            'role' => 'string',
             'site' => 'required',
             'image_profile' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
+        //on teste si role est vide
+        if (!$request->role){
+
+            $role = "Fournisseur";
+            $fournisseur = new Fournisseur();
+            $fournisseur->nom_fournisseur = $request->name;
+            $fournisseur->adresse_fournisseur = $request->adress;
+            $fournisseur->phone_fournisseur = $request->phone;
+            $fournisseur->email_fournisseur = $request->email;
+            $fournisseur->save();
+        }else{
+            $role = $request->role;
+        }
         //on teste si il l'image existe
         if ($request->hasFile('image_profile')) {
             $imageName = str::random(32).".".$request->image_profile->getClientOriginalExtension();
@@ -57,11 +73,12 @@ class RegisteredUserController extends Controller
             $imageName = null;
         }
 
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => $request->role,
+            'role' => $role,
             'site' => $request->site,
             'image_profile' => $imageName
             // 'approved' => $request->has('approved')

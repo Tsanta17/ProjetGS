@@ -12,6 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
+            $table->string('role')->after('password');
+            $table->boolean('approved')->default(1);
             $table->string('image_profile')->nullable();
         });
     }

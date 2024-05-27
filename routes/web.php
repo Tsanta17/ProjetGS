@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\FournisseurController;
 use App\Http\Controllers\ProfileController;
+use App\Models\Fournisseur;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -33,6 +35,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
 });
 
 require __DIR__ . '/auth.php';
+//Fournisseur
+Route::get('/fournisseur', [FournisseurController::class, 'index'])->name('fournisseur.index');
+Route::post('/fournisseur/create', [FournisseurController::class, 'store'])->name('fournisseur.store');
+Route::get('/fournisseur/{fournisseur}/show', [FournisseurController::class, 'show'])->name('fournisseur.show');
+Route::post('/fournisseur/{fournisseur}/update', [FournisseurController::class, 'update'])->name('fournisseur.update');
+Route::get('/fournisseur/{fournisseur}/edit', [FournisseurController::class, 'edit'])->name('fournisseur.edit');
+Route::get('/fournisseur/list', [FournisseurController::class, 'listeFournisseur'])->name('fournisseurList');
