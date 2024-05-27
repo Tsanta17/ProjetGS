@@ -10,8 +10,11 @@ export default function Register() {
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
         email: '',
+        role: '', // Nouveau champ
+        site: '', // Nouveau champ
         password: '',
         password_confirmation: '',
+        profile_picture: null, // Nouveau champ pour l'image de profil
     });
 
     useEffect(() => {
@@ -22,8 +25,11 @@ export default function Register() {
 
     const submit = (e) => {
         e.preventDefault();
+        post(route('register.store'));
+    };
 
-        post(route('register'));
+    const handleFileChange = (e) => {
+        setData('profile_picture', e.target.files[0]);
     };
 
     return (
@@ -33,7 +39,6 @@ export default function Register() {
             <form onSubmit={submit}>
                 <div>
                     <InputLabel htmlFor="name" value="Name" />
-
                     <TextInput
                         id="name"
                         name="name"
@@ -44,13 +49,11 @@ export default function Register() {
                         onChange={(e) => setData('name', e.target.value)}
                         required
                     />
-
                     <InputError message={errors.name} className="mt-2" />
                 </div>
 
                 <div className="mt-4">
                     <InputLabel htmlFor="email" value="Email" />
-
                     <TextInput
                         id="email"
                         type="email"
@@ -61,13 +64,62 @@ export default function Register() {
                         onChange={(e) => setData('email', e.target.value)}
                         required
                     />
-
                     <InputError message={errors.email} className="mt-2" />
+                </div>
+
+                {/* Nouveau champ de sélection de rôle */}
+                <div className="mt-4">
+                    <InputLabel htmlFor="role" value="Role" />
+                    <select
+                        id="role"
+                        name="role"
+                        value={data.role}
+                        className="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                        onChange={(e) => setData('role', e.target.value)}
+                        required
+                    >
+                        <option value="" disabled>Select Role</option>
+                        <option value="admin">Admin</option>
+                        <option value="manager">Manager</option>
+                        <option value="user">User</option>
+                    </select>
+                    <InputError message={errors.role} className="mt-2" />
+                </div>
+
+                {/* Nouveau champ de sélection de site */}
+                <div className="mt-4">
+                    <InputLabel htmlFor="site" value="Site" />
+                    <select
+                        id="site"
+                        name="site"
+                        value={data.site}
+                        className="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                        onChange={(e) => setData('site', e.target.value)}
+                        required
+                    >
+                        <option value="" disabled>Select Site</option>
+                        <option value="hr">HR</option>
+                        <option value="engineering">Engineering</option>
+                    </select>
+                    <InputError message={errors.site} className="mt-2" />
+                </div>
+
+                {/* Champ de téléchargement de fichier pour l'image de profil */}
+                <div className="mt-4">
+                    <InputLabel htmlFor="profile_picture" value="Photo de Profil" />
+                    <input
+                        id="profile_picture"
+                        type="file"
+                        name="profile_picture"
+                        accept="image/*"
+                        className="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                        onChange={handleFileChange}
+                    />
+                    <InputError message={errors.profile_picture} className="mt-2" />
                 </div>
 
                 <div className="mt-4">
                     <InputLabel htmlFor="password" value="Password" />
-
                     <TextInput
                         id="password"
                         type="password"
@@ -78,13 +130,11 @@ export default function Register() {
                         onChange={(e) => setData('password', e.target.value)}
                         required
                     />
-
                     <InputError message={errors.password} className="mt-2" />
                 </div>
 
                 <div className="mt-4">
                     <InputLabel htmlFor="password_confirmation" value="Confirm Password" />
-
                     <TextInput
                         id="password_confirmation"
                         type="password"
@@ -95,7 +145,6 @@ export default function Register() {
                         onChange={(e) => setData('password_confirmation', e.target.value)}
                         required
                     />
-
                     <InputError message={errors.password_confirmation} className="mt-2" />
                 </div>
 
@@ -106,8 +155,7 @@ export default function Register() {
                     >
                         Already registered?
                     </Link>
-
-                    <PrimaryButton className="ms-4" disabled={processing}>
+                    <PrimaryButton className="ml-4" disabled={processing}>
                         Register
                     </PrimaryButton>
                 </div>
