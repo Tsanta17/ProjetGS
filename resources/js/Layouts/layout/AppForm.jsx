@@ -1,125 +1,111 @@
-
 import React, { useState } from 'react';
 import { InputText } from 'primereact/inputtext';
 import { InputNumber } from 'primereact/inputnumber';
 import { Button } from 'primereact/button';
-import { Checkbox } from 'primereact/checkbox';
-import { RadioButton } from 'primereact/radiobutton';
+import { InputTextarea } from 'primereact/inputtextarea';
+import { Calendar } from 'primereact/calendar';
 
 const AppForm = () => {
-    const [checked1, setChecked1] = useState(false);
-    const [checked2, setChecked2] = useState(false);
-    const [radioValue1, setRadioValue1] = useState('');
-    const [radioValue2, setRadioValue2] = useState('');
+    const initialState = {
+        reference: '',
+        name: '',
+        description: '',
+        expirationDate: null,
+        fournisseurId: null,
+        siteId: null
+    };
+
+    const [formData, setFormData] = useState(initialState);
+
+    const handleInputChange = (e) => {
+        const { id, value } = e.target;
+        setFormData({ ...formData, [id]: value });
+    };
+
+    const handleNumberChange = (e, id) => {
+        setFormData({ ...formData, [id]: e.value });
+    };
+
+    const handleSubmit = () => {
+        console.log('Form data submitted:', formData);
+        // Here you can add your form submission logic, e.g., send data to backend
+    };
+
+    const handleReset = () => {
+        setFormData(initialState);
+    };
 
     return (
         <div>
             <div className="card">
-                <h5>Addons</h5>
+                <h5>Ajouter des Articles</h5>
                 <div className="grid p-fluid">
+                    <div className="col-12 md:col-4">
+                        <div className="p-inputgroup">
+                            <span className="p-inputgroup-addon">
+                                <i className="pi pi-hashtag"></i>
+                            </span>
+                            <InputText id="reference" value={formData.reference} onChange={handleInputChange} placeholder="Référence" />
+                        </div>
+                    </div>
+
                     <div className="col-12 md:col-4">
                         <div className="p-inputgroup">
                             <span className="p-inputgroup-addon">
                                 <i className="pi pi-user"></i>
                             </span>
-                            <InputText placeholder="Username" />
+                            <InputText id="name" value={formData.name} onChange={handleInputChange} placeholder="Nom" />
                         </div>
                     </div>
 
                     <div className="col-12 md:col-4">
-                        <div className="p-inputgroup">
-                            <span className="p-inputgroup-addon">$</span>
-                            <InputNumber placeholder="Price" />
-                            <span className="p-inputgroup-addon">.00</span>
-                        </div>
-                    </div>
-
-                    <div className="col-12 md:col-4">
-                        <div className="p-inputgroup">
-                            <span className="p-inputgroup-addon">www</span>
-                            <InputText placeholder="Website" />
-                        </div>
-                    </div>
-                </div>
-
-                <h5>Multiple Addons</h5>
-                <div className="grid">
-                    <div className="col-12">
                         <div className="p-inputgroup">
                             <span className="p-inputgroup-addon">
-                                <i className="pi pi-clock"></i>
+                                <i className="pi pi-bars"></i>
                             </span>
-                            <span className="p-inputgroup-addon">
-                                <i className="pi pi-star-fill"></i>
-                            </span>
-                            <InputNumber placeholder="Price" />
-                            <span className="p-inputgroup-addon">$</span>
-                            <span className="p-inputgroup-addon">.00</span>
-                        </div>
-                    </div>
-                </div>
-
-                <h5>Button Addons</h5>
-                <div className="grid p-fluid">
-                    <div className="col-12 md:col-4">
-                        <div className="p-inputgroup">
-                            <Button label="Search"/>
-                            <InputText placeholder="Keyword"/>
+                            <InputTextarea id="description" value={formData.description} onChange={handleInputChange} placeholder="Description" rows={2} />
                         </div>
                     </div>
 
                     <div className="col-12 md:col-4">
-                        <div className="p-inputgroup">
-                            <InputText placeholder="Keyword"/>
-                            <Button icon="pi pi-search" className="p-button-warning"/>
-                        </div>
-                    </div>
-
-                    <div className="col-12 md:col-4">
-                        <div className="p-inputgroup">
-                            <Button icon="pi pi-check" className="p-button-success"/>
-                            <InputText placeholder="Vote"/>
-                            <Button icon="pi pi-times" className="p-button-danger"/>
-                        </div>
-                    </div>
-                </div>
-
-                <h5>Checkbox and RadioButton</h5>
-                <div className="grid p-fluid">
-                    <div className="col-12">
                         <div className="p-inputgroup">
                             <span className="p-inputgroup-addon">
-                                <Checkbox checked={checked1} onChange={(e) => setChecked1(!checked1)} />
+                                <i className="pi pi-calendar-times"></i>
                             </span>
-                            <InputText placeholder="Username"/>
+                            <Calendar id="expirationDate" value={formData.expirationDate} onChange={(e) => handleNumberChange(e, 'expirationDate')} placeholder="Date de Péremption" />
+                        </div>
+                    </div>
+
+                    <div className="col-12 md:col-4">
+                        <div className="p-inputgroup">
+                            <span className="p-inputgroup-addon">
+                                <i className="pi pi-id-card"></i>
+                            </span>
+                            <InputNumber id="fournisseurId" value={formData.fournisseurId} onValueChange={(e) => handleNumberChange(e, 'fournisseurId')} min={0} max={100} placeholder="Fournisseur ID" />
+                            <Button icon="pi pi-minus" onClick={() => setFormData({ ...formData, fournisseurId: Math.max(formData.fournisseurId - 1, 0) })} />
+                            <Button icon="pi pi-plus" onClick={() => setFormData({ ...formData, fournisseurId: Math.min(formData.fournisseurId + 1, 100) })} />
+                        </div>
+                    </div>
+
+                    <div className="col-12 md:col-4">
+                        <div className="p-inputgroup">
+                            <span className="p-inputgroup-addon">
+                                <i className="pi pi-bookmark"></i>
+                            </span>
+                            <InputNumber id="siteId" value={formData.siteId} onValueChange={(e) => handleNumberChange(e, 'siteId')} min={0} max={100} placeholder="Site ID" />
+                            <Button icon="pi pi-minus" onClick={() => setFormData({ ...formData, siteId: Math.max(formData.siteId - 1, 0) })} />
+                            <Button icon="pi pi-plus" onClick={() => setFormData({ ...formData, siteId: Math.min(formData.siteId + 1, 100) })} />
                         </div>
                     </div>
 
                     <div className="col-12">
-                        <div className="p-inputgroup">
-                            <InputText placeholder="Price"/>
-                            <span className="p-inputgroup-addon">
-                                <RadioButton name="rb1" value="rb1" checked={radioValue1 === 'rb1'} onChange={(e) => setRadioValue1(e.value)} />
-                            </span>
-                        </div>
-                    </div>
-
-                    <div className="col-12">
-                        <div className="p-inputgroup">
-                            <span className="p-inputgroup-addon">
-                                <Checkbox checked={checked2} onChange={(e) => setChecked2(!checked2)} />
-                            </span>
-                            <InputText placeholder="Website"/>
-                            <span className="p-inputgroup-addon">
-                                <RadioButton name="rb2" value="rb2" checked={radioValue2 === 'rb2'} onChange={(e) => setRadioValue2(e.value)} />
-                            </span>
-                        </div>
+                        <Button label="Submit" icon="pi pi-check" onClick={handleSubmit} />
+                        <Button label="Cancel" icon="pi pi-times" className="p-button-secondary ml-2" onClick={handleReset} />
                     </div>
                 </div>
             </div>
         </div>
     );
-}
+};
 
 export default AppForm;
-                 

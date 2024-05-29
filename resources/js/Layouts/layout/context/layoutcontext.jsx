@@ -22,6 +22,8 @@ export const LayoutProvider = ({ children }) => {
     });
 
     const [showForm, setShowForm] = useState(false);
+    const [DataTable, setDataTable] = useState(false);
+    const [showInsertCommmand, setShowInsertCommmand] = useState(false);
 
     const onMenuToggle = () => {
         if (isOverlay()) {
@@ -55,7 +57,11 @@ export const LayoutProvider = ({ children }) => {
         onMenuToggle,
         showProfileSidebar,
         showForm,
-        setShowForm
+        setShowForm,
+        DataTable, 
+        setDataTable,
+        showInsertCommmand, 
+        setShowInsertCommmand
     };
 
     return <LayoutContext.Provider value={value}>{children}</LayoutContext.Provider>;

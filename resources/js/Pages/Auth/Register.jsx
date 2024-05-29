@@ -4,18 +4,22 @@ import InputError from '@/components/InputError';
 import InputLabel from '@/components/InputLabel';
 import PrimaryButton from '@/components/PrimaryButton';
 import TextInput from '@/components/TextInput';
-import { Head, Link, useForm } from '@inertiajs/react';
+import axios from 'axios';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 
 export default function Register() {
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
         email: '',
         role: '', // Nouveau champ
-        site: '', // Nouveau champ
+        site: '', // Nouveau champ     
+        profile_picture: null, // Nouveau champ pour l'image de profil
         password: '',
         password_confirmation: '',
-        profile_picture: null, // Nouveau champ pour l'image de profil
     });
+
+    const { props } = usePage();
+    const { var: role } = props;
 
     useEffect(() => {
         return () => {
@@ -23,9 +27,32 @@ export default function Register() {
         };
     }, []);
 
-    const submit = (e) => {
+    const submit = async (e) => {
         e.preventDefault();
-        post(route('register.store'));
+
+        const formData = new FormData();
+        formData.append('name', data.name);
+        formData.append('email', data.email);
+        formData.append('role', data.role);
+        formData.append('site', data.site);
+        formData.append('password', data.password);
+        formData.append('password_confirmation', data.password_confirmation);
+        if (data.profile_picture) {
+            formData.append('profile_picture', data.profile_picture);
+        }
+
+        try {
+            const response = await axios.post(route('register.store'), formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+    
+            console.log('User registered successfully:', response.data);
+        } catch (error) {
+            console.error('There was an error registering the user:', error);
+        }
+        // console.log(post(route('register.store')));
     };
 
     const handleFileChange = (e) => {
@@ -149,6 +176,7 @@ export default function Register() {
                 </div>
 
                 <div className="flex items-center justify-end mt-4">
+                <p>The role is: {role}</p>
                     <Link
                         href={route('login')}
                         className="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"

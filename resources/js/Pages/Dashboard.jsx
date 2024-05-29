@@ -6,6 +6,8 @@ import { LayoutContext } from '@/Layouts/layout/context/layoutcontext';
 import Layout from "@/Layouts/layout/layout.jsx";
 import DashboardInfoCard from "@/components/DashboardInfoCard.jsx";
 import AppForm from "@/Layouts/layout/AppForm";
+import AppCrudData from "@/Layouts/layout/AppCrudData";
+import AppInsertCommand from '@/Layouts/layout/AppInsertCommand';
 
 const lineData = {
     labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
@@ -30,7 +32,7 @@ const lineData = {
 };
 
 const Dashboard = () => {
-    const { layoutConfig, showForm } = useContext(LayoutContext);
+    const { layoutConfig, showForm, DataTable, showInsertCommmand } = useContext(LayoutContext);
     const menu1 = useRef(null);
     const menu2 = useRef(null);
     const [lineOptions, setLineOptions] = useState({});
@@ -137,10 +139,23 @@ const Dashboard = () => {
                                    descriptionText="responded">
                 </DashboardInfoCard>
 
+
                 {showForm ? (
                     <div className="col-12 xl:col-12">
                         <div className="card">
                             <AppForm />
+                        </div>
+                    </div>
+                ) : DataTable ? (
+                    <div className="col-12 xl:col-12">
+                        <div className="card">
+                            <AppCrudData />
+                        </div>
+                    </div>
+                ) : showInsertCommmand ? (
+                    <div className="col-12 xl:col-12">
+                        <div className="card">
+                            <AppInsertCommand />
                         </div>
                     </div>
                 ) : (
@@ -228,6 +243,7 @@ const Dashboard = () => {
                         </div>
                     </>
                 )}
+
             </div>
         </Layout>
     );
