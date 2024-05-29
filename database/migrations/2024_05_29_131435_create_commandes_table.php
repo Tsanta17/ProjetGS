@@ -13,12 +13,14 @@ return new class extends Migration
     {
         Schema::create('commandes', function (Blueprint $table) {
             $table->id('commande_id');
-            $table->unsignedBigInteger('fournisseur_id');
-            $table->unsignedBigInteger('site_id');
+            $table->unsignedBigInteger('fournisseur_id')->nullable();
+            $table->unsignedBigInteger('site_id')->nullable();
             $table->date('date_commande')->nullable();
-            $table->string('statut');
+            $table->string('reference_article')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->string('statut')->nullable();
             $table->boolean('abonnement')->default(false);
-            $table->unsignedBigInteger('budget_disponible');
+            $table->unsignedBigInteger('budget_disponible')->nullable();
             $table->timestamps();
 
             // // Définir les clés étrangères

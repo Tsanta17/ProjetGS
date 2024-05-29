@@ -13,15 +13,12 @@ return new class extends Migration
     {
         Schema::create('articles', function (Blueprint $table) {
             $table->id('article_id');
-            $table->string('reference');
-            $table->string('nom_article');
+            $table->string('reference')->nullable();
+            $table->string('nom_article')->nullable();
             $table->text('description')->nullable();
             $table->date('date_peremption')->nullable();
-            $table->boolean('stock_central')->default(false);
-            $table->unsignedBigInteger('fournisseur_id');
-            $table->boolean('actif')->default(true);
-            $table->boolean('alerte_peremption')->default(false);
-            $table->unsignedBigInteger('site_id');
+            $table->unsignedBigInteger('fournisseur_id')->nullable();
+            $table->unsignedBigInteger('site_id')->nullable();
             $table->timestamps();
 
             // // Définir les clés étrangères

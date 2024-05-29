@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('stocks', function (Blueprint $table) {
             $table->id('stock_id');
-            $table->unsignedBigInteger('article_id');
-            $table->unsignedBigInteger('site_id');
+            $table->unsignedBigInteger('article_id')->nullable();
+            $table->unsignedBigInteger('site_id')->nullable();
             $table->date('date_inventaire')->nullable();
-            $table->unsignedInteger('quantite');
+            $table->unsignedInteger('quantite')->nullable();
             $table->timestamps();
 
             // Définir les clés étrangères
