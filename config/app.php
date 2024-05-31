@@ -154,6 +154,7 @@ return [
     | this array to grant expanded functionality to your applications.
     |
     */
+    // config/app.php
 
     'providers' => ServiceProvider::defaultProviders()->merge([
         /*
@@ -163,6 +164,7 @@ return [
         /*
          * Application Service Providers...
          */
+        Barryvdh\DomPDF\ServiceProvider::class,
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
         // App\Providers\BroadcastServiceProvider::class,
@@ -180,9 +182,13 @@ return [
     | the aliases are "lazy" loaded so they don't hinder performance.
     |
     */
+// config/app.php
+
+    // ...
 
     'aliases' => Facade::defaultAliases()->merge([
         // 'Example' => App\Facades\Example::class,
+        "PDF" => Barryvdh\DomPDF\Facade\Pdf::class,
     ])->toArray(),
 
 ];

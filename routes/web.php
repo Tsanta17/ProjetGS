@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\CommandeController;
+use App\Http\Controllers\FournisseurController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\RegisteredUserController;
@@ -72,3 +74,20 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__ . '/auth.php';
+//Fournisseur
+Route::get('/fournisseur', [FournisseurController::class, 'index'])->name('fournisseur.index');
+Route::post('/fournisseur/create', [FournisseurController::class, 'store'])->name('fournisseur.store');
+Route::get('/fournisseur/{fournisseur}/show', [FournisseurController::class, 'show'])->name('fournisseur.show');
+Route::post('/fournisseur/{fournisseur}/update', [FournisseurController::class, 'update'])->name('fournisseur.update');
+Route::get('/fournisseur/{fournisseur}/edit', [FournisseurController::class, 'edit'])->name('fournisseur.edit');
+Route::get('/fournisseur/list', [FournisseurController::class, 'listeFournisseur'])->name('fournisseurList');
+
+//Commande
+Route::get('/commande', [CommandeController::class, 'commandeEnAttente'])->name('commande.index');
+Route::get('/commande/site', [CommandeController::class, 'commandeParSite'])->name('commande.site');
+Route::get('/commande/details/{commande}', [CommandeController::class, 'detailCommande'])->name('commande.detail');
+Route::patch('/commande/valider/{commande}', [CommandeController::class, 'validateCommande'])->name('commande.valider');
+Route::patch('/commande/mettre-en-attente/{commande}', [CommandeController::class, 'mettreAttenteCommande'])->name('commande.attente');
+Route::get('/commande/validee', [CommandeController::class, 'listeCommandeValide'])->name('commande.validee');
+Route::get('commandes/send/{commande}', [CommandeController::class, 'sendCommande'])->name('commandes.send');
+Route::get('commandes/download/{commande}', [CommandeController::class, 'createAndDownloadPDF'])->name('commandes.download');

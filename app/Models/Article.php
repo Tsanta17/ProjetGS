@@ -10,4 +10,7 @@ class Article extends Model
     use HasFactory;
 
     protected $primaryKey = 'article_id';
+    public function commande(){
+        return $this->hasMany(Commande::class, 'reference', 'reference_article');
+    }
 }
