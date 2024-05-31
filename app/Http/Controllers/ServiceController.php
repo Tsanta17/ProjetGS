@@ -36,7 +36,7 @@ class ServiceController extends Controller
             ->select('articles.*', 'commandes.*', 'users.departement')
             ->get();
 
-        return view('services.create', compact('listeCommandes', 'user', 'userIdCommande'));
+        return view('services.create', compact('listeCommandes', 'user'));
     }
 
     /**
