@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('commande_lignes', function (Blueprint $table) {
             $table->id('lignes_id');
-            $table->unsignedBigInteger('commande_id');
-            $table->unsignedBigInteger('article_id');
-            $table->unsignedInteger('quantite');
-            $table->unsignedDecimal('prix_unitaire');
-            $table->string('statut');
+            $table->unsignedBigInteger('commande_id')->nullable();
+            $table->unsignedBigInteger('article_id')->nullable();
+            $table->unsignedInteger('quantite')->nullable();
+            $table->unsignedDecimal('prix_unitaire')->nullable();
+            $table->string('statut')->nullable();
             $table->timestamps();
 
             // Définir les clés étrangères

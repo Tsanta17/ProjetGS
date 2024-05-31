@@ -2,7 +2,6 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -12,16 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('roles', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
+        Schema::dropIfExists('sites');
+        Schema::create('sites', function (Blueprint $table) {
+            $table->id('site_id');
+            $table->string('nom_site');
+            $table->string('adresse_site');
             $table->timestamps();
         });
-        DB::table('roles')->insert([
-            ['name' => 'Administrateur'],
-            ['name' => 'Manager'],
-            ['name' => 'Utilisateur']
-        ]);
     }
 
     /**
@@ -29,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('roles');
+        Schema::dropIfExists('sites');
     }
 };

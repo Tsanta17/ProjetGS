@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use Illuminate\Foundation\Application;
@@ -34,16 +35,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     //DASHBOARD
     Route::get('/dashboard', function () {
-        $user = Auth::user();
-        if ($user->role === 'admin') {
-            return Inertia::render('Dashboard');
-        } else if ($user->role === 'manager') {
-
-            return Inertia::render('Manager');
-        } else if ($user->role === 'user') {
-
-            return Inertia::render('Service');
-        }
+        return Inertia::render('Dashboard');
     })->name('dashboard');
 });
 
@@ -60,6 +52,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/editArticle/{id}', [ArticleController::class, 'edit']);
     Route::post('/updateArticle/{id}', [ArticleController::class, 'update']);
     Route::get('/destroyArticle/{id}', [ArticleController::class, 'destroy']);
+
+    //SERVICES
+    Route::get('/services', [ServiceController::class, 'create']);
+    Route::post('/ajoutCommande', [ServiceController::class, 'store']);
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

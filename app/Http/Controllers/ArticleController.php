@@ -40,10 +40,7 @@ class ArticleController extends Controller
         $article->nom = $request->nom;
         $article->description = $request->description;
         $article->date_peremption = $request->date_peremption;
-        $article->stock_central = $request->stock_central === 'on' ? 1 : 0;
         $article->fournisseur_id = $request->fournisseur_id;
-        $article->actif = $request->actif === 'on' ? 1 : 0;
-        $article->alerte_peremption = $request->alerte_peremption === 'on' ? 1 : 0;
         $article->site_id = $request->site_id;
 
         // dd($article);
@@ -77,13 +74,10 @@ class ArticleController extends Controller
     {
         $data = article::findOrFail($id);
         $data->reference = $request->reference;
-        $data->nom = $request->nom;
+        $data->nom_article = $request->nom;
         $data->description = $request->description;
         $data->date_peremption = $request->date_peremption;
-        $data->stock_central = $request->stock_central === 'on' ? 1 : 0;
         $data->fournisseur_id = $request->fournisseur_id;
-        $data->actif = $request->actif === 'on' ? 1 : 0;
-        $data->alerte_peremption = $request->alerte_peremption === 'on' ? 1 : 0;
         $data->site_id = $request->site_id;
 
         $data->save();

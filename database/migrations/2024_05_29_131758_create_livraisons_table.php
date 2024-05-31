@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('livraisons', function (Blueprint $table) {
             $table->id('livraison_id');
-            $table->unsignedBigInteger('commande_id');
+            $table->unsignedBigInteger('commande_id')->nullable();
+            $table->unsignedBigInteger('site_id')->nullable();
             $table->date('date_livraison')->nullable();
-            $table->string('numero_lot');
-            $table->unsignedInteger('quantite');
+            $table->string('numero_lot')->nullable();
+            $table->unsignedInteger('quantite')->nullable();
             $table->timestamps();
-            $table->unsignedBigInteger('site_id');
 
             // Définir les clés étrangères
             $table->foreign('commande_id')->references('commande_id')->on('commandes')->onDelete('cascade');
