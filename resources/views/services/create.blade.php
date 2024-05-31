@@ -54,6 +54,8 @@
             <th>Site</th>
             <th>Département</th>
             <th>Statut</th>
+
+
         </tr>
         @foreach($listeCommandes as $data)
         <tr>
@@ -61,9 +63,12 @@
             <td>{{$data->description}}</td>
             <td>{{$data->reference}}</td>
             <td>{{$data->date_commande}}</td>
-            <td>{{$user->site}}</td>
-            <td>{{$user->departement}}</td>
+            <td>{{Auth::user()->site}}</td>
+            <td>{{$data->departement}}</td>
             <td>{{$data->statut}}</td>
+            @if (Auth::user()->departement == $data->departement)
+            <td><button>Demander</button></td>
+            @endif
 
         </tr>
         @endforeach

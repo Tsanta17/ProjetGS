@@ -28,11 +28,14 @@ class ServiceController extends Controller
 
         $site = DB::table('sites')->where('nom_site', $userSite)->first();;
         $userSiteId = $site->site_id;
-        $listeCommandes = DB::table('articles')
-            ->join('commandes', 'articles.reference', '=', 'commandes.reference_article')
+
+        $listeCommandes = DB::table('commandes')
+            ->join('articles', 'articles.reference', '=', 'commandes.reference_article')
+            ->join('users', 'users.id', '=', 'commandes.user_id')
             ->where('commandes.site_id', $userSiteId)
-            ->select('articles.*', 'commandes.*')
+            ->select('articles.*', 'commandes.*', 'users.departement')
             ->get();
+
         return view('services.create', compact('listeCommandes', 'user'));
     }
 
