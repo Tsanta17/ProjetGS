@@ -28,7 +28,7 @@ class Commande extends Model
         return $this->hasMany(CommandeLigne::class, 'commande_id', 'commande_id');
     }
     public function article(){
-        return $this->belongsTo(Article::class, 'article_id', 'article_id');
+        return $this->belongsTo(Article::class, 'reference_article', 'reference');
     }
     //relation avec commande
     public function site(){

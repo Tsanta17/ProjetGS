@@ -16,6 +16,6 @@ class Site extends Model
     ];
     //relation avec commande
     public function commande(){
-        return $this->hasMany(Commande::class, 'article_id', 'article_id');
+        return $this->hasMany(Commande::class, 'site_id', 'site_id');
     }
 }

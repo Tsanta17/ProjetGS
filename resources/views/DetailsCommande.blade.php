@@ -23,8 +23,6 @@
     <form action="{{ route('commande.valider', $commande->commande_id) }}" method="post">
         @csrf
         @method('PATCH')
-        <h4>Champs à remplir dans la table Article</h4>
-        <input type="date" name="date" id="">
         <h4>Insertion dans commandes lignes</h4>
         <input type="text" name="quantite" placeholder="quantite" id="">
         <input type="text" name="prix_unitaire" placeholder="prix unitaire" id="">

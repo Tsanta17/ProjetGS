@@ -18,8 +18,10 @@ class AdminSeeder extends Seeder
             'name' => 'Admin',
             'email' => 'admin@example.com',
             'password' => Hash::make('admin123'),
-            'role_id' => 1,
-            'profil' => 'Ploufragan',
+            'role' => "manager",
+            'site' => 1,
+            'approved' => 1,
+            'departement' =>"maintenance"
         ]);
     }
 }

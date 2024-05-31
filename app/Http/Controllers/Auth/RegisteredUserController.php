@@ -27,11 +27,7 @@ class RegisteredUserController extends Controller
      */
     public function create(): Response
     {
-        $roles = Roles::all('name');
-        $sites = Sites::all('nom_site');
-        return Inertia::render('Auth/Register', [
-            'var' => $role
-        ]);
+        return Inertia::render('Auth/Register');
     }
 
     /**

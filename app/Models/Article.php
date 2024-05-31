@@ -11,6 +11,6 @@ class Article extends Model
 
     protected $primaryKey = 'article_id';
     public function commande(){
-        return $this->hasMany(Commande::class, 'article_id', 'article_id');
+        return $this->hasMany(Commande::class, 'reference', 'reference_article');
     }
 }

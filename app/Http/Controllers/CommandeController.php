@@ -17,7 +17,7 @@ class CommandeController extends Controller
 
         $user = auth()->user();
         $tousLesCommandes = Commande::with('ligneDeCommande')
-            ->where('site_id', $user->site_id)
+            ->where('site_id', $user->site)
             ->get();
             return view('CommandeParSite', [
                 'user' => $user,
@@ -27,8 +27,8 @@ class CommandeController extends Controller
     // Filtrer les demandes en attente par site
     public function commandeEnAttente(){
         $user = auth()->user();
-        $commandeEnAttente = Commande::with('ligneDeCommande')
-            ->where('site_id', $user->site_id)
+        $commandeEnAttente = Commande::with('site')
+            ->where('site_id', $user->site)
             ->where('statut', 'en_attente')
             ->get();
             return view('commandeAttente', [
@@ -49,7 +49,6 @@ class CommandeController extends Controller
     public function validateCommande($commande, Request $request){
         //validation des champs supplémentaires
         $request->validate([
-            'date' => 'required|date',
             'prix_unitaire' => 'required|numeric',
             'quantite' => 'required|numeric'
         ]);
@@ -62,7 +61,7 @@ class CommandeController extends Controller
 
         //Mettre à jour la date de l'article
         $article = $commande->article;
-        $article->date_peremption = $request->input('date');
+        $article->fournisseur_id = $commande->fournisseur_id;
         $article->save();
 
         //ajouter le prix et la quantite à la ligne de commande
@@ -78,7 +77,6 @@ class CommandeController extends Controller
         Livraison::create([
             'commande_id' => $commande->commande_id,
             'numero_lot' => $commande->fournisseur->nom_fournisseur,
-            'quantite' => $request->quantite,
             'site_id' => $commande->site_id,
         ]);
 
