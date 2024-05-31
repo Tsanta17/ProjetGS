@@ -3,10 +3,13 @@
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\CommandeController;
 use App\Http\Controllers\FournisseurController;
+use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Auth\RegisteredUserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+
 
 use Inertia\Inertia;
 
@@ -24,7 +27,6 @@ use Inertia\Inertia;
 Route::get('/', function () {
     return Inertia::render('Auth/Login', [
         'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]);
@@ -35,25 +37,27 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     //DASHBOARD
     Route::get('/dashboard', function () {
-        $user = Auth::user();
-        if ($user->role === 'admin') {
-            return Inertia::render('Dashboard');
-        } else if ($user->role === 'manager') {
-
-            return Inertia::render('Manager');
-        } else if ($user->role === 'user') {
-
-            return Inertia::render('Service');
-        }
+        return Inertia::render('Dashboard');
     })->name('dashboard');
+});
 
-    Route::get('/manager', [ArticleController::class, 'index']);
-
-
-    //PROFIL
+Route::middleware('auth')->group(function () {
+    Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
+    Route::post('/register', [RegisteredUserController::class, 'store'])->name('register.store');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    //ARTICLES
+    Route::get('/articles', [ArticleController::class, 'create']);
+    Route::post('/ajoutArticle', [ArticleController::class, 'store']);
+    Route::get('/editArticle/{id}', [ArticleController::class, 'edit']);
+    Route::post('/updateArticle/{id}', [ArticleController::class, 'update']);
+    Route::get('/destroyArticle/{id}', [ArticleController::class, 'destroy']);
+
+    //SERVICES
+    Route::get('/services', [ServiceController::class, 'create']);
+    Route::post('/ajoutCommande', [ServiceController::class, 'store']);
 });
 
 require __DIR__ . '/auth.php';

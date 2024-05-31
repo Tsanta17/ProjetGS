@@ -27,12 +27,10 @@ class RegisteredUserController extends Controller
      */
     public function create(): Response
     {
-        //recuperer la liste des roles et la liste des sites
         $roles = Roles::all('name');
         $sites = Sites::all('nom_site');
         return Inertia::render('Auth/Register', [
-            'roles' => $roles,
-            'sites' => $sites
+            'var' => $role
         ]);
     }
 
