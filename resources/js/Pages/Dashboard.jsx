@@ -8,6 +8,9 @@ import DashboardInfoCard from "@/components/DashboardInfoCard.jsx";
 import AppForm from "@/Layouts/layout/AppForm";
 import AppCrudData from "@/Layouts/layout/AppCrudData";
 import AppInsertCommand from '@/Layouts/layout/AppInsertCommand';
+import AppCheckOrder from '@/Layouts/layout/AppCheckOrder';
+import AppFormSupplier from '@/Layouts/layout/AppFormSupplier';
+import AppHistoric from '@/Layouts/layout/AppHistoric';
 
 const lineData = {
     labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
@@ -32,7 +35,7 @@ const lineData = {
 };
 
 const Dashboard = () => {
-    const { layoutConfig, showForm, DataTable, showInsertCommmand } = useContext(LayoutContext);
+    const { layoutConfig, showForm, DataTable, showInsertCommmand, picklistOrder, showSupplier, showHisto } = useContext(LayoutContext);
     const menu1 = useRef(null);
     const menu2 = useRef(null);
     const [lineOptions, setLineOptions] = useState({});
@@ -156,6 +159,24 @@ const Dashboard = () => {
                     <div className="col-12 xl:col-12">
                         <div className="card">
                             <AppInsertCommand />
+                        </div>
+                    </div>
+                ) : picklistOrder ? (
+                    <div className="col-12 xl:col-12">
+                        <div className="card">
+                            <AppCheckOrder />
+                        </div>
+                    </div>
+                ) : showSupplier ? (
+                    <div className="col-12 xl:col-12">
+                        <div className="card">
+                            <AppFormSupplier />
+                        </div>
+                    </div>
+                ) : showHisto ? (
+                    <div className="col-12 xl:col-12">
+                        <div className="card">
+                            <AppHistoric />
                         </div>
                     </div>
                 ) : (

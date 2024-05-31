@@ -1,25 +1,34 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
+import { useForm, usePage } from '@inertiajs/react';
+import { InputText } from 'primereact/inputtext';
+import { Button } from 'primereact/button';
+import { Dropdown } from 'primereact/dropdown';
+import { FileUpload } from 'primereact/fileupload';
+import { Password } from 'primereact/password';
+import { Dialog } from 'primereact/dialog';
+import { Divider } from 'primereact/divider';
+import { classNames } from 'primereact/utils';
 import GuestLayout from '@/Layouts/GuestLayout';
-import InputError from '@/components/InputError';
-import InputLabel from '@/components/InputLabel';
-import PrimaryButton from '@/components/PrimaryButton';
-import TextInput from '@/components/TextInput';
+import { useState } from 'react';
 import axios from 'axios';
-import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
+import '../../../css/FormDemo.css';
 
 export default function Register() {
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
         email: '',
-        role: '', // Nouveau champ
-        site: '', // Nouveau champ     
-        profile_picture: null, // Nouveau champ pour l'image de profil
+        role: '',
+        site: '',
+        profile_picture: null,
         password: '',
         password_confirmation: '',
     });
 
     const { props } = usePage();
     const { var: role } = props;
+    const [showMessage, setShowMessage] = useState(false);
+    const [formData, setFormData] = useState({});
 
     useEffect(() => {
         return () => {
@@ -48,146 +57,131 @@ export default function Register() {
                 }
             });
     
-            console.log('User registered successfully:', response.data);
+            setFormData(data);
+            setShowMessage(true);
+
+            reset();
         } catch (error) {
             console.error('There was an error registering the user:', error);
         }
-        // console.log(post(route('register.store')));
     };
 
     const handleFileChange = (e) => {
-        setData('profile_picture', e.target.files[0]);
+        setData('profile_picture', e.files[0]);
     };
 
+    const roleOptions = [
+        { label: 'Admin', value: 'admin' },
+        { label: 'Manager', value: 'manager' },
+        { label: 'User', value: 'user' }
+    ];
+
+    const siteOptions = [
+        { label: 'HR', value: 'hr' },
+        { label: 'Engineering', value: 'engineering' }
+    ];
+
+    const isFormFieldValid = (name) => !!errors[name];
+    const getFormErrorMessage = (name) => {
+        return isFormFieldValid(name) && <small className="p-error">{errors[name]}</small>;
+    };
+
+    const dialogFooter = <div className="flex justify-content-center"><Button label="OK" className="p-button-text" autoFocus onClick={() => setShowMessage(false)} /></div>;
+    const passwordHeader = <h6>Pick a password</h6>;
+    const passwordFooter = (
+        <React.Fragment>
+            <Divider />
+            <p className="mt-2">Suggestions</p>
+            <ul className="pl-2 ml-2 mt-0" style={{ lineHeight: '1.5' }}>
+                <li>At least one lowercase</li>
+                <li>At least one uppercase</li>
+                <li>At least one numeric</li>
+                <li>Minimum 8 characters</li>
+            </ul>
+        </React.Fragment>
+    );
+
     return (
-        <GuestLayout>
+        <div className="form-demo">
             <Head title="Register" />
 
-            <form onSubmit={submit}>
-                <div>
-                    <InputLabel htmlFor="name" value="Name" />
-                    <TextInput
-                        id="name"
-                        name="name"
-                        value={data.name}
-                        className="mt-1 block w-full"
-                        autoComplete="name"
-                        isFocused={true}
-                        onChange={(e) => setData('name', e.target.value)}
-                        required
-                    />
-                    <InputError message={errors.name} className="mt-2" />
+            <Dialog visible={showMessage} onHide={() => setShowMessage(false)} position="top" footer={dialogFooter} showHeader={false} breakpoints={{ '960px': '80vw' }} style={{ width: '30vw' }}>
+                <div className="flex align-items-center flex-column pt-6 px-3">
+                    <i className="pi pi-check-circle" style={{ fontSize: '5rem', color: 'var(--green-500)' }}></i>
+                    <h5>Registration Successful!</h5>
+                    <p style={{ lineHeight: 1.5, textIndent: '1rem' }}>
+                        Your account is registered under name <b>{formData.name}</b> ; it'll be valid next 30 days without activation. Please check <b>{formData.email}</b> for activation instructions.
+                    </p>
                 </div>
+            </Dialog>
 
-                <div className="mt-4">
-                    <InputLabel htmlFor="email" value="Email" />
-                    <TextInput
-                        id="email"
-                        type="email"
-                        name="email"
-                        value={data.email}
-                        className="mt-1 block w-full"
-                        autoComplete="username"
-                        onChange={(e) => setData('email', e.target.value)}
-                        required
-                    />
-                    <InputError message={errors.email} className="mt-2" />
-                </div>
+            <div className="flex justify-content-center">
+                <div className="card">
+                    <h5 className="text-center">Register</h5>
+                    <form onSubmit={submit} className="p-fluid">
+                        <div className="field">
+                            <span className="p-float-label">
+                                <InputText id="name" value={data.name} onChange={(e) => setData('name', e.target.value)} autoFocus className={classNames({ 'p-invalid': isFormFieldValid('name') })} />
+                                <label htmlFor="name" className={classNames({ 'p-error': isFormFieldValid('name') })}>Name*</label>
+                            </span>
+                            {getFormErrorMessage('name')}
+                        </div>
 
-                {/* Nouveau champ de sélection de rôle */}
-                <div className="mt-4">
-                    <InputLabel htmlFor="role" value="Role" />
-                    <select
-                        id="role"
-                        name="role"
-                        value={data.role}
-                        className="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
-                        onChange={(e) => setData('role', e.target.value)}
-                        required
-                    >
-                        <option value="" disabled>Select Role</option>
-                        <option value="admin">Admin</option>
-                        <option value="manager">Manager</option>
-                        <option value="user">User</option>
-                    </select>
-                    <InputError message={errors.role} className="mt-2" />
-                </div>
+                        <div className="field">
+                            <span className="p-float-label p-input-icon-right">
+                                <i className="pi pi-envelope" />
+                                <InputText id="email" type="email" value={data.email} onChange={(e) => setData('email', e.target.value)} className={classNames({ 'p-invalid': isFormFieldValid('email') })} />
+                                <label htmlFor="email" className={classNames({ 'p-error': isFormFieldValid('email') })}>Email*</label>
+                            </span>
+                            {getFormErrorMessage('email')}
+                        </div>
 
-                {/* Nouveau champ de sélection de site */}
-                <div className="mt-4">
-                    <InputLabel htmlFor="site" value="Site" />
-                    <select
-                        id="site"
-                        name="site"
-                        value={data.site}
-                        className="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
-                        onChange={(e) => setData('site', e.target.value)}
-                        required
-                    >
-                        <option value="" disabled>Select Site</option>
-                        <option value="hr">HR</option>
-                        <option value="engineering">Engineering</option>
-                    </select>
-                    <InputError message={errors.site} className="mt-2" />
-                </div>
+                        <div className="field">
+                            <span className="p-float-label">
+                                <Password id="password" value={data.password} onChange={(e) => setData('password', e.target.value)} toggleMask
+                                    className={classNames({ 'p-invalid': isFormFieldValid('password') })} header={passwordHeader} footer={passwordFooter} />
+                                <label htmlFor="password" className={classNames({ 'p-error': isFormFieldValid('password') })}>Password*</label>
+                            </span>
+                            {getFormErrorMessage('password')}
+                        </div>
 
-                {/* Champ de téléchargement de fichier pour l'image de profil */}
-                <div className="mt-4">
-                    <InputLabel htmlFor="profile_picture" value="Photo de Profil" />
-                    <input
-                        id="profile_picture"
-                        type="file"
-                        name="profile_picture"
-                        accept="image/*"
-                        className="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
-                        onChange={handleFileChange}
-                    />
-                    <InputError message={errors.profile_picture} className="mt-2" />
-                </div>
+                        <div className="field">
+                            <span className="p-float-label">
+                                <Password id="password_confirmation" value={data.password_confirmation} onChange={(e) => setData('password_confirmation', e.target.value)} toggleMask
+                                    className={classNames({ 'p-invalid': isFormFieldValid('password_confirmation') })} />
+                                <label htmlFor="password_confirmation" className={classNames({ 'p-error': isFormFieldValid('password_confirmation') })}>Confirm Password*</label>
+                            </span>
+                            {getFormErrorMessage('password_confirmation')}
+                        </div>
 
-                <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
-                    <TextInput
-                        id="password"
-                        type="password"
-                        name="password"
-                        value={data.password}
-                        className="mt-1 block w-full"
-                        autoComplete="new-password"
-                        onChange={(e) => setData('password', e.target.value)}
-                        required
-                    />
-                    <InputError message={errors.password} className="mt-2" />
-                </div>
+                        <div className="field">
+                            <span className="p-float-label">
+                                <Dropdown id="role" value={data.role} options={roleOptions} onChange={(e) => setData('role', e.value)} placeholder="Select Role" className={classNames({ 'p-invalid': isFormFieldValid('role') })} />
+                                <label htmlFor="role" className={classNames({ 'p-error': isFormFieldValid('role') })}>Role*</label>
+                            </span>
+                            {getFormErrorMessage('role')}
+                        </div>
 
-                <div className="mt-4">
-                    <InputLabel htmlFor="password_confirmation" value="Confirm Password" />
-                    <TextInput
-                        id="password_confirmation"
-                        type="password"
-                        name="password_confirmation"
-                        value={data.password_confirmation}
-                        className="mt-1 block w-full"
-                        autoComplete="new-password"
-                        onChange={(e) => setData('password_confirmation', e.target.value)}
-                        required
-                    />
-                    <InputError message={errors.password_confirmation} className="mt-2" />
-                </div>
+                        <div className="field">
+                            <span className="p-float-label">
+                                <Dropdown id="site" value={data.site} options={siteOptions} onChange={(e) => setData('site', e.value)} placeholder="Select Site" className={classNames({ 'p-invalid': isFormFieldValid('site') })} />
+                                <label htmlFor="site" className={classNames({ 'p-error': isFormFieldValid('site') })}>Site*</label>
+                            </span>
+                            {getFormErrorMessage('site')}
+                        </div>
 
-                <div className="flex items-center justify-end mt-4">
-                <p>The role is: {role}</p>
-                    <Link
-                        href={route('login')}
-                        className="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                    >
-                        Already registered?
-                    </Link>
-                    <PrimaryButton className="ml-4" disabled={processing}>
-                        Register
-                    </PrimaryButton>
+                        <div className="field">
+                            <span className="p-float-label">
+                                <FileUpload name="profile_picture" customUpload uploadHandler={handleFileChange} accept="image/*" mode="basic" className={classNames({ 'p-invalid': isFormFieldValid('profile_picture') })} />
+                                <label htmlFor="profile_picture" className={classNames({ 'p-error': isFormFieldValid('profile_picture') })}>Photo de Profil</label>
+                            </span>
+                            {getFormErrorMessage('profile_picture')}
+                        </div>
+
+                        <Button type="submit" label="Register" icon="pi pi-user" className="mt-2" loading={processing} />
+                    </form>
                 </div>
-            </form>
-        </GuestLayout>
+            </div>
+        </div>
     );
 }
