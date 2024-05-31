@@ -35,7 +35,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     //DASHBOARD
     Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
+        $fournisseur = session('nombreFournisseurs', 0);
+        $article = session('nombreArticles', 0);
+        $cout = session('coutArticles', 0);
+        $commandeParMois = session('commande_par_mois', []);
+        $budgetTotalParMois = session('budget_total_par_mois', []);
+
+        // logger()->info('Session:', ['nombreFournisseurs' => $fournisseur]);
+        return Inertia::render('Dashboard', [
+            'fournisseurs' => $fournisseur,
+            'articles' => $article,
+            'couts' => $cout,
+            'commandeParMois' => $commandeParMois,
+            'budgetTotalParMois' => $budgetTotalParMois,
+        ]);
     })->name('dashboard');
 });
 

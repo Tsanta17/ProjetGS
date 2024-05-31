@@ -26,7 +26,7 @@ class ServiceController extends Controller
         $user = Auth::user();
         $userSite = $user->site;
 
-        $site = DB::table('sites')->where('nom_site', $userSite)->first();;
+        $site = DB::table('sites')->where('nom_site', $userSite)->first();
         $userSiteId = $site->site_id;
 
         $listeCommandes = DB::table('commandes')
