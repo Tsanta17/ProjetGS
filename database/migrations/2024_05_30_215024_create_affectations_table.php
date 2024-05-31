@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('affectations', function (Blueprint $table) {
             $table->id('affectation_id');
             $table->unsignedBigInteger('quantite')->nullable();
+            $table->date('date_affectation')->nullable();
             $table->unsignedBigInteger('article_id')->nullable();
             $table->unsignedBigInteger('site_id')->nullable();
             $table->unsignedBigInteger('user_id')->nullable();
