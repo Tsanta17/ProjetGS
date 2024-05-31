@@ -16,10 +16,22 @@ class AdminSeeder extends Seeder
     {
         User::create([
             'name' => 'Admin',
-            'email' => 'admin@example.com',
+            'email' => 'admin1@example.com',
             'password' => Hash::make('admin123'),
-            'role_id' => 1,
-            'profil' => 'Ploufragan',
+            'role' => 'admin',
+            'approved' => '1',
+            'site' => 'Ploufragan',
+            'departement' => 'Informatique'
+        ]);
+
+        User::create([
+            'name' => 'Service',
+            'email' => 'service@example.com',
+            'password' => Hash::make('admin123'),
+            'role' => 'service',
+            'approved' => '1',
+            'site' => 'Ploufragan',
+            'departement' => 'Informatique'
         ]);
     }
 }

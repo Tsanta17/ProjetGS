@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('password');
             $table->string('role');
             $table->string('site');
+            $table->unsignedInteger('approved');
+            $table->string('departement');
             $table->rememberToken();
             $table->timestamps();
         });

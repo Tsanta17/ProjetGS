@@ -1,15 +1,79 @@
-t\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
-#32 {main}
+<!DOCTYPE html>
+<html lang="en">
 
-[previous exception] [object] (PDOException(code: 42S01): SQLSTATE[42S01]: Base table or view already exists: 1050 Table 'sites' already exists at E:\\BOSSY\\WORKSPACE\\ProjetGS\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php:587)
-[stacktrace]
-#0 E:\\BOSSY\\WORKSPACE\\ProjetGS\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(587): PDOStatement->execute()
-#1 E:\\BOSSY\\WORKSPACE\\ProjetGS\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(816): Illuminate\\Database\\Connection->Illuminate\\Database\\{closure}('create table `s...', Array)
-#2 E:\\BOSSY\\WORKSPACE\\ProjetGS\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(783): Illuminate\\Database\\Connection->runQueryCallback('create table `s...', Array, Object(Closure))
-#3 E:\\BOSSY\\WORKSPACE\\ProjetGS\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php(588): Illuminate\\Database\\Connection->run('create table `s...', Array, Object(Closure))
-#4 E:\\BOSSY\\WORKSPACE\\ProjetGS\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Schema\\Blueprint.php(110): Illuminate\\Database\\Connection->statement('create table `s...')
-#5 E:\\BOSSY\\WORKSPACE\\ProjetGS\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Schema\\Builder.php(602): Illuminate\\Database\\Schema\\Blueprint->build(Object(Illuminate\\Database\\MySqlConnection), Object(Illuminate\\Database\\Schema\\Grammars\\MySqlGrammar))
-#6 E:\\BOSSY\\WORKSPACE\\ProjetGS\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Schema\\Builder.php(460): Illuminate\\Database\\Schema\\Builder->build(Object(Illuminate\\Database\\Schema\\Blueprint))
-#7 E:\\BOSSY\\WORKSPACE\\ProjetGS\\vendor\\laravel\\framework\\src\\Illuminate\\Support\\Facades\\Facade.php(355): Illuminate\\Database\\Schema\\Builder->create('sites', Object(Closure))
-#8 E:\\BOSSY\\WORKSPACE\\ProjetGS\\database\\migrations\\2024_05_29_122947_create_sites_table.php(19): Illuminate\\Support\\Facades\\Facade::__callStatic('create', Array)
-#9 E:\\BOSSY\\WORKSPACE\\ProjetGS\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Migrations\\Migrator.php(493): Illuminate\\
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commande</title>
+</head>
+
+<body>
+    <h1>Ajouter un Commande</h1>
+    <p>
+        @if(session()->has('success'))
+    <div class="alert alert-success bg-success text-light border-0 alert-dismissible fade show" role="alert">
+        {{session()->get('success')}}
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close">X</button>
+    </div>
+    @endif
+    </p>
+
+    <form action="{{ url('ajoutCommande') }}" method="POST">
+        @csrf
+        <div>
+            <label for="reference">Reference</label>
+            <input type="text" name="reference" id="reference" required>
+        </div>
+        <div>
+            <label for="reference">Article</label>
+            <input type="text" name="nom_article" id="article" required>
+        </div>
+        <div>
+            <label for="description">Description</label>
+            <textarea name="description" id="description"></textarea>
+        </div>
+        <div>
+            <label for="date_commande">Date de commande</label>
+            <input type="date" name="date_commande" id="date_commande">
+        </div>
+        <div>
+            <label for="budget_disponible">Budget</label>
+            <input type="number" name="budget_disponible" id="budget_disponible" required>
+        </div>
+        <button type="submit">Commander</button>
+    </form>
+    <hr>
+    <span><b>Liste des commandes</b></span>
+    <br>
+    <table border="1">
+        <tr>
+            <th>Article</th>
+            <th>Déscription</th>
+            <th>Reference</th>
+            <th>Date commande</th>
+            <th>Site</th>
+            <th>Département</th>
+            <th>Statut</th>
+        </tr>
+        @foreach($listeCommandes as $data)
+        <tr>
+            <td>{{$data->nom_article}}</td>
+            <td>{{$data->description}}</td>
+            <td>{{$data->reference}}</td>
+            <td>{{$data->date_commande}}</td>
+            <td>{{$user->site}}</td>
+            <td>{{$user->departement}}</td>
+            <td>{{$data->statut}}</td>
+
+        </tr>
+        @endforeach
+
+
+
+
+    </table>
+    <hr>
+
+</body>
+
+</html>

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id('stock_id');
             $table->unsignedBigInteger('article_id')->nullable();
             $table->unsignedBigInteger('site_id')->nullable();
-            $table->date('date_inventaire')->nullable();
+            $table->string('departement')->nullable();
             $table->unsignedInteger('quantite')->nullable();
             $table->timestamps();
 

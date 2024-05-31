@@ -74,7 +74,7 @@ class ArticleController extends Controller
     {
         $data = article::findOrFail($id);
         $data->reference = $request->reference;
-        $data->nom = $request->nom;
+        $data->nom_article = $request->nom;
         $data->description = $request->description;
         $data->date_peremption = $request->date_peremption;
         $data->fournisseur_id = $request->fournisseur_id;

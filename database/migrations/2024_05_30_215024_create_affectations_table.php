@@ -11,19 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-
-        Schema::create('articles', function (Blueprint $table) {
-            $table->id('article_id');
-            $table->string('reference')->unique();
-            $table->string('nom_article')->nullable();
-            $table->text('description')->nullable();
-            $table->date('date_peremption')->nullable();
-            $table->unsignedBigInteger('fournisseur_id')->nullable();
+        Schema::create('affectations', function (Blueprint $table) {
+            $table->id('affectation_id');
+            $table->unsignedBigInteger('quantite')->nullable();
+            $table->unsignedBigInteger('article_id')->nullable();
             $table->unsignedBigInteger('site_id')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->string('departement')->nullable();
             $table->timestamps();
 
             // Définir les clés étrangères
-            $table->foreign('fournisseur_id')->references('fournisseur_id')->on('fournisseurs')->onDelete('cascade');
+            $table->foreign('article_id')->references('article_id')->on('articles')->onDelete('cascade');
             $table->foreign('site_id')->references('site_id')->on('sites')->onDelete('cascade');
         });
     }
@@ -33,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('articles');
+        Schema::dropIfExists('affectations');
     }
 };

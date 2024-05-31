@@ -24,14 +24,16 @@ class ServiceController extends Controller
     public function create()
     {
         $user = Auth::user();
-        $userId = $user->id;
         $userSite = $user->site;
+
+        $site = DB::table('sites')->where('nom_site', $userSite)->first();;
+        $userSiteId = $site->site_id;
         $listeCommandes = DB::table('articles')
             ->join('commandes', 'articles.reference', '=', 'commandes.reference_article')
-            ->where('commandes.user_id', $userId)
+            ->where('commandes.site_id', $userSiteId)
             ->select('articles.*', 'commandes.*')
             ->get();
-        return view('services.create', compact('listeCommandes', 'userSite'));
+        return view('services.create', compact('listeCommandes', 'user'));
     }
 
     /**
@@ -49,13 +51,16 @@ class ServiceController extends Controller
         $commande = new Commande();
         $commande->site_id = $siteId;
         $commande->date_commande = $request->date_commande;
-        $commande->reference_article = $request->date_commande;
+        $commande->reference_article = $request->reference;
         $commande->statut = $statut;
+        $commande->user_id = $user->id;
         $commande->budget_disponible = $request->budget_disponible;
 
         $article = new Article();
-        $article->nom = $request->nom_article;
+        $article->nom_article = $request->nom_article;
         $article->description = $request->description;
+        $article->reference = $request->reference;
+        $article->site_id = $siteId;
 
         $commande->save();
         $article->save();
