@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Fournisseur;
 use App\Models\Roles;
 use App\Models\Sites;
 use App\Models\User;
@@ -26,10 +27,7 @@ class RegisteredUserController extends Controller
      */
     public function create(): Response
     {
-        $role = "Lova";
-        return Inertia::render('Auth/Register', [
-            'var' => $role
-        ]);
+        return Inertia::render('Auth/Register');
     }
 
     /**
@@ -75,11 +73,12 @@ class RegisteredUserController extends Controller
     
     public function store(Request $request): RedirectResponse
     {
+        //verification des données
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:' . User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => 'required',
+            'role' => 'string',
             'site' => 'required',
             'image_profile' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
@@ -90,11 +89,12 @@ class RegisteredUserController extends Controller
             Storage::disk('public')->put($imageName, file_get_contents($request->file('image_profile')->getRealPath()));
         }
 
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => $request->role,
+            'role' => $role,
             'site' => $request->site,
             'image_profile' => $imageName,
         ]);

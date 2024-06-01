@@ -12,32 +12,10 @@ import AppCheckOrder from '@/Layouts/layout/AppCheckOrder';
 import AppFormSupplier from '@/Layouts/layout/AppFormSupplier';
 import AppHistoric from '@/Layouts/layout/AppHistoric';
 
-const lineData = {
-    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-    datasets: [
-        {
-            label: 'First Dataset',
-            data: [65, 59, 80, 81, 56, 55, 40],
-            fill: false,
-            backgroundColor: '#2f4860',
-            borderColor: '#2f4860',
-            tension: 0.4
-        },
-        {
-            label: 'Second Dataset',
-            data: [28, 48, 40, 19, 86, 27, 90],
-            fill: false,
-            backgroundColor: '#00bb7e',
-            borderColor: '#00bb7e',
-            tension: 0.4
-        }
-    ]
-};
 
-const Dashboard = () => {
+
+const Dashboard = ({fournisseurs, articles, couts, commandeParMois, budgetTotalParMois}) => {
     const { layoutConfig, showForm, DataTable, showInsertCommmand, picklistOrder, showSupplier, showHisto } = useContext(LayoutContext);
-    const menu1 = useRef(null);
-    const menu2 = useRef(null);
     const [lineOptions, setLineOptions] = useState({});
 
     const applyLightTheme = () => {
@@ -105,6 +83,7 @@ const Dashboard = () => {
     };
 
     useEffect(() => {
+        console.log(commandeParMois);
         if (layoutConfig.colorScheme === 'light') {
             applyLightTheme();
         } else {
@@ -112,34 +91,56 @@ const Dashboard = () => {
         }
     }, [layoutConfig.colorScheme]);
 
+    const lineData = {
+    labels: ['Jan', 'Fev', 'Mar', 'Avr', 'Mai', 'Juin', 'Jul', 'Aout', 'Sep', 'Oct', 'Nov', 'Dec'],
+    datasets: [
+        {
+            label: 'Nombre de commandes',
+            data: Object.values(commandeParMois),
+            fill: false,
+            backgroundColor: '#2f4860',
+            borderColor: '#2f4860',
+            tension: 0.4
+        },
+        {
+            label: 'Valeur de budget',
+            data: Object.values(budgetTotalParMois),
+            fill: false,
+            backgroundColor: '#00bb7e',
+            borderColor: '#00bb7e',
+            tension: 0.4
+        }
+    ]
+};
+
     return (
         <Layout>
             <div className="grid">
-                <DashboardInfoCard title="Orders"
-                                   value="152"
-                                   icon="map-marker"
-                                   iconColor="blue"
-                                   descriptionValue="24 new"
-                                   descriptionText="since last visit">
-                </DashboardInfoCard>
-                <DashboardInfoCard title="Revenue"
-                                   value="GHS 2.100"
-                                   icon="map-marker"
-                                   iconColor="orange"
-                                   descriptionValue="%52+"
-                                   descriptionText="since last week">
-                </DashboardInfoCard>
-                <DashboardInfoCard title="Customers" value="28441"
-                                   descriptionValue="520"
-                                   icon="inbox"
-                                   iconColor="cyan"
-                                   descriptionText="since last week">
-                </DashboardInfoCard>
-                <DashboardInfoCard title="Comments" value="152 Unread"
-                                   descriptionValue="85"
-                                   icon="comment"
+                <DashboardInfoCard title="Fournisseurs"
+                                   value={ fournisseurs }
+                                   icon="pi pi-fw pi-arrow-right-arrow-left"
                                    iconColor="purple"
-                                   descriptionText="responded">
+                                   descriptionValue="24 "
+                                   descriptionText="nouveaux">
+                </DashboardInfoCard>
+                <DashboardInfoCard title="Articles"
+                                   value={ articles }
+                                   icon="pi pi-fw pi-file"
+                                   iconColor="orange"
+                                   descriptionValue="2+"
+                                   descriptionText="depuis une semaine">
+                </DashboardInfoCard>
+                <DashboardInfoCard title="Coût" value= { couts}
+                                   descriptionValue="520"
+                                   icon="pi pi-dollar"
+                                   iconColor="cyan"
+                                   descriptionText="commandes">
+                </DashboardInfoCard>
+                <DashboardInfoCard title="Périmés" value="1 Articles"
+                                   descriptionValue="85"
+                                   icon="pi pi-calendar-times"
+                                   iconColor="red"
+                                   descriptionText="réponses">
                 </DashboardInfoCard>
 
 
@@ -184,7 +185,7 @@ const Dashboard = () => {
                     <>
                         <div className="col-12 xl:col-6">
                             <div className="card">
-                                <h5>Sales Overview</h5>
+                                <h5>Statistique des commandes</h5>
                                 <Chart type="line" data={lineData} options={lineOptions} />
                             </div>
                         </div>
@@ -192,25 +193,14 @@ const Dashboard = () => {
                         <div className="col-12 xl:col-6">
                             <div className="card">
                                 <div className="flex justify-content-between align-items-center mb-5">
-                                    <h5>Best Selling Products</h5>
-                                    <div>
-                                        <Button type="button" icon="pi pi-ellipsis-v" rounded text className="p-button-plain"
-                                                onClick={(event) => menu1.current?.toggle(event)} />
-                                        <Menu
-                                            ref={menu1}
-                                            popup
-                                            model={[
-                                                { label: 'Add New', icon: 'pi pi-fw pi-plus' },
-                                                { label: 'Remove', icon: 'pi pi-fw pi-minus' }
-                                            ]}
-                                        />
-                                    </div>
+                                    <h5>Top commandes</h5>
+                                    
                                 </div>
                                 <ul className="list-none p-0 m-0">
                                     <li className="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
                                         <div>
-                                            <span className="text-900 font-medium mr-2 mb-1 md:mb-0">Space T-Shirt</span>
-                                            <div className="mt-1 text-600">Clothing</div>
+                                            <span className="text-900 font-medium mr-2 mb-1 md:mb-0">Ordinateurs</span>
+                                            <div className="mt-1 text-600">Informatique</div>
                                         </div>
                                         <div className="mt-2 md:mt-0 flex align-items-center">
                                             <div className="surface-300 border-round overflow-hidden w-10rem lg:w-6rem"
@@ -220,10 +210,11 @@ const Dashboard = () => {
                                             <span className="text-orange-500 ml-3 font-medium">%50</span>
                                         </div>
                                     </li>
+                                    
                                     <li className="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
                                         <div>
-                                            <span className="text-900 font-medium mr-2 mb-1 md:mb-0">Portal Sticker</span>
-                                            <div className="mt-1 text-600">Accessories</div>
+                                            <span className="text-900 font-medium mr-2 mb-1 md:mb-0">Loko</span>
+                                            <div className="mt-1 text-600">Production</div>
                                         </div>
                                         <div className="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
                                             <div className="surface-300 border-round overflow-hidden w-10rem lg:w-6rem"
@@ -233,10 +224,11 @@ const Dashboard = () => {
                                             <span className="text-cyan-500 ml-3 font-medium">%16</span>
                                         </div>
                                     </li>
+                                                            
                                     <li className="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
                                         <div>
-                                            <span className="text-900 font-medium mr-2 mb-1 md:mb-0">Supernova Sticker</span>
-                                            <div className="mt-1 text-600">Accessories</div>
+                                            <span className="text-900 font-medium mr-2 mb-1 md:mb-0">Phone</span>
+                                            <div className="mt-1 text-600">Achat</div>
                                         </div>
                                         <div className="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
                                             <div className="surface-300 border-round overflow-hidden w-10rem lg:w-6rem"
@@ -246,19 +238,7 @@ const Dashboard = () => {
                                             <span className="text-pink-500 ml-3 font-medium">%67</span>
                                         </div>
                                     </li>
-                                    <li className="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-                                        <div>
-                                            <span className="text-900 font-medium mr-2 mb-1 md:mb-0">Wonders Notebook</span>
-                                            <div className="mt-1 text-600">Office</div>
-                                        </div>
-                                        <div className="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
-                                            <div className="surface-300 border-round overflow-hidden w-10rem lg:w-6rem"
-                                                style={{ height: '8px' }}>
-                                                <div className="bg-green-500 h-full" style={{ width: '35%' }} />
-                                            </div>
-                                            <span className="text-green-500 ml-3 font-medium">%35</span>
-                                        </div>
-                                    </li>
+                                    
                                 </ul>
                             </div>
                         </div>

@@ -18,12 +18,15 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('role');
-            $table->string('site');
+            $table->unsignedBigInteger('site');
             $table->unsignedInteger('approved');
             $table->string('departement');
             $table->rememberToken();
             $table->timestamps();
+            // Définir les clés étrangères
+            $table->foreign('site')->references('site_id')->on('sites')->onDelete('cascade');
         });
+
     }
 
     /**

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('fournisseur_id')->nullable();
             $table->unsignedBigInteger('site_id')->nullable();
             $table->date('date_commande')->nullable();
-            $table->string('reference_article')->nullable();
+            $table->string('reference_article');
             $table->unsignedBigInteger('user_id')->nullable();
             $table->string('statut')->nullable();
             $table->boolean('abonnement')->default(false);
@@ -26,6 +26,7 @@ return new class extends Migration
             // // Définir les clés étrangères
             $table->foreign('fournisseur_id')->references('fournisseur_id')->on('fournisseurs')->onDelete('cascade');
             $table->foreign('site_id')->references('site_id')->on('sites')->onDelete('cascade');
+            $table->foreign('reference_article')->references('reference')->on('articles')->onDelete('cascade');
         });
     }
 
