@@ -1,49 +1,42 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { useForm } from '@inertiajs/react';
 import { AutoComplete } from 'primereact/autocomplete';
 import { Calendar } from 'primereact/calendar';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { InputNumber } from 'primereact/inputnumber';
-import { MultiSelect } from 'primereact/multiselect';
+import { format } from 'date-fns';
 
 const FloatLabelDemo = () => {
     const initialState = {
-        article: '',
+        reference: '',
+        nom_article: '',
         description: '',
-        orderDate: null,
-        budget: null,
-        selectedCities: []
+        date_commande: null,
+        budget_disponible: null,
     };
 
     const { data, setData, post, processing, errors, reset } = useForm(initialState);
 
-    const [countries, setCountries] = useState([]);
-    const [filteredCountries, setFilteredCountries] = useState([]);
-    const [cities] = useState([
-        { name: 'New York', code: 'NY' },
-        { name: 'Rome', code: 'RM' },
-        { name: 'London', code: 'LDN' },
-        { name: 'Istanbul', code: 'IST' },
-        { name: 'Paris', code: 'PRS' }
-    ]);
-
-    useEffect(() => {
-        // Fetch countries or any other initial data if needed
-        // Example: setCountries(fetchedCountries);
-    }, []);
-
-    const searchCountry = (event) => {
-        setTimeout(() => {
-            const results = countries.filter((country) => {
-                return country.name.toLowerCase().startsWith(event.query.toLowerCase());
-            });
-            setFilteredCountries(results);
-        }, 250);
-    };
-
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        post('/register'); // Adjust the URL according to your route
+
+        // Formater la date
+        const formattedDate = data.date_commande ? format(data.date_commande, 'yyyy-MM-dd') : null;
+
+        try {
+            await axios.post('/ajoutCommande', {
+                reference: data.reference,
+                nom_article: data.nom_article,
+                description: data.description,
+                date_commande: formattedDate,
+                budget_disponible: data.budget_disponible,
+            });
+            alert('Commande effectuée avec succès');
+            reset();
+        } catch (err) {
+            console.error('Erreur lors de l\'ajout de la commande', err);
+        }
     };
 
     const handleReset = () => {
@@ -58,7 +51,14 @@ const FloatLabelDemo = () => {
 
                         <div className="field col-12 md:col-4">
                             <span className="p-float-label">
-                                <AutoComplete value={data.article} suggestions={filteredCountries} completeMethod={searchCountry} field="name" onChange={(e) => setData('article', e.value)} />
+                                <AutoComplete value={data.reference} field="name" onChange={(e) => setData('reference', e.value)} />
+                                <label htmlFor="autocomplete"><b>Référence</b></label>
+                            </span>
+                        </div>
+
+                        <div className="field col-12 md:col-4">
+                            <span className="p-float-label">
+                                <AutoComplete value={data.nom_article} field="name" onChange={(e) => setData('nom_article', e.value)} />
                                 <label htmlFor="autocomplete"><b>Article</b></label>
                             </span>
                         </div>
@@ -72,22 +72,15 @@ const FloatLabelDemo = () => {
 
                         <div className="field col-12 md:col-4">
                             <span className="p-float-label">
-                                <Calendar id="calendar" value={data.orderDate} onChange={(e) => setData('orderDate', e.value)} />
+                                <Calendar id="calendar" value={data.date_commande} onChange={(e) => setData('date_commande', e.value)} />
                                 <label htmlFor="calendar"><b>Date de commande</b></label>
                             </span>
                         </div>
 
                         <div className="field col-12 md:col-4">
                             <span className="p-float-label">
-                                <InputNumber inputId="inputnumber" value={data.budget} onChange={(e) => setData('budget', e.value)} />
+                                <InputNumber inputId="inputnumber" value={data.budget_disponible} onChange={(e) => setData('budget_disponible', e.value)} />
                                 <label htmlFor="inputnumber"><b>Budget</b></label>
-                            </span>
-                        </div>
-
-                        <div className="field col-12 md:col-4">
-                            <span className="p-float-label">
-                                <MultiSelect inputId="multiselect" value={data.selectedCities} options={cities} onChange={(e) => setData('selectedCities', e.value)} optionLabel="name" />
-                                <label htmlFor="multiselect"><b>MultiSelect</b></label>
                             </span>
                         </div>
 

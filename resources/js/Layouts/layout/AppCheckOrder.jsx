@@ -1,51 +1,48 @@
-
 import React, { useState, useEffect } from 'react';
 import { PickList } from 'primereact/picklist';
-// import { ProductService } from '../service/ProductService';
-import '../../../css/FormDemo.css';
+import axios from 'axios';
 
-const AppCheckOrder = () => {
+export default function AppCheckOrder() {
     const [source, setSource] = useState([]);
     const [target, setTarget] = useState([]);
-    // const productService = new ProductService();
 
-    // useEffect(() => {
-    //     productService.getProductsSmall().then(data => setSource(data));
-    // }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    useEffect(() => {
+        axios.get('/servicesListes')  // Assurez-vous que l'URL est correcte
+            .then(response => {
+                setSource(response.data);
+                console.log(response.data);
+            })
+            .catch(error => {
+                console.error('There was an error fetching the commandes!', error);
+            });
+    }, []);
 
     const onChange = (event) => {
         setSource(event.source);
         setTarget(event.target);
-    }
+    };
 
     const itemTemplate = (item) => {
+        console.log(item);
         return (
-            <div className="product-item">
-                <div className="image-container">
-                    <img src={`images/product/${item.image}`} onError={(e) => e.target.src='https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={item.name} />
+            <div className="flex flex-wrap p-2 align-items-center gap-3">
+                {/* Remplacez avec les champs pertinents de votre commande */}
+                <div className="flex-1 flex flex-column gap-2">
+                    <span className="font-bold">{item.reference_article}</span>
+                    <div className="flex align-items-center gap-2">
+                        <i className="pi pi-tag text-sm"></i>
+                        <span>{item.date_commande}</span>
+                    </div>
                 </div>
-                <div className="product-list-detail">
-                    <h5 className="mb-2">{item.name}</h5>
-                    <i className="pi pi-tag product-category-icon"></i>
-                    <span className="product-category">{item.category}</span>
-                </div>
-                <div className="product-list-action">
-                    <h6 className="mb-2">${item.price}</h6>
-                    <span className={`product-badge status-${item.inventoryStatus.toLowerCase()}`}>{item.inventoryStatus}</span>
-                </div>
+                <span className="font-bold text-900">${item.budget_disponible}</span>
             </div>
         );
-    }
+    };
 
     return (
-        <div className="picklist-demo">
-            <div className="card">
-                <PickList source={source} target={target} itemTemplate={itemTemplate} sourceHeader="Available" targetHeader="Selected"
-                    sourceStyle={{ height: '342px' }} targetStyle={{ height: '342px' }} onChange={onChange}
-                    filterBy="name" sourceFilterPlaceholder="Search by name" targetFilterPlaceholder="Search by name" />
-            </div>
+        <div className="card">
+            <PickList dataKey="id" source={source} target={target} onChange={onChange} itemTemplate={itemTemplate} breakpoint="1280px"
+                sourceHeader="En attente" targetHeader="Validée" sourceStyle={{ height: '24rem' }} targetStyle={{ height: '24rem' }} />
         </div>
     );
 }
-
-export default AppCheckOrder;

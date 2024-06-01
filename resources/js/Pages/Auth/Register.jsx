@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm, usePage } from '@inertiajs/react';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
@@ -9,18 +9,17 @@ import { Dialog } from 'primereact/dialog';
 import { Divider } from 'primereact/divider';
 import { classNames } from 'primereact/utils';
 import GuestLayout from '@/Layouts/GuestLayout';
-import { useState } from 'react';
 import axios from 'axios';
 import { Head, Link } from '@inertiajs/react';
 import '../../../css/FormDemo.css';
 
 export default function Register() {
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const { data, setData, post, processing, errors, reset, setError } = useForm({
         name: '',
         email: '',
         role: '',
         site: '',
-        profile_picture: null,
+        image_profile: null,
         password: '',
         password_confirmation: '',
     });
@@ -46,8 +45,13 @@ export default function Register() {
         formData.append('site', data.site);
         formData.append('password', data.password);
         formData.append('password_confirmation', data.password_confirmation);
-        if (data.profile_picture) {
-            formData.append('profile_picture', data.profile_picture);
+        if (data.image_profile) {
+            formData.append('image_profile', data.image_profile);
+        }
+
+        // Débogage : Afficher les données du formulaire dans la console
+        for (var pair of formData.entries()) {
+            console.log(pair[0] + ': ' + pair[1]);
         }
 
         try {
@@ -56,29 +60,38 @@ export default function Register() {
                     'Content-Type': 'multipart/form-data'
                 }
             });
-    
+
             setFormData(data);
             setShowMessage(true);
-
             reset();
         } catch (error) {
-            console.error('There was an error registering the user:', error);
+            if (error.response && error.response.data.errors) {
+                const responseErrors = error.response.data.errors;
+                Object.keys(responseErrors).forEach(key => {
+                    setError(key, responseErrors[key][0]);
+                });
+            } else {
+                console.error('There was an error registering the user:', error);
+            }
         }
     };
 
     const handleFileChange = (e) => {
-        setData('profile_picture', e.files[0]);
+        setData('image_profile', e.files[0]);
     };
 
     const roleOptions = [
         { label: 'Admin', value: 'admin' },
         { label: 'Manager', value: 'manager' },
-        { label: 'User', value: 'user' }
+        { label: 'Service', value: 'service' }
     ];
 
     const siteOptions = [
-        { label: 'HR', value: 'hr' },
-        { label: 'Engineering', value: 'engineering' }
+        { label: 'Ploufragan', value: 'ploufragan' },
+        { label: 'Quimper', value: 'quimper' },
+        { label: 'Brest', value: 'brest' },
+        { label: 'Fougères', value: 'fougere' },
+        { label: 'Combourg', value: 'combourg' }
     ];
 
     const isFormFieldValid = (name) => !!errors[name];
@@ -172,10 +185,10 @@ export default function Register() {
 
                         <div className="field">
                             <span className="p-float-label">
-                                <FileUpload name="profile_picture" customUpload uploadHandler={handleFileChange} accept="image/*" mode="basic" className={classNames({ 'p-invalid': isFormFieldValid('profile_picture') })} />
-                                <label htmlFor="profile_picture" className={classNames({ 'p-error': isFormFieldValid('profile_picture') })}>Photo de Profil</label>
+                                <FileUpload name="image_profile" customUpload uploadHandler={handleFileChange} accept="image/*" mode="basic" className={classNames({ 'p-invalid': isFormFieldValid('image_profile') })} />
+                                <label htmlFor="image_profile" className={classNames({ 'p-error': isFormFieldValid('image_profile') })}>Photo de Profil</label>
                             </span>
-                            {getFormErrorMessage('profile_picture')}
+                            {getFormErrorMessage('image_profile')}
                         </div>
 
                         <Button type="submit" label="Register" icon="pi pi-user" className="mt-2" loading={processing} />

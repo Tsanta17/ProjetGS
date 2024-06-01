@@ -15,7 +15,8 @@ class ServiceController extends Controller
      */
     public function index()
     {
-        //
+        $listeCommandes = commande::all();
+        return response()->json($listeCommandes);
     }
 
     /**

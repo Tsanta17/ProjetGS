@@ -1,123 +1,106 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { classNames } from 'primereact/utils';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-// import { ProductService } from './service/ProductService';
 import { Toast } from 'primereact/toast';
 import { Button } from 'primereact/button';
-import { FileUpload } from 'primereact/fileupload';
-import { Rating } from 'primereact/rating';
 import { Toolbar } from 'primereact/toolbar';
-import { InputTextarea } from 'primereact/inputtextarea';
-import { IconField } from 'primereact/iconfield';
-import { InputIcon } from 'primereact/inputicon';
-import { RadioButton } from 'primereact/radiobutton';
-import { InputNumber } from 'primereact/inputnumber';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
-import { Tag } from 'primereact/tag';
 
 export default function AppFormSupplier() {
-    let emptyProduct = {
+    let emptySupplier = {
         id: null,
         name: '',
-        image: null,
-        description: '',
-        category: null,
-        price: 0,
-        quantity: 0,
-        rating: 0,
-        inventoryStatus: 'INSTOCK'
+        address: '',
+        phone: '',
+        email: ''
     };
 
-    const [products, setProducts] = useState(null);
-    const [productDialog, setProductDialog] = useState(false);
-    const [deleteProductDialog, setDeleteProductDialog] = useState(false);
-    const [deleteProductsDialog, setDeleteProductsDialog] = useState(false);
-    const [product, setProduct] = useState(emptyProduct);
-    const [selectedProducts, setSelectedProducts] = useState(null);
+    const [suppliers, setSuppliers] = useState(null);
+    const [supplierDialog, setSupplierDialog] = useState(false);
+    const [deleteSupplierDialog, setDeleteSupplierDialog] = useState(false);
+    const [deleteSuppliersDialog, setDeleteSuppliersDialog] = useState(false);
+    const [supplier, setSupplier] = useState(emptySupplier);
+    const [selectedSuppliers, setSelectedSuppliers] = useState(null);
     const [submitted, setSubmitted] = useState(false);
     const [globalFilter, setGlobalFilter] = useState(null);
     const toast = useRef(null);
     const dt = useRef(null);
 
-    // useEffect(() => {
-    //     ProductService.getProducts().then((data) => setProducts(data));
-    // }, []);
-
-    const formatCurrency = (value) => {
-        return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
-    };
+    useEffect(() => {
+        // Fetch initial supplier data from an API
+        // Example:
+        // axios.get('/api/suppliers').then((response) => setSuppliers(response.data));
+    }, []);
 
     const openNew = () => {
-        setProduct(emptyProduct);
+        setSupplier(emptySupplier);
         setSubmitted(false);
-        setProductDialog(true);
+        setSupplierDialog(true);
     };
 
     const hideDialog = () => {
         setSubmitted(false);
-        setProductDialog(false);
+        setSupplierDialog(false);
     };
 
-    const hideDeleteProductDialog = () => {
-        setDeleteProductDialog(false);
+    const hideDeleteSupplierDialog = () => {
+        setDeleteSupplierDialog(false);
     };
 
-    const hideDeleteProductsDialog = () => {
-        setDeleteProductsDialog(false);
+    const hideDeleteSuppliersDialog = () => {
+        setDeleteSuppliersDialog(false);
     };
 
-    const saveProduct = () => {
+    const saveSupplier = () => {
         setSubmitted(true);
 
-        if (product.name.trim()) {
-            let _products = [...products];
-            let _product = { ...product };
+        if (supplier.name.trim()) {
+            let _suppliers = [...suppliers];
+            let _supplier = { ...supplier };
 
-            if (product.id) {
-                const index = findIndexById(product.id);
+            if (supplier.id) {
+                const index = findIndexById(supplier.id);
 
-                _products[index] = _product;
-                toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Product Updated', life: 3000 });
+                _suppliers[index] = _supplier;
+                toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Supplier Updated', life: 3000 });
             } else {
-                _product.id = createId();
-                _product.image = 'product-placeholder.svg';
-                _products.push(_product);
-                toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Product Created', life: 3000 });
+                _supplier.id = createId();
+                _suppliers.push(_supplier);
+                toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Supplier Created', life: 3000 });
             }
 
-            setProducts(_products);
-            setProductDialog(false);
-            setProduct(emptyProduct);
+            setSuppliers(_suppliers);
+            setSupplierDialog(false);
+            setSupplier(emptySupplier);
         }
     };
 
-    const editProduct = (product) => {
-        setProduct({ ...product });
-        setProductDialog(true);
+    const editSupplier = (supplier) => {
+        setSupplier({ ...supplier });
+        setSupplierDialog(true);
     };
 
-    const confirmDeleteProduct = (product) => {
-        setProduct(product);
-        setDeleteProductDialog(true);
+    const confirmDeleteSupplier = (supplier) => {
+        setSupplier(supplier);
+        setDeleteSupplierDialog(true);
     };
 
-    const deleteProduct = () => {
-        let _products = products.filter((val) => val.id !== product.id);
+    const deleteSupplier = () => {
+        let _suppliers = suppliers.filter((val) => val.id !== supplier.id);
 
-        setProducts(_products);
-        setDeleteProductDialog(false);
-        setProduct(emptyProduct);
-        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Product Deleted', life: 3000 });
+        setSuppliers(_suppliers);
+        setDeleteSupplierDialog(false);
+        setSupplier(emptySupplier);
+        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Supplier Deleted', life: 3000 });
     };
 
     const findIndexById = (id) => {
         let index = -1;
 
-        for (let i = 0; i < products.length; i++) {
-            if (products[i].id === id) {
+        for (let i = 0; i < suppliers.length; i++) {
+            if (suppliers[i].id === id) {
                 index = i;
                 break;
             }
@@ -142,48 +125,32 @@ export default function AppFormSupplier() {
     };
 
     const confirmDeleteSelected = () => {
-        setDeleteProductsDialog(true);
+        setDeleteSuppliersDialog(true);
     };
 
-    const deleteSelectedProducts = () => {
-        let _products = products.filter((val) => !selectedProducts.includes(val));
+    const deleteSelectedSuppliers = () => {
+        let _suppliers = suppliers.filter((val) => !selectedSuppliers.includes(val));
 
-        setProducts(_products);
-        setDeleteProductsDialog(false);
-        setSelectedProducts(null);
-        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Products Deleted', life: 3000 });
-    };
-
-    const onCategoryChange = (e) => {
-        let _product = { ...product };
-
-        _product['category'] = e.value;
-        setProduct(_product);
+        setSuppliers(_suppliers);
+        setDeleteSuppliersDialog(false);
+        setSelectedSuppliers(null);
+        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Suppliers Deleted', life: 3000 });
     };
 
     const onInputChange = (e, name) => {
         const val = (e.target && e.target.value) || '';
-        let _product = { ...product };
+        let _supplier = { ...supplier };
 
-        _product[`${name}`] = val;
+        _supplier[`${name}`] = val;
 
-        setProduct(_product);
-    };
-
-    const onInputNumberChange = (e, name) => {
-        const val = e.value || 0;
-        let _product = { ...product };
-
-        _product[`${name}`] = val;
-
-        setProduct(_product);
+        setSupplier(_supplier);
     };
 
     const leftToolbarTemplate = () => {
         return (
             <div className="flex flex-wrap gap-2">
                 <Button label="New" icon="pi pi-plus" severity="success" onClick={openNew} />
-                <Button label="Delete" icon="pi pi-trash" severity="danger" onClick={confirmDeleteSelected} disabled={!selectedProducts || !selectedProducts.length} />
+                <Button label="Delete" icon="pi pi-trash" severity="danger" onClick={confirmDeleteSelected} disabled={!selectedSuppliers || !selectedSuppliers.length} />
             </div>
         );
     };
@@ -192,72 +159,41 @@ export default function AppFormSupplier() {
         return <Button label="Export" icon="pi pi-upload" className="p-button-help" onClick={exportCSV} />;
     };
 
-    const imageBodyTemplate = (rowData) => {
-        return <img src={`https://primefaces.org/cdn/primereact/images/product/${rowData.image}`} alt={rowData.image} className="shadow-2 border-round" style={{ width: '64px' }} />;
-    };
-
-    const priceBodyTemplate = (rowData) => {
-        return formatCurrency(rowData.price);
-    };
-
-    const ratingBodyTemplate = (rowData) => {
-        return <Rating value={rowData.rating} readOnly cancel={false} />;
-    };
-
-    const statusBodyTemplate = (rowData) => {
-        return <Tag value={rowData.inventoryStatus} severity={getSeverity(rowData)}></Tag>;
-    };
-
     const actionBodyTemplate = (rowData) => {
         return (
             <React.Fragment>
-                <Button icon="pi pi-pencil" rounded outlined className="mr-2" onClick={() => editProduct(rowData)} />
-                <Button icon="pi pi-trash" rounded outlined severity="danger" onClick={() => confirmDeleteProduct(rowData)} />
+                <Button icon="pi pi-pencil" rounded outlined className="mr-2" onClick={() => editSupplier(rowData)} />
+                <Button icon="pi pi-trash" rounded outlined severity="danger" onClick={() => confirmDeleteSupplier(rowData)} />
             </React.Fragment>
         );
     };
 
-    const getSeverity = (product) => {
-        switch (product.inventoryStatus) {
-            case 'INSTOCK':
-                return 'success';
-
-            case 'LOWSTOCK':
-                return 'warning';
-
-            case 'OUTOFSTOCK':
-                return 'danger';
-
-            default:
-                return null;
-        }
-    };
-
     const header = (
         <div className="flex flex-wrap gap-2 align-items-center justify-content-between">
-            <h4 className="m-0">Manage Products</h4>
-            <IconField iconPosition="left">
-                <InputIcon className="pi pi-search" />
+            <h4 className="m-0">Manage Suppliers</h4>
+            <span className="p-input-icon-left">
+                <i className="pi pi-search" />
                 <InputText type="search" onInput={(e) => setGlobalFilter(e.target.value)} placeholder="Search..." />
-            </IconField>
+            </span>
         </div>
     );
-    const productDialogFooter = (
+
+    const supplierDialogFooter = (
         <React.Fragment>
             <Button label="Cancel" icon="pi pi-times" outlined onClick={hideDialog} />
-            <Button label="Save" icon="pi pi-check" onClick={saveProduct} />
+            <Button label="Save" icon="pi pi-check" onClick={saveSupplier} />
         </React.Fragment>
     );
-    const deleteProductDialogFooter = (
+    const deleteSupplierDialogFooter = (
         <React.Fragment>
-            <Button label="No" icon="pi pi-times" outlined onClick={hideDeleteProductDialog} />
-            <Button label="Yes" icon="pi pi-check" severity="danger" onClick={deleteProduct} />
+            <Button label="No" icon="pi pi-times" outlined onClick={hideDeleteSupplierDialog} />
+            <Button label="Yes" icon="pi pi-check" severity="danger" onClick={deleteSupplier} />
         </React.Fragment>
     );
-    const deleteProductsDialogFooter = (
+    const deleteSuppliersDialogFooter = (
         <React.Fragment>
-            <Button label="No" icon="pi pi-times" outlined onClick={hideDeleteProductsDialog} />
-            <Button label="Yes" icon="pi pi-check" severity="danger" onClick={deleteSelectedProducts} />
+            <Button label="No" icon="pi pi-times" outlined onClick={hideDeleteSuppliersDialog} />
+            <Button label="Yes" icon="pi pi-check" severity="danger" onClick={deleteSelectedSuppliers} />
         </React.Fragment>
     );
 
@@ -267,95 +203,64 @@ export default function AppFormSupplier() {
             <div className="card">
                 <Toolbar className="mb-4" left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
 
-                <DataTable ref={dt} value={products} selection={selectedProducts} onSelectionChange={(e) => setSelectedProducts(e.value)}
+                <DataTable ref={dt} value={suppliers} selection={selectedSuppliers} onSelectionChange={(e) => setSelectedSuppliers(e.value)}
                         dataKey="id"  paginator rows={10} rowsPerPageOptions={[5, 10, 25]}
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products" globalFilter={globalFilter} header={header}>
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} suppliers" globalFilter={globalFilter} header={header}>
                     <Column selectionMode="multiple" exportable={false}></Column>
-                    <Column field="code" header="Code" sortable style={{ minWidth: '12rem' }}></Column>
-                    <Column field="name" header="Name" sortable style={{ minWidth: '16rem' }}></Column>
-                    <Column field="image" header="Image" body={imageBodyTemplate}></Column>
-                    <Column field="price" header="Price" body={priceBodyTemplate} sortable style={{ minWidth: '8rem' }}></Column>
-                    <Column field="category" header="Category" sortable style={{ minWidth: '10rem' }}></Column>
-                    <Column field="rating" header="Reviews" body={ratingBodyTemplate} sortable style={{ minWidth: '12rem' }}></Column>
-                    <Column field="inventoryStatus" header="Status" body={statusBodyTemplate} sortable style={{ minWidth: '12rem' }}></Column>
+                    <Column field="name" header="Nom du fournisseur" sortable style={{ minWidth: '16rem' }}></Column>
+                    <Column field="address" header="Adresse" sortable style={{ minWidth: '20rem' }}></Column>
+                    <Column field="phone" header="Téléphone" sortable style={{ minWidth: '12rem' }}></Column>
+                    <Column field="email" header="Email" sortable style={{ minWidth: '16rem' }}></Column>
                     <Column body={actionBodyTemplate} exportable={false} style={{ minWidth: '12rem' }}></Column>
                 </DataTable>
             </div>
 
-            <Dialog visible={productDialog} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Product Details" modal className="p-fluid" footer={productDialogFooter} onHide={hideDialog}>
-                {product.image && <img src={`https://primefaces.org/cdn/primereact/images/product/${product.image}`} alt={product.image} className="product-image block m-auto pb-3" />}
+            <Dialog visible={supplierDialog} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Supplier Details" modal className="p-fluid" footer={supplierDialogFooter} onHide={hideDialog}>
                 <div className="field">
                     <label htmlFor="name" className="font-bold">
-                        Name
+                        Nom du fournisseur
                     </label>
-                    <InputText id="name" value={product.name} onChange={(e) => onInputChange(e, 'name')} required autoFocus className={classNames({ 'p-invalid': submitted && !product.name })} />
-                    {submitted && !product.name && <small className="p-error">Name is required.</small>}
+                    <InputText id="name" value={supplier.name} onChange={(e) => onInputChange(e, 'name')} required autoFocus className={classNames({ 'p-invalid': submitted && !supplier.name })} />
+                    {submitted && !supplier.name && <small className="p-error">Nom du fournisseur est requis.</small>}
                 </div>
                 <div className="field">
-                    <label htmlFor="description" className="font-bold">
-                        Description
+                    <label htmlFor="address" className="font-bold">
+                        Adresse
                     </label>
-                    <InputTextarea id="description" value={product.description} onChange={(e) => onInputChange(e, 'description')} required rows={3} cols={20} />
+                    <InputText id="address" value={supplier.address} onChange={(e) => onInputChange(e, 'address')} required />
                 </div>
-
                 <div className="field">
-                    <label className="mb-3 font-bold">Category</label>
-                    <div className="formgrid grid">
-                        <div className="field-radiobutton col-6">
-                            <RadioButton inputId="category1" name="category" value="Accessories" onChange={onCategoryChange} checked={product.category === 'Accessories'} />
-                            <label htmlFor="category1">Accessories</label>
-                        </div>
-                        <div className="field-radiobutton col-6">
-                            <RadioButton inputId="category2" name="category" value="Clothing" onChange={onCategoryChange} checked={product.category === 'Clothing'} />
-                            <label htmlFor="category2">Clothing</label>
-                        </div>
-                        <div className="field-radiobutton col-6">
-                            <RadioButton inputId="category3" name="category" value="Electronics" onChange={onCategoryChange} checked={product.category === 'Electronics'} />
-                            <label htmlFor="category3">Electronics</label>
-                        </div>
-                        <div className="field-radiobutton col-6">
-                            <RadioButton inputId="category4" name="category" value="Fitness" onChange={onCategoryChange} checked={product.category === 'Fitness'} />
-                            <label htmlFor="category4">Fitness</label>
-                        </div>
-                    </div>
+                    <label htmlFor="phone" className="font-bold">
+                        Téléphone
+                    </label>
+                    <InputText id="phone" value={supplier.phone} onChange={(e) => onInputChange(e, 'phone')} required />
                 </div>
-
-                <div className="formgrid grid">
-                    <div className="field col">
-                        <label htmlFor="price" className="font-bold">
-                            Price
-                        </label>
-                        <InputNumber id="price" value={product.price} onValueChange={(e) => onInputNumberChange(e, 'price')} mode="currency" currency="USD" locale="en-US" />
-                    </div>
-                    <div className="field col">
-                        <label htmlFor="quantity" className="font-bold">
-                            Quantity
-                        </label>
-                        <InputNumber id="quantity" value={product.quantity} onValueChange={(e) => onInputNumberChange(e, 'quantity')} />
-                    </div>
+                <div className="field">
+                    <label htmlFor="email" className="font-bold">
+                        Email
+                    </label>
+                    <InputText id="email" value={supplier.email} onChange={(e) => onInputChange(e, 'email')} required />
                 </div>
             </Dialog>
 
-            <Dialog visible={deleteProductDialog} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Confirm" modal footer={deleteProductDialogFooter} onHide={hideDeleteProductDialog}>
+            <Dialog visible={deleteSupplierDialog} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Confirm" modal footer={deleteSupplierDialogFooter} onHide={hideDeleteSupplierDialog}>
                 <div className="confirmation-content">
                     <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
-                    {product && (
+                    {supplier && (
                         <span>
-                            Are you sure you want to delete <b>{product.name}</b>?
+                            Are you sure you want to delete <b>{supplier.name}</b>?
                         </span>
                     )}
                 </div>
             </Dialog>
 
-            <Dialog visible={deleteProductsDialog} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Confirm" modal footer={deleteProductsDialogFooter} onHide={hideDeleteProductsDialog}>
+            <Dialog visible={deleteSuppliersDialog} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Confirm" modal footer={deleteSuppliersDialogFooter} onHide={hideDeleteSuppliersDialog}>
                 <div className="confirmation-content">
                     <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
-                    {product && <span>Are you sure you want to delete the selected products?</span>}
+                    {supplier && <span>Are you sure you want to delete the selected suppliers?</span>}
                 </div>
             </Dialog>
         </div>
     );
 }
-
-        
