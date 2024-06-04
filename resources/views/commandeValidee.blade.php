@@ -8,7 +8,7 @@
 </head>
 <body>
 <h1>Liste des commandes validée</h1>
-<p>vous êtes le manager de {{ $user->site_id }}</p>
+<p>vous êtes le manager de {{ $user->site }}</p>
 <h1>Liste des commandes validee </h1>
     <table style="border: 2px solid black; border-collapse: collapse">
         <thead style="border: 2px solid black">
@@ -32,8 +32,7 @@
                     <td>{{$commande->statut}}</td>
                     <td>{{$commande->abonnement}}</td>
                     <td>{{$commande->budget_disponible}}</td>
-                    <td><a href="">modifier</a><a href="">Détails</a></td>
-                    <td><a href="http://">supprimer</a></td>
+                    <td><a href="">modifier</a><a href="{{ route("commande.detail", $commande->commande_id) }}">Détails</a></td>
                 </tr>
             @endforeach
         </tbody>
