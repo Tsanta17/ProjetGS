@@ -40,8 +40,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         $fournisseur = session('nombreFournisseurs', 0);
         $article = session('nombreArticles', 0);
         $cout = session('coutArticles', 0);
+        $totalCommandes = session('total_commande', 0);
         $commandeParMois = session('commande_par_mois', []);
         $budgetTotalParMois = session('budget_total_par_mois', []);
+        $topArticles = session('top_trois', []);
+        $articlePerime = session('article_perime', 0);
 
         // logger()->info('Session:', ['nombreFournisseurs' => $fournisseur]);
         return Inertia::render('Dashboard', [
@@ -50,6 +53,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'couts' => $cout,
             'commandeParMois' => $commandeParMois,
             'budgetTotalParMois' => $budgetTotalParMois,
+            'articlePerime' => $articlePerime,
+            'totalCommandes' => $totalCommandes,
+            'topArticles' => $topArticles
         ]);
     })->name('dashboard');
 });

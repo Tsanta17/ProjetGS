@@ -14,8 +14,9 @@ import AppHistoric from '@/Layouts/layout/AppHistoric';
 import AppListUser from '@/Layouts/layout/AppListUser';
 
 
-const Dashboard = ({fournisseurs, articles, couts, commandeParMois, budgetTotalParMois}) => {
-    const { layoutConfig, showForm, DataTable, showInsertCommmand, picklistOrder, showSupplier, showHisto, showUserList } = useContext(LayoutContext);
+
+const Dashboard = ({fournisseurs, articles, couts, commandeParMois, budgetTotalParMois, articlePerime, topArticles, totalCommandes}) => {
+    const { layoutConfig, showForm, DataTable, showInsertCommmand, picklistOrder, showSupplier, showHisto, showListeUser } = useContext(LayoutContext);
     const [lineOptions, setLineOptions] = useState({});
 
     const applyLightTheme = () => {
@@ -83,13 +84,13 @@ const Dashboard = ({fournisseurs, articles, couts, commandeParMois, budgetTotalP
     };
 
     useEffect(() => {
-        console.log(commandeParMois);
+        console.log(topArticles);
         if (layoutConfig.colorScheme === 'light') {
             applyLightTheme();
         } else {
             applyDarkTheme();
         }
-    }, [layoutConfig.colorScheme]);
+    }, [layoutConfig.colorScheme, topArticles]);
 
     const lineData = {
     labels: ['Jan', 'Fev', 'Mar', 'Avr', 'Mai', 'Juin', 'Jul', 'Aout', 'Sep', 'Oct', 'Nov', 'Dec'],
@@ -103,7 +104,7 @@ const Dashboard = ({fournisseurs, articles, couts, commandeParMois, budgetTotalP
             tension: 0.4
         },
         {
-            label: 'Valeur de budget',
+            label: 'Total de budget',
             data: Object.values(budgetTotalParMois),
             fill: false,
             backgroundColor: '#00bb7e',
@@ -136,7 +137,7 @@ const Dashboard = ({fournisseurs, articles, couts, commandeParMois, budgetTotalP
                                    iconColor="cyan"
                                    descriptionText="commandes">
                 </DashboardInfoCard>
-                <DashboardInfoCard title="Périmés" value="1 Articles"
+                <DashboardInfoCard title="Périmés" value={articlePerime}
                                    descriptionValue="85"
                                    icon="pi pi-calendar-times"
                                    iconColor="red"
@@ -203,19 +204,22 @@ const Dashboard = ({fournisseurs, articles, couts, commandeParMois, budgetTotalP
                                     
                                 </div>
                                 <ul className="list-none p-0 m-0">
-                                    <li className="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
+                                    
+                                    { topArticles.map((articles, index) => (
+                                        <li key={index} className="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
                                         <div>
-                                            <span className="text-900 font-medium mr-2 mb-1 md:mb-0">Ordinateurs</span>
-                                            <div className="mt-1 text-600">Informatique</div>
+                                            <span className="text-900 font-medium mr-2 mb-1 md:mb-0">{ articles.nom_article }</span>
+                                            <div className="mt-1 text-600">{ articles.total_commandes }</div>
                                         </div>
                                         <div className="mt-2 md:mt-0 flex align-items-center">
                                             <div className="surface-300 border-round overflow-hidden w-10rem lg:w-6rem"
                                                 style={{ height: '8px' }}>
-                                                <div className="bg-orange-500 h-full" style={{ width: '50%' }} />
+                                                <div className={`bg-${['cyan','orange','pink'][index]}-500 h-full`} style={{ width: `${(articles.total_commandes / totalCommandes) * 100} %` }} />
                                             </div>
-                                            <span className="text-orange-500 ml-3 font-medium">%50</span>
+                                            <span className={`text-${['cyan','orange','pink'][index]}-500 ml-3 font-medium`}>%{((articles.total_commandes / totalCommandes) * 100)}</span>
                                         </div>
                                     </li>
+))}
                                     
                                     <li className="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
                                         <div>
