@@ -7,7 +7,7 @@ import { Link } from "@inertiajs/react";
 import usePageState from './UsePageState'; // Import du hook personnalisé
 
 const AppMenu = () => {
-    const { layoutConfig, setShowForm, setDataTable, setShowInsertCommmand, setPicklistOrder, setShowSupplier, setShowHisto } = useContext(LayoutContext);
+    const { layoutConfig, setShowForm, setDataTable, setShowInsertCommmand, setPicklistOrder, setShowSupplier, setShowHisto, setShowUserList } = useContext(LayoutContext);
     const { currentPage, setPage } = usePageState(); // Utilisation du hook
 
     const handleMenuItemClick = (page) => {
@@ -18,6 +18,7 @@ const AppMenu = () => {
         setPicklistOrder(page === 'picklistOrder');
         setShowSupplier(page === 'supplierForm');
         setShowHisto(page === 'historic');
+        setShowUserList(page === 'userList');
     };
 
     const model = [
@@ -42,6 +43,7 @@ const AppMenu = () => {
                         {
                             label: 'Liste',
                             icon: 'pi pi-fw pi-file',
+                            command: () => handleMenuItemClick('userList'),
                         },
                         {
                             label: 'Delete',

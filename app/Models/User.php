@@ -23,7 +23,8 @@ class User extends Authenticatable
         'password',
         'role',
         'site',
-        'approved'
+        'approved',
+        'image_profile', // Ajoutez cette ligne
     ];
 
     /**

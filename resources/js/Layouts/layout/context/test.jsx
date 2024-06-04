@@ -5,163 +5,176 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Toast } from 'primereact/toast';
 import { Button } from 'primereact/button';
-import { FileUpload } from 'primereact/fileupload';
 import { Toolbar } from 'primereact/toolbar';
-import { InputTextarea } from 'primereact/inputtextarea';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
-import { Checkbox } from 'primereact/checkbox'; // Importer le composant Checkbox
-import '../../../css/layout.css';
 
-const AppCrudData = () => {
-
-    const emptyArticle = {
+export default function AppFormSupplier() {
+    let emptySupplier = {
         id: null,
-        reference: '',
-        nom_article: '',
-        description: '',
-        date_peremption: '',
-        statut: ''
+        nom_fournisseur: '',
+        adresse_fournisseur: '',
+        phone_fournisseur: '',
+        email_fournisseur: ''
     };
 
-    const [articles, setArticles] = useState([]);
-    const [articleDialog, setArticleDialog] = useState(false);
-    const [deleteArticleDialog, setDeleteArticleDialog] = useState(false);
-    const [deleteArticlesDialog, setDeleteArticlesDialog] = useState(false);
-    const [article, setArticle] = useState(emptyArticle);
-    const [selectedArticles, setSelectedArticles] = useState([]);
+    const [suppliers, setSuppliers] = useState([]);
+    const [supplierDialog, setSupplierDialog] = useState(false);
+    const [deleteSupplierDialog, setDeleteSupplierDialog] = useState(false);
+    const [deleteSuppliersDialog, setDeleteSuppliersDialog] = useState(false);
+    const [supplier, setSupplier] = useState(emptySupplier);
+    const [selectedSuppliers, setSelectedSuppliers] = useState(null);
     const [submitted, setSubmitted] = useState(false);
     const [globalFilter, setGlobalFilter] = useState(null);
     const toast = useRef(null);
     const dt = useRef(null);
 
     useEffect(() => {
-        axios.get('/articles')
-            .then(response => {
-                setArticles(response.data);
-            })
-            .catch(error => {
-                console.error("There was an error fetching the articles!", error);
-            });
-    }, []);
+    axios.get('/fournisseur/list').then((response) => {
+        if (Array.isArray(response.data)) {
+            setSuppliers(response.data);
+            console.log(response.data);
+        } else {
+            console.error('API response is not an array', response.data);
+            setSuppliers([]);
+        }
+    }).catch(error => {
+        console.error('Failed to fetch suppliers:', error);
+        setSuppliers([]);
+    });
+}, []);
 
     const openNew = () => {
-        setArticle(emptyArticle);
+        setSupplier(emptySupplier);
         setSubmitted(false);
-        setArticleDialog(true);
-    }
+        setSupplierDialog(true);
+    };
 
     const hideDialog = () => {
         setSubmitted(false);
-        setArticleDialog(false);
-    }
+        setSupplierDialog(false);
+    };
 
-    const hideDeleteArticleDialog = () => {
-        setDeleteArticleDialog(false);
-    }
+    const hideDeleteSupplierDialog = () => {
+        setDeleteSupplierDialog(false);
+    };
 
-    const hideDeleteArticlesDialog = () => {
-        setDeleteArticlesDialog(false);
-    }
+    const hideDeleteSuppliersDialog = () => {
+        setDeleteSuppliersDialog(false);
+    };
 
-    const saveArticle = () => {
+    const saveSupplier = async () => {
         setSubmitted(true);
 
-        if (article.nom_article.trim()) {
-            let _articles = [...articles];
-            let _article = {...article};
-            if (article.id) {
-                const index = findIndexById(article.id);
-                _articles[index] = _article;
-                toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Article Updated', life: 3000 });
+        if (supplier.nom_fournisseur.trim()) {
+            let _suppliers = [...suppliers];
+            let _supplier = { ...supplier };
+
+            if (supplier.id) {
+                const index = findIndexById(supplier.id);
+
+                _suppliers[index] = _supplier;
+                toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Supplier Updated', life: 3000 });
             } else {
-                _article.id = createId();
-                _articles.push(_article);
-                toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Article Created', life: 3000 });
+                try {
+                    const response = await axios.post('/fournisseur/create', _supplier);
+                    _supplier.id = response.data.id; // Assuming the response contains the created supplier ID
+                    _suppliers.push(_supplier);
+                    toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Supplier Created', life: 3000 });
+                } catch (error) {
+                    toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to create supplier', life: 3000 });
+                }
             }
 
-            setArticles(_articles);
-            setArticleDialog(false);
-            setArticle(emptyArticle);
+            setSuppliers(_suppliers);
+            setSupplierDialog(false);
+            setSupplier(emptySupplier);
         }
-    }
+    };
 
-    const editArticle = (article) => {
-        setArticle({...article});
-        setArticleDialog(true);
-    }
+    const editSupplier = (supplier) => {
+        setSupplier({ ...supplier });
+        setSupplierDialog(true);
+    };
 
-    const confirmDeleteArticle = (article) => {
-        setArticle(article);
-        setDeleteArticleDialog(true);
-    }
+    const confirmDeleteSupplier = (supplier) => {
+        setSupplier(supplier);
+        setDeleteSupplierDialog(true);
+    };
 
-    const deleteArticle = () => {
-        let _articles = articles.filter(val => val.id !== article.id);
-        setArticles(_articles);
-        setDeleteArticleDialog(false);
-        setArticle(emptyArticle);
-        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Article Deleted', life: 3000 });
-    }
+    const deleteSupplier = () => {
+        let _suppliers = suppliers.filter((val) => val.id !== supplier.id);
 
-    const deleteSelectedArticles = () => {
-        let _articles = articles.filter(val => !selectedArticles.includes(val));
-        setArticles(_articles);
-        setDeleteArticlesDialog(false);
-        setSelectedArticles([]);
-        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Articles Deleted', life: 3000 });
-    }
+        setSuppliers(_suppliers);
+        setDeleteSupplierDialog(false);
+        setSupplier(emptySupplier);
+        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Supplier Deleted', life: 3000 });
+    };
 
     const findIndexById = (id) => {
         let index = -1;
-        for (let i = 0; i < articles.length; i++) {
-            if (articles[i].id === id) {
+
+        for (let i = 0; i < suppliers.length; i++) {
+            if (suppliers[i].id === id) {
                 index = i;
                 break;
             }
         }
-        return index;
-    }
 
-    const createId = () => {
-        let id = '';
-        let chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        for (let i = 0; i < 5; i++) {
-            id += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
-        return id;
-    }
+        return index;
+    };
+
+    const exportCSV = () => {
+        dt.current.exportCSV();
+    };
+
+    const confirmDeleteSelected = () => {
+        setDeleteSuppliersDialog(true);
+    };
+
+    const deleteSelectedSuppliers = () => {
+        let _suppliers = suppliers.filter((val) => !selectedSuppliers.includes(val));
+
+        setSuppliers(_suppliers);
+        setDeleteSuppliersDialog(false);
+        setSelectedSuppliers(null);
+        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Suppliers Deleted', life: 3000 });
+    };
+
+    const onInputChange = (e, name) => {
+        const val = (e.target && e.target.value) || '';
+        let _supplier = { ...supplier };
+
+        _supplier[`${name}`] = val;
+
+        setSupplier(_supplier);
+    };
 
     const leftToolbarTemplate = () => {
         return (
-            <React.Fragment>
-                <Button label="New" icon="pi pi-plus" className="p-button-success mr-2" onClick={openNew} />
-                <Button label="Delete" icon="pi pi-trash" className="p-button-danger" onClick={confirmDeleteSelected} disabled={!selectedArticles.length} />
-            </React.Fragment>
+            <div className="flex flex-wrap gap-2">
+                <Button label="New" icon="pi pi-plus" severity="success" onClick={openNew} />
+                <Button label="Delete" icon="pi pi-trash" severity="danger" onClick={confirmDeleteSelected} disabled={!selectedSuppliers || !selectedSuppliers.length} />
+            </div>
         );
-    }
+    };
 
     const rightToolbarTemplate = () => {
-        return (
-            <React.Fragment>
-                <FileUpload mode="basic" name="demo[]" auto url="https://primefaces.org/primereact/showcase/upload.php" accept=".csv" chooseLabel="Import" className="mr-2 inline-block" />
-                <Button label="Export" icon="pi pi-upload" className="p-button-help" onClick={() => dt.current.exportCSV()} />
-            </React.Fragment>
-        );
-    }
+        return <Button label="Export" icon="pi pi-upload" className="p-button-help" onClick={exportCSV} />;
+    };
 
     const actionBodyTemplate = (rowData) => {
         return (
             <React.Fragment>
-                <Button icon="pi pi-pencil" className="p-button-rounded p-button-success mr-2" onClick={() => editArticle(rowData)} />
-                <Button icon="pi pi-trash" className="p-button-rounded p-button-warning" onClick={() => confirmDeleteArticle(rowData)} />
+                <Button icon="pi pi-pencil" rounded outlined className="mr-2" onClick={() => editSupplier(rowData)} />
+                <Button icon="pi pi-trash" rounded outlined severity="danger" onClick={() => confirmDeleteSupplier(rowData)} />
             </React.Fragment>
         );
-    }
+    };
 
     const header = (
-        <div className="table-header">
-            <h5 className="mx-0 my-1">Articles</h5>
+        <div className="flex flex-wrap gap-2 align-items-center justify-content-between">
+            <h4 className="m-0">Manage Suppliers</h4>
             <span className="p-input-icon-left">
                 <i className="pi pi-search" />
                 <InputText type="search" onInput={(e) => setGlobalFilter(e.target.value)} placeholder="Search..." />
@@ -169,86 +182,90 @@ const AppCrudData = () => {
         </div>
     );
 
-    const articleDialogFooter = (
+    const supplierDialogFooter = (
         <React.Fragment>
-            <Button label="Cancel" icon="pi pi-times" className="p-button-text" onClick={hideDialog} />
-            <Button label="Save" icon="pi pi-check" className="p-button-text" onClick={saveArticle} />
+            <Button label="Cancel" icon="pi pi-times" outlined onClick={hideDialog} />
+            <Button label="Save" icon="pi pi-check" onClick={saveSupplier} />
         </React.Fragment>
     );
-
-    const deleteArticleDialogFooter = (
+    const deleteSupplierDialogFooter = (
         <React.Fragment>
-            <Button label="No" icon="pi pi-times" className="p-button-text" onClick={hideDeleteArticleDialog} />
-            <Button label="Yes" icon="pi pi-check" className="p-button-text" onClick={deleteArticle} />
+            <Button label="No" icon="pi pi-times" outlined onClick={hideDeleteSupplierDialog} />
+            <Button label="Yes" icon="pi pi-check" severity="danger" onClick={deleteSupplier} />
         </React.Fragment>
     );
-
-    const deleteArticlesDialogFooter = (
+    const deleteSuppliersDialogFooter = (
         <React.Fragment>
-            <Button label="No" icon="pi pi-times" className="p-button-text" onClick={hideDeleteArticlesDialog} />
-            <Button label="Yes" icon="pi pi-check" className="p-button-text" onClick={deleteSelectedArticles} />
+            <Button label="No" icon="pi pi-times" outlined onClick={hideDeleteSuppliersDialog} />
+            <Button label="Yes" icon="pi pi-check" severity="danger" onClick={deleteSelectedSuppliers} />
         </React.Fragment>
     );
-
-    const confirmDeleteSelected = () => {
-        setDeleteArticlesDialog(true);
-    }
 
     return (
-        <div className="datatable-crud-demo">
+        <div>
             <Toast ref={toast} />
             <div className="card">
                 <Toolbar className="mb-4" left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
-                <DataTable ref={dt} value={articles} selection={selectedArticles} onSelectionChange={(e) => setSelectedArticles(e.value)}
+
+                <DataTable ref={dt} value={suppliers} selection={selectedSuppliers} onSelectionChange={(e) => setSelectedSuppliers(e.value)}
                     dataKey="id" paginator rows={10} rowsPerPageOptions={[5, 10, 25]}
-                    globalFilter={globalFilter} header={header} responsiveLayout="scroll">
-                    <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
-                    <Column selectionMode="single" field="reference" header="Reference" sortable style={{ minWidth: '12rem' }}></Column>
-                    <Column field="nom_article" header="Nom" sortable style={{ minWidth: '16rem' }}></Column>
-                    <Column field="description" header="Description" sortable style={{ minWidth: '20rem' }}></Column>
-                    <Column field="date_peremption" header="Date Peremption" sortable style={{ minWidth: '12rem' }}></Column>
-                    <Column field="statut" header="Statut" sortable style={{ minWidth: '12rem' }}></Column>
-                    <Column body={actionBodyTemplate}></Column>
+                    paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} suppliers" globalFilter={globalFilter} header={header}>
+                    <Column selectionMode="multiple" exportable={false}></Column>
+                    <Column field="nom_fournisseur" header="Nom du fournisseur" sortable style={{ minWidth: '16rem' }}></Column>
+                    <Column field="adresse_fournisseur" header="Adresse" sortable style={{ minWidth: '20rem' }}></Column>
+                    <Column field="phone_fournisseur" header="Téléphone" sortable style={{ minWidth: '12rem' }}></Column>
+                    <Column field="email_fournisseur" header="Email" sortable style={{ minWidth: '16rem' }}></Column>
+                    <Column body={actionBodyTemplate} exportable={false} style={{ minWidth: '12rem' }}></Column>
                 </DataTable>
+
             </div>
 
-            <Dialog visible={articleDialog} style={{ width: '450px' }} header="Article Details" modal className="p-fluid" footer={articleDialogFooter} onHide={hideDialog}>
+            <Dialog visible={supplierDialog} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Supplier Details" modal className="p-fluid" footer={supplierDialogFooter} onHide={hideDialog}>
                 <div className="field">
-                    <label htmlFor="name">Nom</label>
-                    <InputText id="name" value={article.nom_article} onChange={(e) => setArticle({ ...article, nom_article: e.target.value })} required autoFocus className={classNames({ 'p-invalid': submitted && !article.nom_article })} />
-                    {submitted && !article.nom_article && <small className="p-invalid">Nom is required.</small>}
+                    <label htmlFor="nom_fournisseur" className="font-bold">
+                        Nom du fournisseur
+                    </label>
+                    <InputText id="nom_fournisseur" value={supplier.nom_fournisseur} onChange={(e) => onInputChange(e, 'nom_fournisseur')} required autoFocus className={classNames({ 'p-invalid': submitted && !supplier.nom_fournisseur })} />
+                    {submitted && !supplier.nom_fournisseur && <small className="p-error">Nom du fournisseur est requis.</small>}
                 </div>
                 <div className="field">
-                    <label htmlFor="description">Description</label>
-                    <InputTextarea id="description" value={article.description} onChange={(e) => setArticle({ ...article, description: e.target.value })} required rows={3} cols={20} />
+                    <label htmlFor="adresse_fournisseur" className="font-bold">
+                        Adresse
+                    </label>
+                    <InputText id="adresse_fournisseur" value={supplier.adresse_fournisseur} onChange={(e) => onInputChange(e, 'adresse_fournisseur')} required />
                 </div>
                 <div className="field">
-                    <label htmlFor="date_peremption">Date Peremption</label>
-                    <InputText id="date_peremption" value={article.date_peremption} onChange={(e) => setArticle({ ...article, date_peremption: e.target.value })} required className={classNames({ 'p-invalid': submitted && !article.date_peremption })} />
-                    {submitted && !article.date_peremption && <small className="p-invalid">Date Peremption is required.</small>}
+                    <label htmlFor="phone_fournisseur" className="font-bold">
+                        Téléphone
+                    </label>
+                    <InputText id="phone_fournisseur" value={supplier.phone_fournisseur} onChange={(e) => onInputChange(e, 'phone_fournisseur')} required />
                 </div>
                 <div className="field">
-                    <label htmlFor="statut">Statut</label>
-                    <InputText id="statut" value={article.statut} onChange={(e) => setArticle({ ...article, statut: e.target.value })} required className={classNames({ 'p-invalid': submitted && !article.statut })} />
-                    {submitted && !article.statut && <small className="p-invalid">Statut is required.</small>}
+                    <label htmlFor="email_fournisseur" className="font-bold">
+                        Email
+                    </label>
+                    <InputText id="email_fournisseur" value={supplier.email_fournisseur} onChange={(e) => onInputChange(e, 'email_fournisseur')} required />
                 </div>
             </Dialog>
 
-            <Dialog visible={deleteArticleDialog} style={{ width: '450px' }} header="Confirm" modal footer={deleteArticleDialogFooter} onHide={hideDeleteArticleDialog}>
+            <Dialog visible={deleteSupplierDialog} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Confirm" modal footer={deleteSupplierDialogFooter} onHide={hideDeleteSupplierDialog}>
                 <div className="confirmation-content">
                     <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
-                    {article && <span>Are you sure you want to delete <b>{article.nom_article}</b>?</span>}
+                    {supplier && (
+                        <span>
+                            Are you sure you want to delete <b>{supplier.nom_fournisseur}</b>?
+                        </span>
+                    )}
                 </div>
             </Dialog>
 
-            <Dialog visible={deleteArticlesDialog} style={{ width: '450px' }} header="Confirm" modal footer={deleteArticlesDialogFooter} onHide={hideDeleteArticlesDialog}>
+            <Dialog visible={deleteSuppliersDialog} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Confirm" modal footer={deleteSuppliersDialogFooter} onHide={hideDeleteSuppliersDialog}>
                 <div className="confirmation-content">
                     <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
-                    {selectedArticles && <span>Are you sure you want to delete the selected articles?</span>}
+                    {supplier && <span>Are you sure you want to delete the selected suppliers?</span>}
                 </div>
             </Dialog>
         </div>
     );
 }
-
-export default AppCrudData;

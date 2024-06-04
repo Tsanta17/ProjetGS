@@ -19,9 +19,9 @@ export default function Register() {
         email: '',
         role: '',
         site: '',
-        image_profile: null,
         password: '',
         password_confirmation: '',
+        image_profile: null,
     });
 
     const { props } = usePage();

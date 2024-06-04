@@ -79,9 +79,10 @@ require __DIR__ . '/auth.php';
 Route::get('/fournisseur', [FournisseurController::class, 'index'])->name('fournisseur.index');
 Route::post('/fournisseur/create', [FournisseurController::class, 'store'])->name('fournisseur.store');
 Route::get('/fournisseur/{fournisseur}/show', [FournisseurController::class, 'show'])->name('fournisseur.show');
-Route::post('/fournisseur/{fournisseur}/update', [FournisseurController::class, 'update'])->name('fournisseur.update');
+Route::put('/fournisseur/{fournisseur}/update', [FournisseurController::class, 'update'])->name('fournisseur.update');
+Route::delete('/fournisseur/{fournisseur}/delete', [FournisseurController::class, 'delete'])->name('fournisseur.delete');
 Route::get('/fournisseur/{fournisseur}/edit', [FournisseurController::class, 'edit'])->name('fournisseur.edit');
-Route::get('/fournisseur/list', [FournisseurController::class, 'listeFournisseur'])->name('fournisseurList');
+Route::get('/fournisseur/list', [FournisseurController::class, 'list'])->name('fournisseurList');
 
 //Commande
 Route::get('/commande', [CommandeController::class, 'commandeEnAttente'])->name('commande.index');

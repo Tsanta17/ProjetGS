@@ -11,11 +11,11 @@ import AppInsertCommand from '@/Layouts/layout/AppInsertCommand';
 import AppCheckOrder from '@/Layouts/layout/AppCheckOrder';
 import AppFormSupplier from '@/Layouts/layout/AppFormSupplier';
 import AppHistoric from '@/Layouts/layout/AppHistoric';
-
+import AppListUser from '@/Layouts/layout/AppListUser';
 
 
 const Dashboard = ({fournisseurs, articles, couts, commandeParMois, budgetTotalParMois}) => {
-    const { layoutConfig, showForm, DataTable, showInsertCommmand, picklistOrder, showSupplier, showHisto } = useContext(LayoutContext);
+    const { layoutConfig, showForm, DataTable, showInsertCommmand, picklistOrder, showSupplier, showHisto, showUserList } = useContext(LayoutContext);
     const [lineOptions, setLineOptions] = useState({});
 
     const applyLightTheme = () => {
@@ -178,6 +178,12 @@ const Dashboard = ({fournisseurs, articles, couts, commandeParMois, budgetTotalP
                     <div className="col-12 xl:col-12">
                         <div className="card">
                             <AppHistoric />
+                        </div>
+                    </div>
+                ) : showUserList ? (
+                    <div className="col-12 xl:col-12">
+                        <div className="card">
+                            <AppListUser />
                         </div>
                     </div>
                 ) : (

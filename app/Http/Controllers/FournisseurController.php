@@ -20,12 +20,14 @@ class FournisseurController extends Controller
         return redirect()->route('fournisseurList')->with('success', 'fournisseur ajouté');
     }
     //Liste des fournisseurs
-    public function list(){
+
+    public function list()
+    {
         $fournisseurs = Fournisseur::all();
-        return view('fournisseur', [
-            'fournisseurs' => $fournisseurs
-        ]);
+        return response()->json($fournisseurs);
     }
+
+
     //suppression d'un fournisseur
     public function destroy($id){
         $fournisseur = Fournisseur::find($id);
@@ -33,17 +35,22 @@ class FournisseurController extends Controller
         return redirect()->route('fournisseurList')->with('success', 'fournisseur supprimé');
     }
     //modification d'un fournisseur
-    public function update(Request $request, $fournisseur){
+   
+    public function update(Request $request, $id)
+    {
         $request->validate([
             'nom_fournisseur' => 'required|string',
             'adresse_fournisseur' => 'required|string',
             'phone_fournisseur' => 'required|string',
-            'email_fournisseur' => 'required|string',
+            'email_fournisseur' => 'required|string|unique:fournisseurs,email_fournisseur,' . $id . ',fournisseur_id',
         ]);
-        $fournisseur = Fournisseur::find($fournisseur);
+
+        $fournisseur = Fournisseur::findOrFail($id);
         $fournisseur->update($request->all());
-        return redirect()->route('fournisseurList')->with('success', 'fournisseur modifié');
+
+        return response()->json(['message' => 'Supplier updated successfully', 'fournisseur' => $fournisseur]);
     }
+
     //importer les données fournisseurs à éditer
     public function edit(Fournisseur $fournisseur){
         // dd($fournisseur);
@@ -64,6 +71,16 @@ class FournisseurController extends Controller
         // dd($commandes);
         return view('fournisseur', ['commande' => $commandes]);
     }
+
+    public function delete($fournisseur)
+    {
+        $fournisseur = Fournisseur::findOrFail($fournisseur);
+        $fournisseur->delete();
+
+        return response()->json(['message' => 'Supplier deleted successfully']);
+    }
+
+
     //Liste des fournisseurs
     public function listeFournisseur(){
         //récupération des fournisseurs

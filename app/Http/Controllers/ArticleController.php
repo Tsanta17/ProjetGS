@@ -40,7 +40,7 @@ class ArticleController extends Controller
         $article = new Article();
 
         $article->reference = $request->reference;
-        $article->nom_article = $request->nom;
+        $article->nom_article = $request->name;
         $article->description = $request->description;
         $article->date_peremption = $request->date_peremption;
         $article->fournisseur_id = $request->fournisseur_id;
