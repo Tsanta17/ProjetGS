@@ -39,19 +39,38 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     //DASHBOARD
     Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
+        $fournisseur = session('nombreFournisseurs', 0);
+        $article = session('nombreArticles', 0);
+        $cout = session('coutArticles', 0);
+        $totalCommandes = session('total_commande', 0);
+        $commandeParMois = session('commande_par_mois', []);
+        $budgetTotalParMois = session('budget_total_par_mois', []);
+        $topArticles = session('top_trois', []);
+        $articlePerime = session('article_perime', 0);
+
+        // logger()->info('Session:', ['nombreFournisseurs' => $fournisseur]);
+        return Inertia::render('Dashboard', [
+            'fournisseurs' => $fournisseur,
+            'articles' => $article,
+            'couts' => $cout,
+            'commandeParMois' => $commandeParMois,
+            'budgetTotalParMois' => $budgetTotalParMois,
+            'articlePerime' => $articlePerime,
+            'totalCommandes' => $totalCommandes,
+            'topArticles' => $topArticles
+        ]);
     })->name('dashboard');
 });
 
 Route::middleware('auth')->group(function () {
     Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
-    Route::post('/register', [RegisteredUserController::class, 'store'])->name('register.store');
+    Route::post('/registerUser', [RegisteredUserController::class, 'store'])->name('register.store');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     //ARTICLES
-    Route::get('/articles', [ArticleController::class, 'create']);
+    Route::get('/articles', [ArticleController::class, 'index']);
     Route::post('/ajoutArticle', [ArticleController::class, 'store']);
     Route::get('/editArticle/{id}', [ArticleController::class, 'edit']);
     Route::post('/updateArticle/{id}', [ArticleController::class, 'update']);
@@ -59,17 +78,18 @@ Route::middleware('auth')->group(function () {
 
     //SERVICES
     Route::get('/services', [ServiceController::class, 'create']);
+    Route::get('/servicesListes', [ServiceController::class, 'index']);
     Route::post('/ajoutCommande', [ServiceController::class, 'store']);
 
-    //Fournisseur
-    Route::get('/fournisseur/list', [FournisseurController::class, 'listeFournisseur'])->name('fournisseurList');
-    Route::get('/fournisseur', [FournisseurController::class, 'index'])->name('fournisseur.index');
-    Route::post('/fournisseur/create', [FournisseurController::class, 'store'])->name('fournisseur.store');
-    Route::get('/fournisseur/{fournisseur}/show', [FournisseurController::class, 'show'])->name('fournisseur.show');
-    Route::post('/fournisseur/{fournisseur}/update', [FournisseurController::class, 'update'])->name('fournisseur.update');
-    Route::get('/fournisseur/{fournisseur}/edit', [FournisseurController::class, 'edit'])->name('fournisseur.edit');
-
-    //CommandeCommandeAbonnee
+require __DIR__ . '/auth.php';
+//Fournisseur
+Route::get('/fournisseur', [FournisseurController::class, 'index'])->name('fournisseur.index');
+Route::post('/fournisseur/create', [FournisseurController::class, 'store'])->name('fournisseur.store');
+Route::get('/fournisseur/{fournisseur}/show', [FournisseurController::class, 'show'])->name('fournisseur.show');
+Route::put('/fournisseur/{fournisseur}/update', [FournisseurController::class, 'update'])->name('fournisseur.update');
+Route::delete('/fournisseur/{fournisseur}/delete', [FournisseurController::class, 'delete'])->name('fournisseur.delete');
+Route::get('/fournisseur/{fournisseur}/edit', [FournisseurController::class, 'edit'])->name('fournisseur.edit');
+Route::get('/fournisseur/list', [FournisseurController::class, 'list'])->name('fournisseurList');
 
     Route::get('/commande/abonnee', [CommandeController::class, 'abonnemementCommande'])->name('commande.abonnee');
     Route::get('/commande', [CommandeController::class, 'commandeEnAttente'])->name('commande.index');

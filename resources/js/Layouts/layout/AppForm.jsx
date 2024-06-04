@@ -45,9 +45,9 @@ const AppForm = () => {
             ...formData,
             date_peremption: formattedDate
         };
-
         setLoading(true);
         setError(null);
+        console.log(formData);
         try {
             await axios.post('/ajoutArticle', dataToSubmit);
             alert('Article ajouté avec succès');

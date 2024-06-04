@@ -1,361 +1,294 @@
-
 import React, { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
 import { classNames } from 'primereact/utils';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-// import { ProductService } from './service/ProductService';
 import { Toast } from 'primereact/toast';
 import { Button } from 'primereact/button';
-import { FileUpload } from 'primereact/fileupload';
-import { Rating } from 'primereact/rating';
 import { Toolbar } from 'primereact/toolbar';
-import { InputTextarea } from 'primereact/inputtextarea';
-import { IconField } from 'primereact/iconfield';
-import { InputIcon } from 'primereact/inputicon';
-import { RadioButton } from 'primereact/radiobutton';
-import { InputNumber } from 'primereact/inputnumber';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
-import { Tag } from 'primereact/tag';
 
 export default function AppFormSupplier() {
-    let emptyProduct = {
-        id: null,
-        name: '',
-        image: null,
-        description: '',
-        category: null,
-        price: 0,
-        quantity: 0,
-        rating: 0,
-        inventoryStatus: 'INSTOCK'
+    let emptySupplier = {
+        fournisseur_id: null,
+        nom_fournisseur: '',
+        adresse_fournisseur: '',
+        phone_fournisseur: '',
+        email_fournisseur: ''
     };
 
-    const [products, setProducts] = useState(null);
-    const [productDialog, setProductDialog] = useState(false);
-    const [deleteProductDialog, setDeleteProductDialog] = useState(false);
-    const [deleteProductsDialog, setDeleteProductsDialog] = useState(false);
-    const [product, setProduct] = useState(emptyProduct);
-    const [selectedProducts, setSelectedProducts] = useState(null);
+    const [suppliers, setSuppliers] = useState([]);
+    const [supplierDialog, setSupplierDialog] = useState(false);
+    const [deleteSupplierDialog, setDeleteSupplierDialog] = useState(false);
+    const [deleteSuppliersDialog, setDeleteSuppliersDialog] = useState(false);
+    const [supplier, setSupplier] = useState(emptySupplier);
+    const [selectedSuppliers, setSelectedSuppliers] = useState(null);
     const [submitted, setSubmitted] = useState(false);
     const [globalFilter, setGlobalFilter] = useState(null);
     const toast = useRef(null);
     const dt = useRef(null);
 
-    // useEffect(() => {
-    //     ProductService.getProducts().then((data) => setProducts(data));
-    // }, []);
-
-    const formatCurrency = (value) => {
-        return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
-    };
+    useEffect(() => {
+        axios.get('/fournisseur/list').then((response) => {
+            if (Array.isArray(response.data)) {
+                setSuppliers(response.data);
+                console.log(response.data);
+            } else {
+                console.error('API response is not an array', response.data);
+                setSuppliers([]);
+            }
+        }).catch(error => {
+            console.error('Failed to fetch suppliers:', error);
+            setSuppliers([]);
+        });
+    }, []);
 
     const openNew = () => {
-        setProduct(emptyProduct);
+        setSupplier(emptySupplier);
         setSubmitted(false);
-        setProductDialog(true);
+        setSupplierDialog(true);
     };
 
     const hideDialog = () => {
         setSubmitted(false);
-        setProductDialog(false);
+        setSupplierDialog(false);
     };
 
-    const hideDeleteProductDialog = () => {
-        setDeleteProductDialog(false);
+    const hideDeleteSupplierDialog = () => {
+        setDeleteSupplierDialog(false);
     };
 
-    const hideDeleteProductsDialog = () => {
-        setDeleteProductsDialog(false);
+    const hideDeleteSuppliersDialog = () => {
+        setDeleteSuppliersDialog(false);
     };
 
-    const saveProduct = () => {
+    const saveSupplier = async () => {
         setSubmitted(true);
 
-        if (product.name.trim()) {
-            let _products = [...products];
-            let _product = { ...product };
+        if (supplier.nom_fournisseur.trim()) {
+            let _suppliers = [...suppliers];
+            let _supplier = { ...supplier };
 
-            if (product.id) {
-                const index = findIndexById(product.id);
-
-                _products[index] = _product;
-                toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Product Updated', life: 3000 });
+            if (supplier.fournisseur_id) {
+                // Update existing supplier
+                try {
+                    const response = await axios.put(`/fournisseur/${supplier.fournisseur_id}/update`, _supplier);
+                    const index = findIndexById(supplier.fournisseur_id);
+                    _suppliers[index] = response.data.fournisseur;
+                    toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Supplier Updated', life: 3000 });
+                } catch (error) {
+                    toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to update supplier', life: 3000 });
+                }
             } else {
-                _product.id = createId();
-                _product.image = 'product-placeholder.svg';
-                _products.push(_product);
-                toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Product Created', life: 3000 });
+                // Create new supplier
+                try {
+                    const response = await axios.post('/fournisseur/create', _supplier);
+                    _suppliers.push(response.data.fournisseur);
+                    toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Supplier Created', life: 3000 });
+                } catch (error) {
+                    toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to create supplier', life: 3000 });
+                }
             }
 
-            setProducts(_products);
-            setProductDialog(false);
-            setProduct(emptyProduct);
+            setSuppliers(_suppliers);
+            setSupplierDialog(false);
+            setSupplier(emptySupplier);
         }
     };
 
-    const editProduct = (product) => {
-        setProduct({ ...product });
-        setProductDialog(true);
+    const editSupplier = (supplier) => {
+        setSupplier({ ...supplier });
+        setSupplierDialog(true);
     };
 
-    const confirmDeleteProduct = (product) => {
-        setProduct(product);
-        setDeleteProductDialog(true);
+    const confirmDeleteSupplier = (supplier) => {
+        setSupplier(supplier);
+        setDeleteSupplierDialog(true);
     };
 
-    const deleteProduct = () => {
-        let _products = products.filter((val) => val.id !== product.id);
+    // const deleteSupplier = () => {
+    //     let _suppliers = suppliers.filter((val) => val.id !== supplier.fournisseur_id);
 
-        setProducts(_products);
-        setDeleteProductDialog(false);
-        setProduct(emptyProduct);
-        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Product Deleted', life: 3000 });
+    //     setSuppliers(_suppliers);
+    //     setDeleteSupplierDialog(false);
+    //     setSupplier(emptySupplier);
+    //     toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Supplier Deleted', life: 3000 });
+    // };
+
+    const deleteSupplier = async () => {
+        try {
+            await axios.delete(`/fournisseur/${supplier.fournisseur_id}/delete`);
+            const updatedSuppliers = suppliers.filter(item => item.fournisseur_id !== supplier.fournisseur_id);
+            setSuppliers(updatedSuppliers);
+            toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Supplier Deleted', life: 3000 });
+        } catch (error) {
+            toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to delete supplier', life: 3000 });
+        }
     };
+    
 
-    const findIndexById = (id) => {
+    const findIndexById = (fournisseur_id) => {
         let index = -1;
-
-        for (let i = 0; i < products.length; i++) {
-            if (products[i].id === id) {
+    
+        for (let i = 0; i < suppliers.length; i++) {
+            if (suppliers[i].fournisseur_id === fournisseur_id) {
                 index = i;
                 break;
             }
         }
-
+    
         return index;
     };
-
-    const createId = () => {
-        let id = '';
-        let chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-
-        for (let i = 0; i < 5; i++) {
-            id += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
-
-        return id;
-    };
+    
 
     const exportCSV = () => {
         dt.current.exportCSV();
     };
 
     const confirmDeleteSelected = () => {
-        setDeleteProductsDialog(true);
+        setDeleteSuppliersDialog(true);
     };
 
-    const deleteSelectedProducts = () => {
-        let _products = products.filter((val) => !selectedProducts.includes(val));
+    const deleteSelectedSuppliers = () => {
+        let _suppliers = suppliers.filter((val) => !selectedSuppliers.includes(val));
 
-        setProducts(_products);
-        setDeleteProductsDialog(false);
-        setSelectedProducts(null);
-        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Products Deleted', life: 3000 });
-    };
-
-    const onCategoryChange = (e) => {
-        let _product = { ...product };
-
-        _product['category'] = e.value;
-        setProduct(_product);
+        setSuppliers(_suppliers);
+        setDeleteSuppliersDialog(false);
+        setSelectedSuppliers(null);
+        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Suppliers Deleted', life: 3000 });
     };
 
     const onInputChange = (e, name) => {
         const val = (e.target && e.target.value) || '';
-        let _product = { ...product };
+        let _supplier = { ...supplier };
 
-        _product[`${name}`] = val;
+        _supplier[`${name}`] = val;
 
-        setProduct(_product);
-    };
-
-    const onInputNumberChange = (e, name) => {
-        const val = e.value || 0;
-        let _product = { ...product };
-
-        _product[`${name}`] = val;
-
-        setProduct(_product);
+        setSupplier(_supplier);
     };
 
     const leftToolbarTemplate = () => {
         return (
             <div className="flex flex-wrap gap-2">
-                <Button label="New" icon="pi pi-plus" severity="success" onClick={openNew} />
-                <Button label="Delete" icon="pi pi-trash" severity="danger" onClick={confirmDeleteSelected} disabled={!selectedProducts || !selectedProducts.length} />
+                <Button label="Ajouter" icon="pi pi-plus" severity="success" onClick={openNew} />
+                <Button label="Supprimer" icon="pi pi-trash" severity="danger" onClick={confirmDeleteSelected} disabled={!selectedSuppliers || !selectedSuppliers.length} />
             </div>
         );
     };
 
     const rightToolbarTemplate = () => {
-        return <Button label="Export" icon="pi pi-upload" className="p-button-help" onClick={exportCSV} />;
-    };
-
-    const imageBodyTemplate = (rowData) => {
-        return <img src={`https://primefaces.org/cdn/primereact/images/product/${rowData.image}`} alt={rowData.image} className="shadow-2 border-round" style={{ width: '64px' }} />;
-    };
-
-    const priceBodyTemplate = (rowData) => {
-        return formatCurrency(rowData.price);
-    };
-
-    const ratingBodyTemplate = (rowData) => {
-        return <Rating value={rowData.rating} readOnly cancel={false} />;
-    };
-
-    const statusBodyTemplate = (rowData) => {
-        return <Tag value={rowData.inventoryStatus} severity={getSeverity(rowData)}></Tag>;
+        return <Button label="Exporté" icon="pi pi-upload" className="p-button-help" onClick={exportCSV} />;
     };
 
     const actionBodyTemplate = (rowData) => {
         return (
             <React.Fragment>
-                <Button icon="pi pi-pencil" rounded outlined className="mr-2" onClick={() => editProduct(rowData)} />
-                <Button icon="pi pi-trash" rounded outlined severity="danger" onClick={() => confirmDeleteProduct(rowData)} />
+                <Button icon="pi pi-pencil" rounded outlined className="mr-2" onClick={() => editSupplier(rowData)} />
+                <Button icon="pi pi-trash" rounded outlined severity="danger" onClick={() => confirmDeleteSupplier(rowData)} />
             </React.Fragment>
         );
     };
 
-    const getSeverity = (product) => {
-        switch (product.inventoryStatus) {
-            case 'INSTOCK':
-                return 'success';
-
-            case 'LOWSTOCK':
-                return 'warning';
-
-            case 'OUTOFSTOCK':
-                return 'danger';
-
-            default:
-                return null;
-        }
-    };
-
     const header = (
         <div className="flex flex-wrap gap-2 align-items-center justify-content-between">
-            <h4 className="m-0">Manage Products</h4>
-            <IconField iconPosition="left">
-                <InputIcon className="pi pi-search" />
+            <h4 className="m-0">Gestion des Fournisseurs</h4>
+            <span className="p-input-icon-left">
+                <i className="pi pi-search" />
                 <InputText type="search" onInput={(e) => setGlobalFilter(e.target.value)} placeholder="Search..." />
-            </IconField>
+            </span>
         </div>
     );
-    const productDialogFooter = (
+
+    const supplierDialogFooter = (
         <React.Fragment>
             <Button label="Cancel" icon="pi pi-times" outlined onClick={hideDialog} />
-            <Button label="Save" icon="pi pi-check" onClick={saveProduct} />
+            <Button label="Save" icon="pi pi-check" onClick={saveSupplier} />
         </React.Fragment>
     );
-    const deleteProductDialogFooter = (
+    const deleteSupplierDialogFooter = (
         <React.Fragment>
-            <Button label="No" icon="pi pi-times" outlined onClick={hideDeleteProductDialog} />
-            <Button label="Yes" icon="pi pi-check" severity="danger" onClick={deleteProduct} />
+            <Button label="No" icon="pi pi-times" outlined onClick={hideDeleteSupplierDialog} />
+            <Button label="Yes" icon="pi pi-check" severity="danger" onClick={deleteSupplier} />
         </React.Fragment>
     );
-    const deleteProductsDialogFooter = (
+    const deleteSuppliersDialogFooter = (
         <React.Fragment>
-            <Button label="No" icon="pi pi-times" outlined onClick={hideDeleteProductsDialog} />
-            <Button label="Yes" icon="pi pi-check" severity="danger" onClick={deleteSelectedProducts} />
+            <Button label="No" icon="pi pi-times" outlined onClick={hideDeleteSuppliersDialog} />
+            <Button label="Yes" icon="pi pi-check" severity="danger" onClick={deleteSelectedSuppliers} />
         </React.Fragment>
     );
 
     return (
-        <div>
-            <Toast ref={toast} />
-            <div className="card">
-                <Toolbar className="mb-4" left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
-
-                <DataTable ref={dt} value={products} selection={selectedProducts} onSelectionChange={(e) => setSelectedProducts(e.value)}
-                        dataKey="id"  paginator rows={10} rowsPerPageOptions={[5, 10, 25]}
+        <div className="grid crud-demo">
+            <div className="col-12">
+                <div className="card">
+                    <Toast ref={toast} />
+                    <Toolbar className="mb-4" left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
+                    <DataTable
+                        ref={dt}
+                        value={suppliers}
+                        selection={selectedSuppliers}
+                        onSelectionChange={(e) => setSelectedSuppliers(e.value)}
+                        dataKey="id"
+                        paginator
+                        rows={10}
+                        rowsPerPageOptions={[5, 10, 25]}
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products" globalFilter={globalFilter} header={header}>
-                    <Column selectionMode="multiple" exportable={false}></Column>
-                    <Column field="code" header="Code" sortable style={{ minWidth: '12rem' }}></Column>
-                    <Column field="name" header="Name" sortable style={{ minWidth: '16rem' }}></Column>
-                    <Column field="image" header="Image" body={imageBodyTemplate}></Column>
-                    <Column field="price" header="Price" body={priceBodyTemplate} sortable style={{ minWidth: '8rem' }}></Column>
-                    <Column field="category" header="Category" sortable style={{ minWidth: '10rem' }}></Column>
-                    <Column field="rating" header="Reviews" body={ratingBodyTemplate} sortable style={{ minWidth: '12rem' }}></Column>
-                    <Column field="inventoryStatus" header="Status" body={statusBodyTemplate} sortable style={{ minWidth: '12rem' }}></Column>
-                    <Column body={actionBodyTemplate} exportable={false} style={{ minWidth: '12rem' }}></Column>
-                </DataTable>
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} suppliers"
+                        globalFilter={globalFilter}
+                        header={header}
+                    >
+                        <Column selectionMode="multiple" exportable={false}></Column>
+                        <Column field="id" header="ID" sortable style={{ minWidth: '12rem' }}></Column>
+                        <Column field="nom_fournisseur" header="Nom" sortable style={{ minWidth: '16rem' }}></Column>
+                        <Column field="adresse_fournisseur" header="Adresse" sortable style={{ minWidth: '16rem' }}></Column>
+                        <Column field="phone_fournisseur" header="Téléphone" sortable style={{ minWidth: '12rem' }}></Column>
+                        <Column field="email_fournisseur" header="Email" sortable style={{ minWidth: '16rem' }}></Column>
+                        <Column body={actionBodyTemplate} exportable={false} style={{ minWidth: '8rem' }}></Column>
+                    </DataTable>
+
+                    <Dialog visible={supplierDialog} style={{ width: '450px' }} header="Supplier Details" modal className="p-fluid" footer={supplierDialogFooter} onHide={hideDialog}>
+                        <div className="field">
+                            <label htmlFor="nom_fournisseur">Nom</label>
+                            <InputText id="nom_fournisseur" value={supplier.nom_fournisseur} onChange={(e) => onInputChange(e, 'nom_fournisseur')} required autoFocus className={classNames({ 'p-invalid': submitted && !supplier.nom_fournisseur })} />
+                            {submitted && !supplier.nom_fournisseur && <small className="p-error">Nom is required.</small>}
+                        </div>
+
+                        <div className="field">
+                            <label htmlFor="adresse_fournisseur">Adresse</label>
+                            <InputText id="adresse_fournisseur" value={supplier.adresse_fournisseur} onChange={(e) => onInputChange(e, 'adresse_fournisseur')} required className={classNames({ 'p-invalid': submitted && !supplier.adresse_fournisseur })} />
+                            {submitted && !supplier.adresse_fournisseur && <small className="p-error">Adresse is required.</small>}
+                        </div>
+
+                        <div className="field">
+                            <label htmlFor="phone_fournisseur">Téléphone</label>
+                            <InputText id="phone_fournisseur" value={supplier.phone_fournisseur} onChange={(e) => onInputChange(e, 'phone_fournisseur')} required className={classNames({ 'p-invalid': submitted && !supplier.phone_fournisseur })} />
+                            {submitted && !supplier.phone_fournisseur && <small className="p-error">Téléphone is required.</small>}
+                        </div>
+
+                        <div className="field">
+                            <label htmlFor="email_fournisseur">Email</label>
+                            <InputText id="email_fournisseur" value={supplier.email_fournisseur} onChange={(e) => onInputChange(e, 'email_fournisseur')} required className={classNames({ 'p-invalid': submitted && !supplier.email_fournisseur })} />
+                            {submitted && !supplier.email_fournisseur && <small className="p-error">Email is required.</small>}
+                        </div>
+                    </Dialog>
+
+                    <Dialog visible={deleteSupplierDialog} style={{ width: '450px' }} header="Confirm" modal footer={deleteSupplierDialogFooter} onHide={hideDeleteSupplierDialog}>
+                        <div className="confirmation-content">
+                            <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
+                            {supplier && <span>Are you sure you want to delete <b>{supplier.nom_fournisseur}</b>?</span>}
+                        </div>
+                    </Dialog>
+
+                    <Dialog visible={deleteSuppliersDialog} style={{ width: '450px' }} header="Confirm" modal footer={deleteSuppliersDialogFooter} onHide={hideDeleteSuppliersDialog}>
+                        <div className="confirmation-content">
+                            <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
+                            {supplier && <span>Are you sure you want to delete the selected suppliers?</span>}
+                        </div>
+                    </Dialog>
+                </div>
             </div>
-
-            <Dialog visible={productDialog} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Product Details" modal className="p-fluid" footer={productDialogFooter} onHide={hideDialog}>
-                {product.image && <img src={`https://primefaces.org/cdn/primereact/images/product/${product.image}`} alt={product.image} className="product-image block m-auto pb-3" />}
-                <div className="field">
-                    <label htmlFor="name" className="font-bold">
-                        Name
-                    </label>
-                    <InputText id="name" value={product.name} onChange={(e) => onInputChange(e, 'name')} required autoFocus className={classNames({ 'p-invalid': submitted && !product.name })} />
-                    {submitted && !product.name && <small className="p-error">Name is required.</small>}
-                </div>
-                <div className="field">
-                    <label htmlFor="description" className="font-bold">
-                        Description
-                    </label>
-                    <InputTextarea id="description" value={product.description} onChange={(e) => onInputChange(e, 'description')} required rows={3} cols={20} />
-                </div>
-
-                <div className="field">
-                    <label className="mb-3 font-bold">Category</label>
-                    <div className="formgrid grid">
-                        <div className="field-radiobutton col-6">
-                            <RadioButton inputId="category1" name="category" value="Accessories" onChange={onCategoryChange} checked={product.category === 'Accessories'} />
-                            <label htmlFor="category1">Accessories</label>
-                        </div>
-                        <div className="field-radiobutton col-6">
-                            <RadioButton inputId="category2" name="category" value="Clothing" onChange={onCategoryChange} checked={product.category === 'Clothing'} />
-                            <label htmlFor="category2">Clothing</label>
-                        </div>
-                        <div className="field-radiobutton col-6">
-                            <RadioButton inputId="category3" name="category" value="Electronics" onChange={onCategoryChange} checked={product.category === 'Electronics'} />
-                            <label htmlFor="category3">Electronics</label>
-                        </div>
-                        <div className="field-radiobutton col-6">
-                            <RadioButton inputId="category4" name="category" value="Fitness" onChange={onCategoryChange} checked={product.category === 'Fitness'} />
-                            <label htmlFor="category4">Fitness</label>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="formgrid grid">
-                    <div className="field col">
-                        <label htmlFor="price" className="font-bold">
-                            Price
-                        </label>
-                        <InputNumber id="price" value={product.price} onValueChange={(e) => onInputNumberChange(e, 'price')} mode="currency" currency="USD" locale="en-US" />
-                    </div>
-                    <div className="field col">
-                        <label htmlFor="quantity" className="font-bold">
-                            Quantity
-                        </label>
-                        <InputNumber id="quantity" value={product.quantity} onValueChange={(e) => onInputNumberChange(e, 'quantity')} />
-                    </div>
-                </div>
-            </Dialog>
-
-            <Dialog visible={deleteProductDialog} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Confirm" modal footer={deleteProductDialogFooter} onHide={hideDeleteProductDialog}>
-                <div className="confirmation-content">
-                    <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
-                    {product && (
-                        <span>
-                            Are you sure you want to delete <b>{product.name}</b>?
-                        </span>
-                    )}
-                </div>
-            </Dialog>
-
-            <Dialog visible={deleteProductsDialog} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Confirm" modal footer={deleteProductsDialogFooter} onHide={hideDeleteProductsDialog}>
-                <div className="confirmation-content">
-                    <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
-                    {product && <span>Are you sure you want to delete the selected products?</span>}
-                </div>
-            </Dialog>
         </div>
     );
 }
-
-        

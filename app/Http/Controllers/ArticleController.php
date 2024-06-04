@@ -14,19 +14,22 @@ class ArticleController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        //
-    }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    // public function create()
+    // {
+    //     $listeArticles = article::all();
+    //     return view('articles.create', compact('listeArticles'));
+    // }
+
+    public function index()
     {
         $listeArticles = article::all();
-        return view('articles.create', compact('listeArticles'));
+        return response()->json($listeArticles);
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -37,7 +40,7 @@ class ArticleController extends Controller
         $article = new Article();
 
         $article->reference = $request->reference;
-        $article->nom_article = $request->nom;
+        $article->nom_article = $request->name;
         $article->description = $request->description;
         $article->date_peremption = $request->date_peremption;
         $article->fournisseur_id = $request->fournisseur_id;

@@ -35,36 +35,58 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
+    // public function store(Request $request): RedirectResponse
+    // {
+    //     $request->validate([
+    //         'name' => 'required|string|max:255',
+    //         'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
+    //         'password' => ['required', 'confirmed', Rules\Password::defaults()],
+    //         'role' => 'required',
+    //         'site' => 'required',
+    //         'image_profile' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+    //     ]);
+
+    //     //on teste si il l'image existe
+    //     if ($request->hasFile('image_profile')) {
+    //         $imageName = str::random(32).".".$request->image_profile->getClientOriginalExtension();
+    //     }else {
+    //         $imageName = null;
+    //     }
+
+    //     $user = User::create([
+    //         'name' => $request->name,
+    //         'email' => $request->email,
+    //         'password' => Hash::make($request->password),
+    //         'role' => $request->role,
+    //         'site' => $request->site,
+    //         'image_profile' => $imageName
+    //         // 'approved' => $request->has('approved')
+    //     ]);
+
+    //     event(new Registered($user));
+    //     Storage::disk('public')->put($imageName, file_get_contents($request->image_profile));
+    //     Auth::login($user);
+
+    //     return redirect(RouteServiceProvider::HOME);
+    // }
+
+    
     public function store(Request $request): RedirectResponse
     {
         //verification des données
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
+            'email' => 'required|string|lowercase|email|max:255|unique:' . User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => 'string',
+            'role' => 'required',
             'site' => 'required',
             'image_profile' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
-        //on teste si role est vide
-        if (!$request->role){
-
-            $role = "Fournisseur";
-            $fournisseur = new Fournisseur();
-            $fournisseur->nom_fournisseur = $request->name;
-            $fournisseur->adresse_fournisseur = $request->adress;
-            $fournisseur->phone_fournisseur = $request->phone;
-            $fournisseur->email_fournisseur = $request->email;
-            $fournisseur->save();
-        }else{
-            $role = $request->role;
-        }
-        //on teste si il l'image existe
+        $imageName = null;
         if ($request->hasFile('image_profile')) {
-            $imageName = str::random(32).".".$request->image_profile->getClientOriginalExtension();
-        }else {
-            $imageName = null;
+            $imageName = Str::random(32) . "." . $request->image_profile->getClientOriginalExtension();
+            Storage::disk('public')->put($imageName, file_get_contents($request->file('image_profile')->getRealPath()));
         }
 
 
@@ -72,16 +94,16 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => $role,
+            'role' => $request->role,
             'site' => $request->site,
-            'image_profile' => $imageName
-            // 'approved' => $request->has('approved')
+            'image_profile' => $imageName,
         ]);
 
         event(new Registered($user));
-        Storage::disk('public')->put($imageName, file_get_contents($request->image_profile));
         Auth::login($user);
 
         return redirect(RouteServiceProvider::HOME);
     }
+
+
 }
