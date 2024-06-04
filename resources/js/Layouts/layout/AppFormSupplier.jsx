@@ -107,15 +107,6 @@ export default function AppFormSupplier() {
         setDeleteSupplierDialog(true);
     };
 
-    // const deleteSupplier = () => {
-    //     let _suppliers = suppliers.filter((val) => val.id !== supplier.fournisseur_id);
-
-    //     setSuppliers(_suppliers);
-    //     setDeleteSupplierDialog(false);
-    //     setSupplier(emptySupplier);
-    //     toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Supplier Deleted', life: 3000 });
-    // };
-
     const deleteSupplier = async () => {
         try {
             await axios.delete(`/fournisseur/${supplier.fournisseur_id}/delete`);
@@ -146,10 +137,6 @@ export default function AppFormSupplier() {
         dt.current.exportCSV();
     };
 
-    const confirmDeleteSelected = () => {
-        setDeleteSuppliersDialog(true);
-    };
-
     const deleteSelectedSuppliers = () => {
         let _suppliers = suppliers.filter((val) => !selectedSuppliers.includes(val));
 
@@ -172,13 +159,13 @@ export default function AppFormSupplier() {
         return (
             <div className="flex flex-wrap gap-2">
                 <Button label="Ajouter" icon="pi pi-plus" severity="success" onClick={openNew} />
-                <Button label="Supprimer" icon="pi pi-trash" severity="danger" onClick={confirmDeleteSelected} disabled={!selectedSuppliers || !selectedSuppliers.length} />
+                
             </div>
         );
     };
 
     const rightToolbarTemplate = () => {
-        return <Button label="Exporté" icon="pi pi-upload" className="p-button-help" onClick={exportCSV} />;
+        return <Button label="Exporter" icon="pi pi-upload" className="p-button-help" onClick={exportCSV} />;
     };
 
     const actionBodyTemplate = (rowData) => {
@@ -195,27 +182,27 @@ export default function AppFormSupplier() {
             <h4 className="m-0">Gestion des Fournisseurs</h4>
             <span className="p-input-icon-left">
                 <i className="pi pi-search" />
-                <InputText type="search" onInput={(e) => setGlobalFilter(e.target.value)} placeholder="Search..." />
+                <InputText type="search" onInput={(e) => setGlobalFilter(e.target.value)} placeholder="Rechercher..." />
             </span>
         </div>
     );
 
     const supplierDialogFooter = (
         <React.Fragment>
-            <Button label="Cancel" icon="pi pi-times" outlined onClick={hideDialog} />
-            <Button label="Save" icon="pi pi-check" onClick={saveSupplier} />
+            <Button label="Annuler" icon="pi pi-times" outlined onClick={hideDialog} />
+            <Button label="Sauvegarder" icon="pi pi-check" onClick={saveSupplier} />
         </React.Fragment>
     );
     const deleteSupplierDialogFooter = (
         <React.Fragment>
-            <Button label="No" icon="pi pi-times" outlined onClick={hideDeleteSupplierDialog} />
-            <Button label="Yes" icon="pi pi-check" severity="danger" onClick={deleteSupplier} />
+            <Button label="Non" icon="pi pi-times" outlined onClick={hideDeleteSupplierDialog} />
+            <Button label="Oui" icon="pi pi-check" severity="danger" onClick={deleteSupplier} />
         </React.Fragment>
     );
     const deleteSuppliersDialogFooter = (
         <React.Fragment>
-            <Button label="No" icon="pi pi-times" outlined onClick={hideDeleteSuppliersDialog} />
-            <Button label="Yes" icon="pi pi-check" severity="danger" onClick={deleteSelectedSuppliers} />
+            <Button label="Non" icon="pi pi-times" outlined onClick={hideDeleteSuppliersDialog} />
+            <Button label="Oui" icon="pi pi-check" severity="danger" onClick={deleteSelectedSuppliers} />
         </React.Fragment>
     );
 
@@ -235,11 +222,10 @@ export default function AppFormSupplier() {
                         rows={10}
                         rowsPerPageOptions={[5, 10, 25]}
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} suppliers"
+                        currentPageReportTemplate="Vue de {first} à {last} pour {totalRecords} données"
                         globalFilter={globalFilter}
                         header={header}
                     >
-                        <Column selectionMode="multiple" exportable={false}></Column>
                         <Column field="id" header="ID" sortable style={{ minWidth: '12rem' }}></Column>
                         <Column field="nom_fournisseur" header="Nom" sortable style={{ minWidth: '16rem' }}></Column>
                         <Column field="adresse_fournisseur" header="Adresse" sortable style={{ minWidth: '16rem' }}></Column>
@@ -277,14 +263,14 @@ export default function AppFormSupplier() {
                     <Dialog visible={deleteSupplierDialog} style={{ width: '450px' }} header="Confirm" modal footer={deleteSupplierDialogFooter} onHide={hideDeleteSupplierDialog}>
                         <div className="confirmation-content">
                             <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
-                            {supplier && <span>Are you sure you want to delete <b>{supplier.nom_fournisseur}</b>?</span>}
+                            {supplier && <span>Vous êtes sûr de supprimer <b>{supplier.nom_fournisseur}</b>?</span>}
                         </div>
                     </Dialog>
 
                     <Dialog visible={deleteSuppliersDialog} style={{ width: '450px' }} header="Confirm" modal footer={deleteSuppliersDialogFooter} onHide={hideDeleteSuppliersDialog}>
                         <div className="confirmation-content">
                             <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
-                            {supplier && <span>Are you sure you want to delete the selected suppliers?</span>}
+                            {supplier && <span>Vous êtes sûr de vouloir supprimer ?</span>}
                         </div>
                     </Dialog>
                 </div>
