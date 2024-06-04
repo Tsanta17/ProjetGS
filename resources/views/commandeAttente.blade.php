@@ -9,7 +9,7 @@
 <body>
 <h1>Liste des commandes en attente</h1>
 <p>vous êtes le manager de {{ $user->site }}</p>
-<h1>Liste des commandes en attente </h1>
+<h1>Liste des commandes en attente et reliquat </h1>
     <table style="border: 2px solid black; border-collapse: collapse">
         <thead style="border: 2px solid black">
             <tr>
@@ -26,14 +26,14 @@
             @foreach ($commandeEnAttente as $commande)
                 <tr>
                     <td>{{$commande->commande_id}}</td>
-                    {{-- <td>{{$commande->fournisseur->nom_fournisseur}}</td>
+                    <td>{{$commande->fournisseur->nom_fournisseur}}</td>
                     <td>{{$commande->site->nom_site}}</td>
                     <td>{{$commande->date_commande}}</td>
                     <td>{{$commande->statut}}</td>
                     <td>{{$commande->abonnement}}</td>
-                    <td>{{$commande->budget_disponible}}</td> --}}
-                    <td><a href="{{ route('commandes.send', $commande->commande_id)}}">Envoyer vers fournisseur</a><a href="{{ route('commandes.download', $commande->commande_id)}}">dowloadpdf</a></td>
-                    <td><a href="http://">supprimer</a></td>
+                    <td>{{$commande->budget_disponible}}</td>
+                    {{-- <td><a href="{{ route('commandes.send', $commande->commande_id)}}">Envoyer vers fournisseur</a><a href="{{ route('commandes.download', $commande->commande_id)}}">dowloadpdf</a></td> --}}
+                    <td><a href="">Verifier</a></td>
                 </tr>
             @endforeach
         </tbody>

@@ -18,12 +18,15 @@ return new class extends Migration
             $table->unsignedBigInteger('article_id')->nullable();
             $table->unsignedBigInteger('site_id')->nullable();
             $table->unsignedBigInteger('user_id')->nullable();
+            $table->unsignedBigInteger('stock_id')->nullable();
+            $table->string('statut')->nullable();
             $table->string('departement')->nullable();
             $table->timestamps();
 
             // Définir les clés étrangères
             $table->foreign('article_id')->references('article_id')->on('articles')->onDelete('cascade');
             $table->foreign('site_id')->references('site_id')->on('sites')->onDelete('cascade');
+            $table->foreign('stock_id')->references('stock_id')->on('stocks')->onDelete('cascade');
         });
     }
 
