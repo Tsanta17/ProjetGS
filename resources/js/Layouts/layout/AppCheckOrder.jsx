@@ -9,6 +9,7 @@ export default function AppCheckOrder() {
     const [source, setSource] = useState([]);
     const [target, setTarget] = useState([]);
     const [selectedItem, setSelectedItem] = useState(null);
+    // const [selectedItems, setSelectedItems] = useState(null); // Nouvel état pour les éléments sélectionnés checkbox
     const toast = useRef(null);
 
     useEffect(() => {
@@ -53,12 +54,22 @@ export default function AppCheckOrder() {
         setTarget(event.target);
     };
 
+    // const handleCheckboxChange = (item) => {
+    //     // Ajouter ou supprimer l'élément de l'état selectedItems
+    //     if (selectedItems.includes(item)) {
+    //         setSelectedItems(prevSelected => prevSelected.filter(selected => selected.id !== item.id));
+    //     } else {
+    //         setSelectedItems(prevSelected => [...prevSelected, item]);
+    //     }
+    // };
+
     const itemTemplate = (item) => {
         return (
             <div className="flex flex-wrap p-2 align-items-center gap-3">
                 <div className="flex-1 flex flex-column gap-2">
                     <span className="font-bold">{item.reference_article}</span>
                     <div className="flex align-items-center gap-2">
+                        {/* <input type="checkbox" onChange={() => handleCheckboxChange(item)} /> Case à cocher */}
                         <i className="pi pi-tag text-sm"></i>
                         <span>{item.date_commande}</span>
                     </div>
