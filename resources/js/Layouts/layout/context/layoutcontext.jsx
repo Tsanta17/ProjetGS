@@ -27,6 +27,7 @@ export const LayoutProvider = ({ children }) => {
     const [picklistOrder, setPicklistOrder] = useState(false);
     const [showSupplier, setShowSupplier] = useState(false);
     const [showHisto, setShowHisto] = useState(false);
+    
     const [showUserList, setShowUserList] = useState(false);
 
     const onMenuToggle = () => {
@@ -72,7 +73,7 @@ export const LayoutProvider = ({ children }) => {
         setShowSupplier, 
         showHisto, 
         setShowHisto, 
-        showUserList, 
+        showUserList,
         setShowUserList
     };
 

@@ -16,7 +16,7 @@ import AppListUser from '@/Layouts/layout/AppListUser';
 
 
 const Dashboard = ({fournisseurs, articles, couts, commandeParMois, budgetTotalParMois, articlePerime, topArticles, totalCommandes}) => {
-    const { layoutConfig, showForm, DataTable, showInsertCommmand, picklistOrder, showSupplier, showHisto, showListeUser } = useContext(LayoutContext);
+    const { layoutConfig, showForm, DataTable, showInsertCommmand, picklistOrder, showSupplier, showHisto, showUserList } = useContext(LayoutContext);
     const [lineOptions, setLineOptions] = useState({});
 
     const applyLightTheme = () => {
@@ -221,7 +221,7 @@ const Dashboard = ({fournisseurs, articles, couts, commandeParMois, budgetTotalP
                                     </li>
 ))}
                                     
-                                    <li className="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
+                                    {/* <li className="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
                                         <div>
                                             <span className="text-900 font-medium mr-2 mb-1 md:mb-0">Loko</span>
                                             <div className="mt-1 text-600">Production</div>
@@ -248,7 +248,7 @@ const Dashboard = ({fournisseurs, articles, couts, commandeParMois, budgetTotalP
                                             <span className="text-pink-500 ml-3 font-medium">%67</span>
                                         </div>
                                     </li>
-                                    
+                                     */}
                                 </ul>
                             </div>
                         </div>
