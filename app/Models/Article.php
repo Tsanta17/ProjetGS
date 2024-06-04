@@ -13,4 +13,7 @@ class Article extends Model
     public function commande(){
         return $this->hasMany(Commande::class, 'reference', 'reference_article');
     }
+    public function affectation(){
+        return $this->hasMany(Affectation::class, 'article_id', 'article_id');
+    }
 }

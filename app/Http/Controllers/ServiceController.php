@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Commande;
 use App\Models\Article;
+use App\Models\Stock;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -102,5 +103,15 @@ class ServiceController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+    //liste des stocks par site
+    public function listeStockParSite(){
+        $user = auth()->user();
+        $listeStockParSite = Stock::with('site')
+            ->where('site_id', $user->site)
+            ->get();
+            return view('Stock', [
+            'stocks' => $listeStockParSite
+        ]);
     }
 }

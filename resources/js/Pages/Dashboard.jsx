@@ -15,7 +15,11 @@ import AppListUser from '@/Layouts/layout/AppListUser';
 
 
 
+<<<<<<< HEAD
 const Dashboard = ({fournisseurs, articles, couts, commandeParMois, budgetTotalParMois, articlePerime, topArticles, totalCommandes}) => {
+=======
+const Dashboard = ({ fournisseurs, articles, couts, commandeParMois, budgetTotalParMois, articlePerime, topArticles, totalCommandes }) => {
+>>>>>>> main
     const { layoutConfig, showForm, DataTable, showInsertCommmand, picklistOrder, showSupplier, showHisto, showUserList } = useContext(LayoutContext);
     const [lineOptions, setLineOptions] = useState({});
 
@@ -93,55 +97,55 @@ const Dashboard = ({fournisseurs, articles, couts, commandeParMois, budgetTotalP
     }, [layoutConfig.colorScheme, topArticles]);
 
     const lineData = {
-    labels: ['Jan', 'Fev', 'Mar', 'Avr', 'Mai', 'Juin', 'Jul', 'Aout', 'Sep', 'Oct', 'Nov', 'Dec'],
-    datasets: [
-        {
-            label: 'Nombre de commandes',
-            data: Object.values(commandeParMois),
-            fill: false,
-            backgroundColor: '#2f4860',
-            borderColor: '#2f4860',
-            tension: 0.4
-        },
-        {
-            label: 'Total de budget',
-            data: Object.values(budgetTotalParMois),
-            fill: false,
-            backgroundColor: '#00bb7e',
-            borderColor: '#00bb7e',
-            tension: 0.4
-        }
-    ]
-};
+        labels: ['Jan', 'Fev', 'Mar', 'Avr', 'Mai', 'Juin', 'Jul', 'Aout', 'Sep', 'Oct', 'Nov', 'Dec'],
+        datasets: [
+            {
+                label: 'Nombre de commandes',
+                data: Object.values(commandeParMois),
+                fill: false,
+                backgroundColor: '#2f4860',
+                borderColor: '#2f4860',
+                tension: 0.4
+            },
+            {
+                label: 'Total de budget',
+                data: Object.values(budgetTotalParMois),
+                fill: false,
+                backgroundColor: '#00bb7e',
+                borderColor: '#00bb7e',
+                tension: 0.4
+            }
+        ]
+    };
 
     return (
         <Layout>
             <div className="grid">
                 <DashboardInfoCard title="Fournisseurs"
-                                   value={ fournisseurs }
-                                   icon="pi pi-fw pi-arrow-right-arrow-left"
-                                   iconColor="purple"
-                                   descriptionValue="24 "
-                                   descriptionText="nouveaux">
+                    value={fournisseurs}
+                    icon="pi pi-fw pi-arrow-right-arrow-left"
+                    iconColor="purple"
+                    descriptionValue="24 "
+                    descriptionText="nouveaux">
                 </DashboardInfoCard>
                 <DashboardInfoCard title="Articles"
-                                   value={ articles }
-                                   icon="pi pi-fw pi-file"
-                                   iconColor="orange"
-                                   descriptionValue="2+"
-                                   descriptionText="depuis une semaine">
+                    value={articles}
+                    icon="pi pi-fw pi-file"
+                    iconColor="orange"
+                    descriptionValue="2+"
+                    descriptionText="depuis une semaine">
                 </DashboardInfoCard>
-                <DashboardInfoCard title="Coût" value= { couts}
-                                   descriptionValue="520"
-                                   icon="pi pi-dollar"
-                                   iconColor="cyan"
-                                   descriptionText="commandes">
+                <DashboardInfoCard title="Coût" value={couts}
+                    descriptionValue="520"
+                    icon="pi pi-dollar"
+                    iconColor="cyan"
+                    descriptionText="commandes">
                 </DashboardInfoCard>
                 <DashboardInfoCard title="Périmés" value={articlePerime}
-                                   descriptionValue="85"
-                                   icon="pi pi-calendar-times"
-                                   iconColor="red"
-                                   descriptionText="réponses">
+                    descriptionValue="85"
+                    icon="pi pi-calendar-times"
+                    iconColor="red"
+                    descriptionText="réponses">
                 </DashboardInfoCard>
 
 
@@ -201,27 +205,36 @@ const Dashboard = ({fournisseurs, articles, couts, commandeParMois, budgetTotalP
                             <div className="card">
                                 <div className="flex justify-content-between align-items-center mb-5">
                                     <h5>Top commandes</h5>
-                                    
+
                                 </div>
                                 <ul className="list-none p-0 m-0">
-                                    
-                                    { topArticles.map((articles, index) => (
+
+                                    {topArticles.map((articles, index) => (
                                         <li key={index} className="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-                                        <div>
-                                            <span className="text-900 font-medium mr-2 mb-1 md:mb-0">{ articles.nom_article }</span>
-                                            <div className="mt-1 text-600">{ articles.total_commandes }</div>
-                                        </div>
-                                        <div className="mt-2 md:mt-0 flex align-items-center">
-                                            <div className="surface-300 border-round overflow-hidden w-10rem lg:w-6rem"
-                                                style={{ height: '8px' }}>
-                                                <div className={`bg-${['cyan','orange','pink'][index]}-500 h-full`} style={{ width: `${(articles.total_commandes / totalCommandes) * 100} %` }} />
+                                            <div>
+                                                <span className="text-900 font-medium mr-2 mb-1 md:mb-0">{articles.nom_article}</span>
+                                                <div className="mt-1 text-600">{articles.total_commandes}</div>
                                             </div>
+<<<<<<< HEAD
                                             <span className={`text-${['cyan','orange','pink'][index]}-500 ml-3 font-medium`}>%{((articles.total_commandes / totalCommandes) * 100)}</span>
                                         </div>
                                     </li>
 ))}
                                     
                                     {/* <li className="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
+=======
+                                            <div className="mt-2 md:mt-0 flex align-items-center">
+                                                <div className="surface-300 border-round overflow-hidden w-10rem lg:w-6rem"
+                                                    style={{ height: '8px' }}>
+                                                    <div className={`bg-${['cyan', 'orange', 'pink'][index]}-500 h-full`} style={{ width: `${(articles.total_commandes / totalCommandes) * 100} %` }} />
+                                                </div>
+                                                <span className={`text-${['cyan', 'orange', 'pink'][index]}-500 ml-3 font-medium`}>%{((articles.total_commandes / totalCommandes) * 100)}</span>
+                                            </div>
+                                        </li>
+                                    ))}
+
+                                    <li className="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
+>>>>>>> main
                                         <div>
                                             <span className="text-900 font-medium mr-2 mb-1 md:mb-0">Loko</span>
                                             <div className="mt-1 text-600">Production</div>
@@ -234,7 +247,7 @@ const Dashboard = ({fournisseurs, articles, couts, commandeParMois, budgetTotalP
                                             <span className="text-cyan-500 ml-3 font-medium">%16</span>
                                         </div>
                                     </li>
-                                                            
+
                                     <li className="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
                                         <div>
                                             <span className="text-900 font-medium mr-2 mb-1 md:mb-0">Phone</span>
@@ -248,7 +261,11 @@ const Dashboard = ({fournisseurs, articles, couts, commandeParMois, budgetTotalP
                                             <span className="text-pink-500 ml-3 font-medium">%67</span>
                                         </div>
                                     </li>
+<<<<<<< HEAD
                                      */}
+=======
+
+>>>>>>> main
                                 </ul>
                             </div>
                         </div>

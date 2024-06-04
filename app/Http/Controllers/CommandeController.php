@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Commande;
 use App\Models\CommandeLigne;
+use App\Models\Fournisseur;
 use App\Models\Livraison;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
@@ -40,9 +41,10 @@ class CommandeController extends Controller
     public function detailCommande($commande_id){
         $commande = Commande::with(['article','fournisseur'])
             ->findOrFail($commande_id);
-
+        $fournisseur = Fournisseur::all();
         return view('DetailsCommande', [
-            'commande' => $commande
+            'commande' => $commande,
+            'fournisseur' => $fournisseur
         ]);
     }
     //validation d'une commande
@@ -50,7 +52,8 @@ class CommandeController extends Controller
         //validation des champs supplémentaires
         $request->validate([
             'prix_unitaire' => 'required|numeric',
-            'quantite' => 'required|numeric'
+            'quantite' => 'required|numeric',
+            'fournisseur' => 'required'
         ]);
         //récuperer la commande
         $commande  = Commande::findOrFail($commande);
@@ -61,7 +64,7 @@ class CommandeController extends Controller
 
         //Mettre à jour la date de l'article
         $article = $commande->article;
-        $article->fournisseur_id = $commande->fournisseur_id;
+        $article->fournisseur_id = $request->input('fournisseur');
         $article->save();
 
         //ajouter le prix et la quantite à la ligne de commande
@@ -100,7 +103,7 @@ class CommandeController extends Controller
     public function listeCommandeValide(){
         $user = auth()->user();
         $commandeEnAttente = Commande::with('ligneDeCommande')
-            ->where('site_id', $user->site_id)
+            ->where('site_id', $user->site)
             ->where('statut', 'validee')
             ->get();
             return view('commandeValidee', [
@@ -149,10 +152,20 @@ class CommandeController extends Controller
 
     //Gestion des Abonnements pour Livraisons Périodiques
     public function abonnemementCommande(){
-
+        //recuperation des commande abonné par site
+        $user = auth()->user();
+        $commandeAbonnee = Commande::with('site')
+            ->where('site_id', $user->site)
+            ->where('abonnement', 1)
+            ->get();
+            return view('CommandeAbonnee', [
+                'user' => $user,
+                'commandeAbonnee' => $commandeAbonnee
+            ]);
     }
-    //Gestion des Signatures Électroniques
-    public function signatureElectronique(){
+    //Methode pour envoyer une commande pour signature électronique
+    public function sendCommandeForSignatur($commande_id){
+        //config
 
     }
 

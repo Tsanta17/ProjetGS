@@ -1,11 +1,13 @@
 <?php
 
+use App\Http\Controllers\AffectationController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\CommandeController;
 use App\Http\Controllers\FournisseurController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\StockController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -78,7 +80,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/services', [ServiceController::class, 'create']);
     Route::get('/servicesListes', [ServiceController::class, 'index']);
     Route::post('/ajoutCommande', [ServiceController::class, 'store']);
-});
 
 require __DIR__ . '/auth.php';
 //Fournisseur
@@ -90,12 +91,25 @@ Route::delete('/fournisseur/{fournisseur}/delete', [FournisseurController::class
 Route::get('/fournisseur/{fournisseur}/edit', [FournisseurController::class, 'edit'])->name('fournisseur.edit');
 Route::get('/fournisseur/list', [FournisseurController::class, 'list'])->name('fournisseurList');
 
-//Commande
-Route::get('/commande', [CommandeController::class, 'commandeEnAttente'])->name('commande.index');
-Route::get('/commande/site', [CommandeController::class, 'commandeParSite'])->name('commande.site');
-Route::get('/commande/details/{commande}', [CommandeController::class, 'detailCommande'])->name('commande.detail');
-Route::patch('/commande/valider/{commande}', [CommandeController::class, 'validateCommande'])->name('commande.valider');
-Route::patch('/commande/mettre-en-attente/{commande}', [CommandeController::class, 'mettreAttenteCommande'])->name('commande.attente');
-Route::get('/commande/validee', [CommandeController::class, 'listeCommandeValide'])->name('commande.validee');
-Route::get('commandes/send/{commande}', [CommandeController::class, 'sendCommande'])->name('commandes.send');
-Route::get('commandes/download/{commande}', [CommandeController::class, 'createAndDownloadPDF'])->name('commandes.download');
+    Route::get('/commande/abonnee', [CommandeController::class, 'abonnemementCommande'])->name('commande.abonnee');
+    Route::get('/commande', [CommandeController::class, 'commandeEnAttente'])->name('commande.index');
+    Route::get('/commande/site', [CommandeController::class, 'commandeParSite'])->name('commande.site');
+    Route::get('/commande/details/{commande}', [CommandeController::class, 'detailCommande'])->name('commande.detail');
+    Route::patch('/commande/valider/{commande}', [CommandeController::class, 'validateCommande'])->name('commande.valider');
+    Route::patch('/commande/mettre-en-attente/{commande}', [CommandeController::class, 'mettreAttenteCommande'])->name('commande.attente');
+    Route::get('/commande/validee', [CommandeController::class, 'listeCommandeValide'])->name('commande.validee');
+    Route::get('commandes/send/{commande}', [CommandeController::class, 'sendCommande'])->name('commandes.send');
+    Route::get('commandes/download/{commande}', [CommandeController::class, 'createAndDownloadPDF'])->name('commandes.download');
+
+    //stocks
+    Route::get('/stock', [ServiceController::class, 'listeStockParSite'])->name('stock.liste');
+    Route::get('/stock/{stock}/show', [StockController::class, 'show'])->name('stock.show');
+
+    //affectation
+    Route::post('/affectation/create', [AffectationController::class, 'store'])->name('affectation.store');
+    Route::get('/affectation/liste', [AffectationController::class, 'listeAffectation'])->name('affectation.list');
+    Route::get('/affectation/valider/{affectation}', [AffectationController::class, 'validateAffectation'])->name('commande.valider');
+});
+
+require __DIR__ . '/auth.php';
+
