@@ -12,9 +12,12 @@ import AppCheckOrder from '@/Layouts/layout/AppCheckOrder';
 import AppFormSupplier from '@/Layouts/layout/AppFormSupplier';
 import AppHistoric from '@/Layouts/layout/AppHistoric';
 import AppListUser from '@/Layouts/layout/AppListUser';
+import AppDelivery from '@/Layouts/layout/AppDelivery';
 
 
 
+const Dashboard = ({ fournisseurs, articles, couts, commandeParMois, budgetTotalParMois, articlePerime, topArticles, totalCommandes }) => {
+    const { layoutConfig, showForm, DataTable, showInsertCommmand, picklistOrder, showSupplier, showHisto, showUserList, showDelivery } = useContext(LayoutContext);
 const Dashboard = ({fournisseurs, articles, couts, commandeParMois, budgetTotalParMois, articlePerime, topArticles, totalCommandes, userRole}) => {
     const { layoutConfig, showForm, DataTable, showInsertCommmand, picklistOrder, showSupplier, showHisto, showUserList } = useContext(LayoutContext);
     const [lineOptions, setLineOptions] = useState({});
@@ -185,6 +188,12 @@ const Dashboard = ({fournisseurs, articles, couts, commandeParMois, budgetTotalP
                     <div className="col-12 xl:col-12">
                         <div className="card">
                             <AppListUser />
+                        </div>
+                    </div>
+                ) : showDelivery ? (
+                    <div className="col-12 xl:col-12">
+                        <div className="card">
+                            <AppDelivery />
                         </div>
                     </div>
                 ) : (

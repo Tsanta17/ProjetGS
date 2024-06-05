@@ -73,7 +73,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     //ARTICLES
-    Route::get('/articles', [ArticleController::class, 'index']);
+    Route::get('/articles', [ArticleController::class, 'show']);
+    Route::get('/articlePage', [ArticleController::class, 'index'])->name('article.page');
     Route::post('/ajoutArticle', [ArticleController::class, 'store']);
     Route::get('/editArticle/{id}', [ArticleController::class, 'edit']);
     Route::post('/updateArticle/{id}', [ArticleController::class, 'update']);
@@ -81,7 +82,7 @@ Route::middleware('auth')->group(function () {
 
     //SERVICES
     Route::get('/services', [ServiceController::class, 'create']);
-    Route::get('/servicesListes', [ServiceController::class, 'index']);
+    Route::get('/servicesListes', [ServiceController::class, 'getCommandesList']);
     Route::post('/ajoutCommande', [ServiceController::class, 'store']);
 
     //Fournisseur

@@ -14,11 +14,24 @@ class ServiceController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    // public function index()
+    // {
+    //     $listeCommandes = commande::all();
+    //     return response()->json($listeCommandes);
+    // }
+
+    public function getCommandesList()
     {
-        $listeCommandes = commande::all();
-        return response()->json($listeCommandes);
+        $listeCommandes = Commande::with('article', 'site')
+            ->get()
+            ->groupBy('statut');
+
+        return response()->json([
+            'enAttente' => $listeCommandes->get('En attente', []),
+            'validee' => $listeCommandes->get('validee', []),
+        ]);
     }
+
 
     /**
      * Show the form for creating a new resource.

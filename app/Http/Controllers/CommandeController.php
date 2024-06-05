@@ -38,55 +38,104 @@ class CommandeController extends Controller
             ]);
     }
     //Affichage détail commande
-    public function detailCommande($commande_id){
-        $commande = Commande::with(['article','fournisseur'])
-            ->findOrFail($commande_id);
-        $fournisseur = Fournisseur::all();
-        return view('DetailsCommande', [
-            'commande' => $commande,
-            'fournisseur' => $fournisseur
-        ]);
-    }
+        public function detailCommande($commande_id)
+        {
+            $commande = Commande::with(['article', 'fournisseur', 'site'])
+                ->findOrFail($commande_id);
+            $fournisseur = Fournisseur::all();
+            return response()->json([
+                'commande' => $commande,
+                'fournisseur' => $fournisseur
+            ]);
+        }
+    
     //validation d'une commande
-    public function validateCommande($commande, Request $request){
-        //validation des champs supplémentaires
-        $request->validate([
-            'prix_unitaire' => 'required|numeric',
-            'quantite' => 'required|numeric',
-            'fournisseur' => 'required'
-        ]);
-        //récuperer la commande
-        $commande  = Commande::findOrFail($commande);
 
-        //mettre à jour le champ statut de la commande
-        $commande->statut = "validee";
-        $commande->save();
+    public function validateCommande($commande, Request $request)
+{
+    // Validation des champs supplémentaires
+    $request->validate([
+        'prix_unitaire' => 'required|numeric',
+        'quantite' => 'required|numeric',
+        'fournisseur' => 'required|exists:fournisseurs,fournisseur_id'
+    ]);
 
-        //Mettre à jour la date de l'article
-        $article = $commande->article;
-        $article->fournisseur_id = $request->input('fournisseur');
-        $article->save();
+    // Récupérer la commande
+    $commande = Commande::findOrFail($commande);
 
-        //ajouter le prix et la quantite à la ligne de commande
-        CommandeLigne::create([
-            'commande_id' => $commande->commande_id,
-            'article_id' => $commande->article_id,
-            'quantite' => $request->quantite,
-            'prix_unitaire' => $request->prix_unitaire,
-            'statut' => "ok"
-        ]);
+    // Mettre à jour le champ statut de la commande
+    $commande->statut = "validee";
+    $commande->save();
 
-        //ajout  de la table livraison
-        Livraison::create([
-            'commande_id' => $commande->commande_id,
-            'numero_lot' => $commande->fournisseur->nom_fournisseur,
-            'site_id' => $commande->site_id,
-        ]);
+    // Mettre à jour le champ fournisseur_id de l'article
+    $article = $commande->article;
+    $article->fournisseur_id = $request->input('fournisseur');
+    $article->save();
 
-        return view('commandeEnAttente', [
-            'commande' => $commande
-        ]);
-    }
+    // Ajouter le prix et la quantité à la ligne de commande
+    CommandeLigne::create([
+        'commande_id' => $commande->commande_id,
+        'article_id' => $commande->article_id,
+        'quantite' => $request->quantite,
+        'prix_unitaire' => $request->prix_unitaire,
+        'statut' => "ok"
+    ]);
+
+    // Récupérer le fournisseur
+    $fournisseur = Fournisseur::findOrFail($request->input('fournisseur'));
+
+    // Ajout de la table livraison
+    Livraison::create([
+        'commande_id' => $commande->commande_id,
+        'numero_lot' => $fournisseur->nom_fournisseur,
+        'site_id' => $commande->site_id,
+    ]);
+
+    return view('commandeEnAttente', [
+        'commande' => $commande
+    ]);
+}
+
+
+    // public function validateCommande($commande, Request $request){
+    //     //validation des champs supplémentaires
+    //     $request->validate([
+    //         'prix_unitaire' => 'required|numeric',
+    //         'quantite' => 'required|numeric',
+    //         'fournisseur' => 'required'
+    //     ]);
+    //     //récuperer la commande
+    //     $commande  = Commande::findOrFail($commande);
+
+    //     //mettre à jour le champ statut de la commande
+    //     $commande->statut = "validee";
+    //     $commande->save();
+
+    //     //Mettre à jour la date de l'article
+    //     $article = $commande->article;
+    //     $article->fournisseur_id = $request->input('fournisseur');
+    //     $article->save();
+
+    //     //ajouter le prix et la quantite à la ligne de commande
+    //     CommandeLigne::create([
+    //         'commande_id' => $commande->commande_id,
+    //         'article_id' => $commande->article_id,
+    //         'quantite' => $request->quantite,
+    //         'prix_unitaire' => $request->prix_unitaire,
+    //         'statut' => "ok"
+    //     ]);
+
+    //     //ajout  de la table livraison
+    //     Livraison::create([
+    //         'commande_id' => $commande->commande_id,
+    //         'numero_lot' => $commande->fournisseur->nom_fournisseur,
+    //         'site_id' => $commande->site_id,
+    //     ]);
+
+    //     return view('commandeEnAttente', [
+    //         'commande' => $commande
+    //     ]);
+    // }
     //mettre en attente une commande
     public function mettreAttenteCommande($commande){
         //recuperer la commande
