@@ -15,7 +15,7 @@ import AppListUser from '@/Layouts/layout/AppListUser';
 
 
 
-const Dashboard = ({fournisseurs, articles, couts, commandeParMois, budgetTotalParMois, articlePerime, topArticles, totalCommandes}) => {
+const Dashboard = ({fournisseurs, articles, couts, commandeParMois, budgetTotalParMois, articlePerime, topArticles, totalCommandes, userRole}) => {
     const { layoutConfig, showForm, DataTable, showInsertCommmand, picklistOrder, showSupplier, showHisto, showUserList } = useContext(LayoutContext);
     const [lineOptions, setLineOptions] = useState({});
 
@@ -200,7 +200,7 @@ const Dashboard = ({fournisseurs, articles, couts, commandeParMois, budgetTotalP
                         <div className="col-12 xl:col-6">
                             <div className="card">
                                 <div className="flex justify-content-between align-items-center mb-5">
-                                    <h5>Top commandes</h5>
+                                    <h5>Top commandes { userRole }</h5>
 
                                 </div>
                                 <ul className="list-none p-0 m-0">

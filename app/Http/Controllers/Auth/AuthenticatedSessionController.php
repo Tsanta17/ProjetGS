@@ -36,6 +36,8 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
+        //PRENDRE ROLE DE L'USER
+        $userRole = Auth::user()->role;
 
         //NOMBRES DE FOURNISSEUR
         $fournisseur = DB::table('fournisseurs')
@@ -93,6 +95,7 @@ class AuthenticatedSessionController extends Controller
             'article_perime' => $articlePerime,
             'top_trois' => $topArticles,
             'max_commande' => $totalCommandes,
+            'user_role' => $userRole
         ]);
 
         return redirect()->intended(RouteServiceProvider::HOME);
