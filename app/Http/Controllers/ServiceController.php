@@ -105,12 +105,13 @@ class ServiceController extends Controller
         //
     }
     //liste des stocks par site
-    public function listeStockParSite(){
+    public function listeStockParSite()
+    {
         $user = auth()->user();
         $listeStockParSite = Stock::with('site')
             ->where('site_id', $user->site)
             ->get();
-            return view('Stock', [
+        return view('Stock', [
             'stocks' => $listeStockParSite
         ]);
     }

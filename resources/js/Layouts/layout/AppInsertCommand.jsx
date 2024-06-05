@@ -13,7 +13,7 @@ const FloatLabelDemo = () => {
         nom_article: '',
         description: '',
         date_commande: null,
-        budget_disponible: null,
+        budget_disponible: null
     };
 
     const { data, setData, post, processing, errors, reset } = useForm(initialState);
