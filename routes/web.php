@@ -8,6 +8,7 @@ use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\StockController;
+use App\Http\Controllers\LivraisonController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -47,6 +48,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         $budgetTotalParMois = session('budget_total_par_mois', []);
         $topArticles = session('top_trois', []);
         $articlePerime = session('article_perime', 0);
+        $userRole = session('user_role', 0);
 
         // logger()->info('Session:', ['nombreFournisseurs' => $fournisseur]);
         return Inertia::render('Dashboard', [
@@ -57,7 +59,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'budgetTotalParMois' => $budgetTotalParMois,
             'articlePerime' => $articlePerime,
             'totalCommandes' => $totalCommandes,
-            'topArticles' => $topArticles
+            'topArticles' => $topArticles,
+            'userRole' => $userRole
         ]);
     })->name('dashboard');
 });
@@ -82,15 +85,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/servicesListes', [ServiceController::class, 'getCommandesList']);
     Route::post('/ajoutCommande', [ServiceController::class, 'store']);
 
-require __DIR__ . '/auth.php';
-//Fournisseur
-Route::get('/fournisseur', [FournisseurController::class, 'index'])->name('fournisseur.index');
-Route::post('/fournisseur/create', [FournisseurController::class, 'store'])->name('fournisseur.store');
-Route::get('/fournisseur/{fournisseur}/show', [FournisseurController::class, 'show'])->name('fournisseur.show');
-Route::put('/fournisseur/{fournisseur}/update', [FournisseurController::class, 'update'])->name('fournisseur.update');
-Route::delete('/fournisseur/{fournisseur}/delete', [FournisseurController::class, 'delete'])->name('fournisseur.delete');
-Route::get('/fournisseur/{fournisseur}/edit', [FournisseurController::class, 'edit'])->name('fournisseur.edit');
-Route::get('/fournisseur/list', [FournisseurController::class, 'list'])->name('fournisseurList');
+    //Fournisseur
+    Route::get('/fournisseur', [FournisseurController::class, 'index'])->name('fournisseur.index');
+    Route::post('/fournisseur/create', [FournisseurController::class, 'store'])->name('fournisseur.store');
+    Route::get('/fournisseur/{fournisseur}/show', [FournisseurController::class, 'show'])->name('fournisseur.show');
+    Route::put('/fournisseur/{fournisseur}/update', [FournisseurController::class, 'update'])->name('fournisseur.update');
+    Route::delete('/fournisseur/{fournisseur}/delete', [FournisseurController::class, 'delete'])->name('fournisseur.delete');
+    Route::get('/fournisseur/{fournisseur}/edit', [FournisseurController::class, 'edit'])->name('fournisseur.edit');
+    Route::get('/fournisseur/list', [FournisseurController::class, 'list'])->name('fournisseurList');
 
     Route::get('/commande/abonnee', [CommandeController::class, 'abonnemementCommande'])->name('commande.abonnee');
     Route::get('/commande', [CommandeController::class, 'commandeEnAttente'])->name('commande.index');
@@ -105,12 +107,24 @@ Route::get('/fournisseur/list', [FournisseurController::class, 'list'])->name('f
     //stocks
     Route::get('/stock', [ServiceController::class, 'listeStockParSite'])->name('stock.liste');
     Route::get('/stock/{stock}/show', [StockController::class, 'show'])->name('stock.show');
+    Route::get('/stock', [StockController::class, 'listeStock']);
+    Route::get('/stockperime', [StockController::class, 'listeSto)çckPerime']);
+    Route::get('/stockperime/delete/{stock_id}', [StockController::class, 'supprimerListeStockPerime'])->name('deleteStockPerime');
+
 
     //affectation
     Route::post('/affectation/create', [AffectationController::class, 'store'])->name('affectation.store');
     Route::get('/affectation/liste', [AffectationController::class, 'listeAffectation'])->name('affectation.list');
-    Route::get('/affectation/valider/{affectation}', [AffectationController::class, 'validateAffectation'])->name('commande.valider');
+    Route::get('/affectation/valider/{affectation}', [AffectationController::class, 'validateAffectation'])->name('affectation.valider');
+
+
+    //Livraison
+    Route::get('/livraison', [LivraisonController::class, 'listeLivraison']);
+    Route::post('/livraison/update/{livraison_id}', [LivraisonController::class, 'update'])->name('livraison.update');
+
+
+
+    require __DIR__ . '/auth.php';
 });
 
 require __DIR__ . '/auth.php';
-

@@ -45,11 +45,7 @@ const AppMenu = () => {
                             label: 'Liste',
                             icon: 'pi pi-fw pi-file',
                             command: () => handleMenuItemClick('userList'),
-                        },
-                        {
-                            label: 'Delete',
-                            icon: 'pi pi-fw pi-trash'
-                        },
+                        }
                     ]
                 },
                 {
@@ -63,12 +59,8 @@ const AppMenu = () => {
                             command: () => handleMenuItemClick('form')
                         },
                         {
-                            label: 'Delete',
-                            icon: 'pi pi-fw pi-trash'
-                        },
-                        {
-                            label: 'Export',
-                            icon: 'pi pi-fw pi-external-link',
+                            label: 'Liste',
+                            icon: 'pi pi-list',
                             command: () => handleMenuItemClick('dataTable')
                         }
                     ]

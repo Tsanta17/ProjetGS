@@ -15,18 +15,21 @@ class Stock extends Model
         'article_id',
         'site_id',
         'departement',
-        'quantite'
+        'quantite',
+        'code_barre'
 
     ];
-    public function site(){
+    public function site()
+    {
         return $this->belongsTo(Site::class, 'site_id', 'site_id');
     }
-    public function article(){
+    public function article()
+    {
         return $this->belongsTo(Article::class, 'article_id', 'article_id');
     }
 
-    public function affectations(){
+    public function affectations()
+    {
         return $this->hasMany(Affectation::class, 'stock_id', 'stock_id');
     }
-
 }

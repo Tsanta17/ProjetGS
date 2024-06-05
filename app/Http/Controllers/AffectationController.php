@@ -46,7 +46,7 @@ class AffectationController extends Controller
         $stock->quantite = $resteStock;
         $stock->update();
 
-        //ajouter le prix et la quantite à la ligne de commande
+        //ajouter le prix et la quantite à la ligne de commande et créer un code barre
         Stock::create([
             'article_id' => $affectation->article_id,
             'site_id' => $affectation->site_id,

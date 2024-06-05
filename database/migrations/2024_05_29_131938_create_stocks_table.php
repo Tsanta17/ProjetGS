@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('article_id')->nullable();
             $table->unsignedBigInteger('site_id')->nullable();
             $table->string('departement')->nullable();
+            $table->string('code_barre')->unique();
             $table->unsignedInteger('quantite')->nullable();
             $table->timestamps();
 

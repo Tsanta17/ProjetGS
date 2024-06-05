@@ -20,10 +20,6 @@ export default function BasicDemo() {
 
     const [selectedCustomer, setSelectedCustomer] = useState(null);
 
-    // useEffect(() => {
-    //     CustomerService.getCustomersSmall().then((data) => setCustomers(data));
-    // }, []);
-
     const imageBodyTemplate = (rowData) => {
         return <img alt="Profile" src={rowData.image} className="w-6 h-6" />;
     };
@@ -63,7 +59,7 @@ export default function BasicDemo() {
         <div className="card">
             <DataTable value={customers} paginator rows={5} header={header} filters={filters} onFilter={(e) => setFilters(e.filters)}
                     selection={selectedCustomer} onSelectionChange={(e) => setSelectedCustomer(e.value)} selectionMode="single" dataKey="id"
-                    stateStorage="session" stateKey="dt-state-demo-local" emptyMessage="No customers found." tableStyle={{ minWidth: '50rem' }}>
+                    stateStorage="session" stateKey="dt-state-demo-local" emptyMessage="Vide" tableStyle={{ minWidth: '50rem' }}>
                 <Column field="name" header="Name" sortable filter filterPlaceholder="Search" style={{ width: '20%' }}></Column>
                 <Column field="email" header="Email" sortable filter filterPlaceholder="Search" style={{ width: '20%' }}></Column>
                 <Column field="role" header="Role" sortable filter filterPlaceholder="Search" style={{ width: '20%' }}></Column>

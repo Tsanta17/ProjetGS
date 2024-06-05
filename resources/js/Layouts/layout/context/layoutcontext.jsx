@@ -27,6 +27,7 @@ export const LayoutProvider = ({ children }) => {
     const [picklistOrder, setPicklistOrder] = useState(false);
     const [showSupplier, setShowSupplier] = useState(false);
     const [showHisto, setShowHisto] = useState(false);
+    
     const [showUserList, setShowUserList] = useState(false);
     const [showDelivery, setShowDelivery] = useState(false);
 
