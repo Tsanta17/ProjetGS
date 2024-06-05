@@ -214,9 +214,9 @@ const Dashboard = ({fournisseurs, articles, couts, commandeParMois, budgetTotalP
                                             <div className="mt-2 md:mt-0 flex align-items-center">
                                                 <div className="surface-300 border-round overflow-hidden w-10rem lg:w-6rem"
                                                     style={{ height: '8px' }}>
-                                                    <div className={`bg-${['cyan', 'orange', 'pink'][index]}-500 h-full`} style={{ width: `${(articles.total_commandes / totalCommandes) * 100} %` }} />
+                                                    <div className={`bg-${['cyan', 'orange', 'pink'][index % 3]}-500 h-full`} style={{ width: `${((articles.total_commandes / totalCommandes) * 100).toFixed(2)} %` }} />
                                                 </div>
-                                                <span className={`text-${['cyan', 'orange', 'pink'][index]}-500 ml-3 font-medium`}>%{((articles.total_commandes / totalCommandes) * 100)}</span>
+                                                <span className={`text-${['cyan', 'orange', 'pink'][index % 3]}-500 ml-3 font-medium`}>%{((articles.total_commandes / totalCommandes) * 100).toFixed(2)}</span>
                                             </div>
                                         </li>
                                     ))}
