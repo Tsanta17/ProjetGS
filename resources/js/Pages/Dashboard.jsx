@@ -15,7 +15,7 @@ import AppListUser from '@/Layouts/layout/AppListUser';
 
 
 
-const Dashboard = ({ fournisseurs, articles, couts, commandeParMois, budgetTotalParMois, articlePerime, topArticles, totalCommandes }) => {
+const Dashboard = ({fournisseurs, articles, couts, commandeParMois, budgetTotalParMois, articlePerime, topArticles, totalCommandes}) => {
     const { layoutConfig, showForm, DataTable, showInsertCommmand, picklistOrder, showSupplier, showHisto, showUserList } = useContext(LayoutContext);
     const [lineOptions, setLineOptions] = useState({});
 
@@ -221,34 +221,7 @@ const Dashboard = ({ fournisseurs, articles, couts, commandeParMois, budgetTotal
                                         </li>
                                     ))}
 
-                                    <li className="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-                                        <div>
-                                            <span className="text-900 font-medium mr-2 mb-1 md:mb-0">Loko</span>
-                                            <div className="mt-1 text-600">Production</div>
-                                        </div>
-                                        <div className="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
-                                            <div className="surface-300 border-round overflow-hidden w-10rem lg:w-6rem"
-                                                style={{ height: '8px' }}>
-                                                <div className="bg-cyan-500 h-full" style={{ width: '16%' }} />
-                                            </div>
-                                            <span className="text-cyan-500 ml-3 font-medium">%16</span>
-                                        </div>
-                                    </li>
-
-                                    <li className="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-                                        <div>
-                                            <span className="text-900 font-medium mr-2 mb-1 md:mb-0">Phone</span>
-                                            <div className="mt-1 text-600">Achat</div>
-                                        </div>
-                                        <div className="mt-2 md:mt-0 ml-0 md:ml-8 flex align-items-center">
-                                            <div className="surface-300 border-round overflow-hidden w-10rem lg:w-6rem"
-                                                style={{ height: '8px' }}>
-                                                <div className="bg-pink-500 h-full" style={{ width: '67%' }} />
-                                            </div>
-                                            <span className="text-pink-500 ml-3 font-medium">%67</span>
-                                        </div>
-                                    </li>
-
+                                    
                                 </ul>
                             </div>
                         </div>

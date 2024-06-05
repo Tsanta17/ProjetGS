@@ -44,7 +44,7 @@ class ArticleController extends Controller
         $article->description = $request->description;
         $article->date_peremption = $request->date_peremption;
         $article->fournisseur_id = $request->fournisseur_id;
-        $article->site_id = $request->site_id;
+        $article->site_id = $request->siteId;
 
         // dd($article);
 
