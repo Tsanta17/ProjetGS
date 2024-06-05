@@ -6,6 +6,8 @@ import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import { InputNumber } from 'primereact/inputnumber';
+import { ToggleButton } from 'primereact/togglebutton';
+
 import axios from 'axios';
 
 export default function AppCheckOrder() {
@@ -15,30 +17,59 @@ export default function AppCheckOrder() {
     const [supplierList, setSupplierList] = useState([]);
     const [form, setForm] = useState({ supplier: null, quantity: '', unitPrice: '' });
     const [showDialog, setShowDialog] = useState(false);
+    const [commandeDetailArticle, setCommandeDetailArticle] = useState(null);
+    const [commandeDetailSite, setCommandeDetailSite] = useState(null);
+    const [commandeDetails, setCommandeDetails] = useState(null);
     const toast = useRef(null);
 
     useEffect(() => {
         axios.get('/servicesListes')
             .then(response => {
-                setSource(response.data);
+                setSource(response.data.enAttente);
+                setTarget(response.data.validee);
+                console.log(response.data);
             })
             .catch(error => {
                 console.error('There was an error fetching the commandes!', error);
             });
-
-        axios.get('/suppliersList')
-            .then(response => {
-                setSupplierList(response.data);
-            })
-            .catch(error => {
-                console.error('There was an error fetching the suppliers!', error);
-            });
     }, []);
 
-    const openDialog = () => {
+    const openDialog = async () => {
         if (selectedItems.length > 0) {
-            setForm({ supplier: null, quantity: '', unitPrice: '' });
-            setShowDialog(true);
+            const commandeId = selectedItems[0].commande_id; // Assuming the selected item has an 'id' field
+            console.log(commandeId);
+            try {
+                const response = await axios.get(`/commande/details/${commandeId}`);
+                setCommandeDetailArticle(response.data.commande.article);
+                setCommandeDetailSite(response.data.commande.site);
+                console.log(response);
+                setCommandeDetails(response.data.commande);
+                const ListFournisseur = response.data.fournisseur.map(f => ({ label: f.nom_fournisseur, value: f.fournisseur_id }));
+                setSupplierList(ListFournisseur);
+                setForm({ supplier: null, quantity: '', unitPrice: '' });
+                setShowDialog(true);
+            } catch (error) {
+                console.error('There was an error fetching the commande details!', error);
+                toast.current.show({ severity: 'error', summary: 'Error', detail: 'Unable to fetch commande details', life: 3000 });
+            }
+        }
+    };
+
+    const validateCommande = async () => {
+        if (selectedItems.length > 0) {
+            const commandeId = selectedItems[0].commande_id; // Assuming the selected item has an 'id' field
+            try {
+                const response = await axios.patch(`/commande/valider/${commandeId}`, {
+                    prix_unitaire: form.unitPrice,
+                    quantite: form.quantity,
+                    fournisseur: form.supplier
+                });
+                moveSelected();
+                toast.current.show({ severity: 'success', summary: 'Success', detail: 'Commande validée', life: 3000 });
+            } catch (error) {
+                console.error('There was an error validating the commande!', error);
+                toast.current.show({ severity: 'error', summary: 'Error', detail: 'Unable to validate commande', life: 3000 });
+            }
         }
     };
 
@@ -47,7 +78,6 @@ export default function AppCheckOrder() {
         setTarget(prevTarget => [...prevTarget, ...selectedItems]);
         setSelectedItems([]);
         setShowDialog(false);
-        toast.current.show({ severity: 'info', summary: 'Confirmed', detail: 'Items moved', life: 3000 });
     };
 
     const onChange = (event) => {
@@ -56,10 +86,23 @@ export default function AppCheckOrder() {
     };
 
     const itemTemplate = (item, isSource) => {
+        const nom_article = item.article.nom_article;
+
+        const handleToggle = (e) => {
+            const selected = e.value;
+            if (selected) {
+                setSelectedItems(prevSelected => [...prevSelected, item]);
+            } else {
+                setSelectedItems(prevSelected => prevSelected.filter(i => i.commande_id !== item.commande_id));
+            }
+        };
+
+        const isSelected = selectedItems.some(i => i.commande_id === item.commande_id);
+
         return (
             <div className="flex flex-wrap p-2 align-items-center gap-3">
                 <div className="flex-1 flex flex-column gap-2">
-                    <span className="font-bold">{item.reference_article}</span>
+                    <span className="font-bold">{nom_article}</span>
                     <div className="flex align-items-center gap-2">
                         <i className="pi pi-tag text-sm"></i>
                         <span>{item.date_commande}</span>
@@ -70,7 +113,7 @@ export default function AppCheckOrder() {
                     <span className="font-bold text-900">${item.budget_disponible}</span>
                     <div className="flex align-items-center gap-2">
                         {isSource ? (
-                            <Button icon="pi pi-eye" label="Sélectionné" onClick={() => setSelectedItems([item])} />
+                            <ToggleButton checked={isSelected} onChange={handleToggle} onLabel="Sélectionné" offLabel="Select" />
                         ) : (
                             <i className="pi pi-check" style={{ fontSize: '1.5rem', color: 'green' }}></i>
                         )}
@@ -87,8 +130,8 @@ export default function AppCheckOrder() {
 
     const dialogFooter = (
         <React.Fragment>
-            <Button label="Cancel" icon="pi pi-times" onClick={() => setShowDialog(false)} className="p-button-text" />
-            <Button label="Move Selected" icon="pi pi-check" onClick={moveSelected} disabled={selectedItems.length === 0} />
+            <Button label="Annuler" icon="pi pi-times" onClick={() => setShowDialog(false)} className="p-button-text" />
+            <Button label="Approuvé" icon="pi pi-check" onClick={validateCommande} disabled={selectedItems.length === 0} />
         </React.Fragment>
     );
 
@@ -97,18 +140,21 @@ export default function AppCheckOrder() {
             <Toast ref={toast} />
             <div className="card">
                 <PickList
-                    dataKey="id"
+                    dataKey="commande_id"
                     source={source}
                     target={target}
                     selectedItems={selectedItems}
                     onChange={onChange}
                     onSelectionChange={e => setSelectedItems(e.value)}
                     itemTemplate={(item) => itemTemplate(item, source.includes(item))}
+                    filter filterBy="nom_article"
                     breakpoint="1280px"
                     sourceHeader="En attente"
                     targetHeader="Validée"
                     sourceStyle={{ height: '24rem' }}
                     targetStyle={{ height: '24rem' }}
+                    sourceFilterPlaceholder="Search by name"
+                    targetFilterPlaceholder="Search by name"
                 />
                 <Button
                     label="Move Selected"
@@ -121,27 +167,27 @@ export default function AppCheckOrder() {
             </div>
 
             <Dialog visible={showDialog} style={{ width: '450px' }} header="Vérification des Détails" modal footer={dialogFooter} onHide={() => setShowDialog(false)}>
-                {selectedItems.length > 0 && (
+                {commandeDetails && (
                     <div className="p-fluid">
                         <div className="field">
                             <label>Nom du site</label>
-                            <InputText value={selectedItems[0].site} readOnly />
+                            <InputText value={commandeDetailSite.nom_site} readOnly />
                         </div>
                         <div className="field">
                             <label>Budget disponible</label>
-                            <InputText value={selectedItems[0].budget_disponible} readOnly />
+                            <InputText value={commandeDetails.budget_disponible} readOnly />
                         </div>
                         <div className="field">
                             <label>Article</label>
-                            <InputText value={selectedItems[0].article} readOnly />
+                            <InputText value={commandeDetailArticle.nom_article} readOnly />
                         </div>
                         <div className="field">
                             <label>Référence de l'article</label>
-                            <InputText value={selectedItems[0].reference_article} readOnly />
+                            <InputText value={commandeDetails.reference_article} readOnly />
                         </div>
                         <div className="field">
                             <label>Fournisseur</label>
-                            <Dropdown value={form.supplier} options={supplierList} onChange={handleFormChange} optionLabel="name" placeholder="Select a Supplier" name="supplier" />
+                            <Dropdown value={form.supplier} options={supplierList} onChange={handleFormChange} optionLabel="label" optionValue="value" placeholder="Select a Supplier" name="supplier" />
                         </div>
                         <div className="field">
                             <label>Quantité</label>

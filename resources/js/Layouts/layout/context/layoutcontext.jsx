@@ -28,6 +28,7 @@ export const LayoutProvider = ({ children }) => {
     const [showSupplier, setShowSupplier] = useState(false);
     const [showHisto, setShowHisto] = useState(false);
     const [showUserList, setShowUserList] = useState(false);
+    const [showDelivery, setShowDelivery] = useState(false);
 
     const onMenuToggle = () => {
         if (isOverlay()) {
@@ -73,7 +74,9 @@ export const LayoutProvider = ({ children }) => {
         showHisto, 
         setShowHisto, 
         showUserList, 
-        setShowUserList
+        setShowUserList,
+        showDelivery, 
+        setShowDelivery
     };
 
     return <LayoutContext.Provider value={value}>{children}</LayoutContext.Provider>;

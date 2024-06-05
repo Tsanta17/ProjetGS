@@ -7,7 +7,7 @@ import { Link } from "@inertiajs/react";
 import usePageState from './UsePageState'; // Import du hook personnalisé
 
 const AppMenu = () => {
-    const { layoutConfig, setShowForm, setDataTable, setShowInsertCommmand, setPicklistOrder, setShowSupplier, setShowHisto, setShowUserList } = useContext(LayoutContext);
+    const { layoutConfig, setShowForm, setDataTable, setShowInsertCommmand, setPicklistOrder, setShowSupplier, setShowHisto, setShowUserList, setShowDelivery } = useContext(LayoutContext);
     const { currentPage, setPage } = usePageState(); // Utilisation du hook
 
     const handleMenuItemClick = (page) => {
@@ -19,6 +19,7 @@ const AppMenu = () => {
         setShowSupplier(page === 'supplierForm');
         setShowHisto(page === 'historic');
         setShowUserList(page === 'userList');
+        setShowDelivery(page === 'delivery');
     };
 
     const model = [
@@ -58,6 +59,7 @@ const AppMenu = () => {
                         {
                             label: 'Ajout d\'articles',
                             icon: 'pi pi-fw pi-plus',
+                            to: route('article.page'),
                             command: () => handleMenuItemClick('form')
                         },
                         {
@@ -74,7 +76,7 @@ const AppMenu = () => {
 
                 {
                     label: 'Commandes',
-                    icon: 'pi pi-fw pi-thumbtack',
+                    icon: 'pi pi-fw pi-tag',
                     items: [
                         {
                             label: 'Ajouter une commande',
@@ -87,6 +89,11 @@ const AppMenu = () => {
                             command: () => handleMenuItemClick('picklistOrder'),
                         }
                     ]
+                },
+                {
+                    label: 'Livraison',
+                    icon: 'pi pi-fw pi-cart-plus',
+                    command: () => handleMenuItemClick('delivery'),
                 },
                 {
                     label: 'Fournisseur',

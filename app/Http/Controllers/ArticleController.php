@@ -6,6 +6,8 @@ use App\Models\Article;
 use App\Http\Controllers\Confirm;
 
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 
 use function Laravel\Prompts\confirm;
 
@@ -24,10 +26,9 @@ class ArticleController extends Controller
     //     return view('articles.create', compact('listeArticles'));
     // }
 
-    public function index()
+    public function index(): Response
     {
-        $listeArticles = article::all();
-        return response()->json($listeArticles);
+        return Inertia::render('./layout/AppForm');
     }
 
 
@@ -56,9 +57,10 @@ class ArticleController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show()
     {
-        //
+        $listeArticles = article::all();
+        return response()->json($listeArticles);
     }
 
     /**
