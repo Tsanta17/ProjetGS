@@ -108,7 +108,7 @@ Route::get('/fournisseur/list', [FournisseurController::class, 'list'])->name('f
     //affectation
     Route::post('/affectation/create', [AffectationController::class, 'store'])->name('affectation.store');
     Route::get('/affectation/liste', [AffectationController::class, 'listeAffectation'])->name('affectation.list');
-    Route::get('/affectation/valider/{affectation}', [AffectationController::class, 'validateAffectation'])->name('commande.valider');
+    Route::get('/affectation/valider/{affectation}', [AffectationController::class, 'validateAffectation'])->name('affectation.valider');
 });
 
 require __DIR__ . '/auth.php';

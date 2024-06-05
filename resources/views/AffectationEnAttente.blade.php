@@ -30,7 +30,7 @@
                     <td>{{$affectation->user_id}}</td>
                     <td>{{$affectation->departement}}</td>
                     <td>{{$affectation->statut}}</td>
-                    <td><a href="{{ route('commande.valider', $affectation->affectation_id)}}">Valider</a></td>
+                    <td><a href="{{ route('affectation.valider', $affectation->affectation_id)}}">Valider</a></td>
                     {{-- <td><a href="{{ route('commandes.send', $commande->commande_id)}}">Envoyer vers fournisseur</a><a href="{{ route('commandes.download', $commande->commande_id)}}">dowloadpdf</a></td> --}}
                     {{-- <td><a href="">Verifier</a></td> --}}
                 </tr>
