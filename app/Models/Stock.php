@@ -15,7 +15,8 @@ class Stock extends Model
         'article_id',
         'site_id',
         'departement',
-        'quantite'
+        'quantite',
+        'code_barre'
 
     ];
     public function site(){
