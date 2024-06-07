@@ -60,7 +60,7 @@ export default function AppManageDelivery({ userRole }) {
                 moveSelected();
                 toast.current.show({ severity: 'success', summary: 'Success', detail: 'Livraison validée', life: 3000 });
             } catch (error) {
-                toast.current.show({ severity: 'error', summary: 'Error', detail: 'Unable to validate delivery', life: 3000 });
+                toast.current.show({ severity: 'error', summary: 'Error', detail: 'Impossible de valider', life: 3000 });
             }
         }
     };
@@ -79,8 +79,8 @@ export default function AppManageDelivery({ userRole }) {
         const invalidMove = event.source.some(item => target.some(targetItem => targetItem.livraison_id === item.livraison_id));
 
         if (invalidMove) {
-            toast.current.show({ severity: 'warn', summary: 'Invalid Move', detail: 'Cannot move delivered items back to pending list', life: 3000 });
-            return;
+            toast.current.show({ severity: 'warn', summary: 'Invalid Move', detail: 'Impossible de revenir sur la liste', life: 3000 });
+            return;C
         }
 
         // Si le déplacement est valide, met à jour les sources et cibles
@@ -163,11 +163,11 @@ export default function AppManageDelivery({ userRole }) {
                     targetHeader="Articles Livrés"
                     sourceStyle={{ height: '24rem' }}
                     targetStyle={{ height: '24rem' }}
-                    sourceFilterPlaceholder="Search by name"
-                    targetFilterPlaceholder="Search by name"
+                    sourceFilterPlaceholder="Recherche par nom"
+                    targetFilterPlaceholder="Recherche par nom"
                 />
                 {userRole !== 'Service' && <Button
-                    label="Move Selected"
+                    label="Approuver"
                     icon="pi pi-arrow-right"
                     onClick={openDialog}
                     disabled={sourceSelection.length === 0 || targetSelection.length > 0} // Désactiver si un article dans target est sélectionné
