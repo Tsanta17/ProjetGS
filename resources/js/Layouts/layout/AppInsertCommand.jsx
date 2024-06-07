@@ -55,7 +55,7 @@ const FloatLabelDemo = () => {
                 <div className="card">
                     <div className="p-fluid grid">
 
-                        <div className="field col-12 md:col-4">
+                        <div className="field col-12 md:col-6">
                             <span className="p-float-label">
                                 <AutoComplete value={data.reference} field="name" onChange={(e) => setData('reference', e.value)} />
                                 <label htmlFor="autocomplete"><b>Référence</b></label>
@@ -63,7 +63,7 @@ const FloatLabelDemo = () => {
                             {errors.reference && <span className="error">{errors.reference}</span>}
                         </div>
 
-                        <div className="field col-12 md:col-4">
+                        <div className="field col-12 md:col-6">
                             <span className="p-float-label">
                                 <AutoComplete value={data.nom_article} field="name" onChange={(e) => setData('nom_article', e.value)} />
                                 <label htmlFor="autocomplete"><b>Article</b></label>
@@ -79,7 +79,7 @@ const FloatLabelDemo = () => {
                             {errors.description && <span className="error">{errors.description}</span>}
                         </div>
 
-                        <div className="field col-12 md:col-4">
+                        <div className="field col-12 md:col-6">
                             <span className="p-float-label">
                                 <Calendar id="calendar" value={data.date_commande} onChange={(e) => setData('date_commande', e.value)} />
                                 <label htmlFor="calendar"><b>Date de commande</b></label>
@@ -87,7 +87,7 @@ const FloatLabelDemo = () => {
                             {errors.date_commande && <span className="error">{errors.date_commande}</span>}
                         </div>
 
-                        <div className="field col-12 md:col-4">
+                        <div className="field col-12 md:col-6">
                             <span className="p-float-label">
                                 <AutoComplete inputId="inputnumber" value={data.budget_disponible} onChange={(e) => setData('budget_disponible', e.value)} />
                                 <label htmlFor="inputnumber"><b>Budget</b></label>
@@ -99,12 +99,12 @@ const FloatLabelDemo = () => {
                 </div>
             </div>
 
-            <div className="button-group">
-                <button type="submit" className="p-button p-component p-button-success" disabled={processing}>
-                    Submit
+            <div className=" col-12 flex flex-col justify-center">
+                <button type="submit" className="p-button p-component p-button-primary flex items-center justify-center font-bold mb-2" disabled={processing}>
+                    Enregistrer
                 </button>
-                <button type="button" className="p-button p-component p-button-secondary" onClick={handleReset} disabled={processing}>
-                    Cancel
+                <button type="button" className="p-button p-component p-button-secondary flex items-center justify-center font-bold font-bold" onClick={handleReset} disabled={processing}>
+                    Annuler
                 </button>
             </div>
         </form>

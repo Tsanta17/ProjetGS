@@ -11,17 +11,17 @@ import axios from 'axios';
 
 export default function AppCheckOrder() {
     // State variables
-    const [source, setSource] = useState([]); // Commandes en attente
-    const [target, setTarget] = useState([]); // Commandes validées
-    const [sourceSelection, setSourceSelection] = useState([]); // Sélection d'articles dans la source
-    const [targetSelection, setTargetSelection] = useState([]); // Sélection d'articles dans le target
-    const [supplierList, setSupplierList] = useState([]); // Liste des fournisseurs
-    const [form, setForm] = useState({ supplier: null, quantity: '', unitPrice: '' }); // Formulaire de validation
-    const [showDialog, setShowDialog] = useState(false); // Affichage du dialogue
-    const [commandeDetailArticle, setCommandeDetailArticle] = useState(null); // Détails de l'article de la commande
-    const [commandeDetailSite, setCommandeDetailSite] = useState(null); // Détails du site de la commande
-    const [commandeDetails, setCommandeDetails] = useState(null); // Détails de la commande
-    const toast = useRef(null); // Référence pour le composant Toast
+    const [source, setSource] = useState([]); 
+    const [target, setTarget] = useState([]); 
+    const [sourceSelection, setSourceSelection] = useState([]); 
+    const [targetSelection, setTargetSelection] = useState([]); 
+    const [supplierList, setSupplierList] = useState([]); 
+    const [form, setForm] = useState({ supplier: null, quantity: '', unitPrice: '' });
+    const [showDialog, setShowDialog] = useState(false); 
+    const [commandeDetailArticle, setCommandeDetailArticle] = useState(null); 
+    const [commandeDetailSite, setCommandeDetailSite] = useState(null); 
+    const [commandeDetails, setCommandeDetails] = useState(null); 
+    const toast = useRef(null); 
 
     // Effect hook pour récupérer les données lors du montage du composant
     useEffect(() => {
@@ -39,7 +39,7 @@ export default function AppCheckOrder() {
     // Fonction pour ouvrir le dialogue
     const openDialog = async () => {
         if (sourceSelection.length > 0) {
-            const commandeId = sourceSelection[0].commande_id; // Assuming the selected item has an 'id' field
+            const commandeId = sourceSelection[0].commande_id; 
             console.log(commandeId);
             try {
                 const response = await axios.get(`/commande/details/${commandeId}`);
@@ -61,7 +61,7 @@ export default function AppCheckOrder() {
     // Fonction pour valider la commande
     const validateCommande = async () => {
         if (sourceSelection.length > 0) {
-            const commandeId = sourceSelection[0].commande_id; // Assuming the selected item has an 'id' field
+            const commandeId = sourceSelection[0].commande_id; 
             try {
                 await axios.patch(`/commande/valider/${commandeId}`, {
                     prix_unitaire: form.unitPrice,
@@ -149,7 +149,7 @@ export default function AppCheckOrder() {
     const dialogFooter = (
         <React.Fragment>
             <Button label="Annuler" icon="pi pi-times" onClick={() => setShowDialog(false)} className="p-button-text" />
-            <Button label="Approuvé" icon="pi pi-check" onClick={validateCommande} disabled={sourceSelection.length === 0 || !form.supplier || !form.quantity || !form.unitPrice} />
+            <Button label="Approuver" icon="pi pi-check" onClick={validateCommande} disabled={sourceSelection.length === 0 || !form.supplier || !form.quantity || !form.unitPrice} />
         </React.Fragment>
     );
 
@@ -173,11 +173,11 @@ export default function AppCheckOrder() {
                     targetHeader="Validée"
                     sourceStyle={{ height: '24rem' }}
                     targetStyle={{ height: '24rem' }}
-                    sourceFilterPlaceholder="Search by name"
-                    targetFilterPlaceholder="Search by name"
+                    sourceFilterPlaceholder="Recherche par nom"
+                    targetFilterPlaceholder="Recherche par nom"
                 />
                 <Button
-                    label="Move Selected"
+                    label="Approuver"
                     icon="pi pi-arrow-right"
                     onClick={openDialog}
                     disabled={sourceSelection.length === 0 || targetSelection.length > 0} // Désactiver si un article dans target est sélectionné

@@ -219,14 +219,13 @@ export default function AppFormSupplier() {
                         onSelectionChange={(e) => setSelectedSuppliers(e.value)}
                         dataKey="id"
                         paginator
-                        rows={10}
+                        rows={5}
                         rowsPerPageOptions={[5, 10, 25]}
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                         currentPageReportTemplate="Vue de {first} à {last} pour {totalRecords} données"
                         globalFilter={globalFilter}
                         header={header}
                     >
-                        <Column field="id" header="ID" sortable style={{ minWidth: '12rem' }}></Column>
                         <Column field="nom_fournisseur" header="Nom" sortable style={{ minWidth: '16rem' }}></Column>
                         <Column field="adresse_fournisseur" header="Adresse" sortable style={{ minWidth: '16rem' }}></Column>
                         <Column field="phone_fournisseur" header="Téléphone" sortable style={{ minWidth: '12rem' }}></Column>
@@ -238,25 +237,25 @@ export default function AppFormSupplier() {
                         <div className="field">
                             <label htmlFor="nom_fournisseur">Nom</label>
                             <InputText id="nom_fournisseur" value={supplier.nom_fournisseur} onChange={(e) => onInputChange(e, 'nom_fournisseur')} required autoFocus className={classNames({ 'p-invalid': submitted && !supplier.nom_fournisseur })} />
-                            {submitted && !supplier.nom_fournisseur && <small className="p-error">Nom is required.</small>}
+                            {submitted && !supplier.nom_fournisseur && <small className="p-error">Nom est obligatoire.</small>}
                         </div>
 
                         <div className="field">
                             <label htmlFor="adresse_fournisseur">Adresse</label>
                             <InputText id="adresse_fournisseur" value={supplier.adresse_fournisseur} onChange={(e) => onInputChange(e, 'adresse_fournisseur')} required className={classNames({ 'p-invalid': submitted && !supplier.adresse_fournisseur })} />
-                            {submitted && !supplier.adresse_fournisseur && <small className="p-error">Adresse is required.</small>}
+                            {submitted && !supplier.adresse_fournisseur && <small className="p-error">Adresse est obligatoire.</small>}
                         </div>
 
                         <div className="field">
                             <label htmlFor="phone_fournisseur">Téléphone</label>
                             <InputText id="phone_fournisseur" value={supplier.phone_fournisseur} onChange={(e) => onInputChange(e, 'phone_fournisseur')} required className={classNames({ 'p-invalid': submitted && !supplier.phone_fournisseur })} />
-                            {submitted && !supplier.phone_fournisseur && <small className="p-error">Téléphone is required.</small>}
+                            {submitted && !supplier.phone_fournisseur && <small className="p-error">Téléphone est obligatoire.</small>}
                         </div>
 
                         <div className="field">
                             <label htmlFor="email_fournisseur">Email</label>
                             <InputText id="email_fournisseur" value={supplier.email_fournisseur} onChange={(e) => onInputChange(e, 'email_fournisseur')} required className={classNames({ 'p-invalid': submitted && !supplier.email_fournisseur })} />
-                            {submitted && !supplier.email_fournisseur && <small className="p-error">Email is required.</small>}
+                            {submitted && !supplier.email_fournisseur && <small className="p-error">Email est obligatoire.</small>}
                         </div>
                     </Dialog>
 
