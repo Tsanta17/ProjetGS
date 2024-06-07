@@ -159,7 +159,7 @@ const Dashboard = ({ fournisseurs, articles, couts, commandeParMois, budgetTotal
                 ) : DataTable ? (
                     <div className="col-12 xl:col-12">
                         <div className="card">
-                            <AppCrudData />
+                            <AppCrudData userRole={userRole}/>
                         </div>
                     </div>
                 ) : showInsertCommmand ? (
@@ -201,7 +201,7 @@ const Dashboard = ({ fournisseurs, articles, couts, commandeParMois, budgetTotal
                 ) : showStock ? (
                     <div className="col-12 xl:col-12">
                         <div className="card">
-                            <AppStock />
+                            <AppStock userRole={userRole}/>
                         </div>
                     </div>
                 ) : (

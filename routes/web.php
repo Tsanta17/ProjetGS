@@ -78,7 +78,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/ajoutArticle', [ArticleController::class, 'store']);
     Route::get('/editArticle/{id}', [ArticleController::class, 'edit']);
     Route::post('/updateArticle/{id}', [ArticleController::class, 'update']);
-    Route::get('/destroyArticle/{id}', [ArticleController::class, 'destroy']);
+    Route::delete('/destroyArticle/{id}', [ArticleController::class, 'destroy']);
 
     //SERVICES
     Route::get('/services', [ServiceController::class, 'create']);

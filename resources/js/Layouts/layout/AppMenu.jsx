@@ -36,6 +36,7 @@ const AppMenu = ({ userRole  }) => {
                 {
                     label: 'Utilisateur',
                     icon: 'pi pi-user',
+                    visible: userRole == 'Admin',
                     items: [
                         {
                             label: 'New',
@@ -104,7 +105,7 @@ const AppMenu = ({ userRole  }) => {
                     label: 'Historique',
                     icon: 'pi pi-fw pi-history',
                     command: () => handleMenuItemClick('historic'),
-                    visible: userRole !== 'Service'
+                    visible: userRole == 'Admin' 
                 }
             ]
         },

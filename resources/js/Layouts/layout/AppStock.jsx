@@ -7,7 +7,7 @@ import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { Toast } from 'primereact/toast';
 
-const CrudTable = () => {
+const CrudTable = ({ userRole }) => {
     const emptyArticle = {
         id: null,
         nom_article: '',
@@ -156,20 +156,25 @@ const CrudTable = () => {
     );
 
     const deleteArticlesDialogFooter = (
+        
         <React.Fragment>
             <Button label="No" icon="pi pi-times" className="p-button-text" onClick={hideDeleteArticlesDialog} />
             <Button label="Yes" icon="pi pi-check" className="p-button-text" onClick={deleteSelectedArticles} />
         </React.Fragment>
     );
 
-    const actionBodyTemplate = (rowData) => {
-        return (
-            <React.Fragment>
-                <Button icon="pi pi-pencil" className="p-button-rounded p-button-success mr-2" onClick={() => editArticle(rowData)} />
-                <Button icon="pi pi-trash" className="p-button-rounded p-button-warning" onClick={() => confirmDeleteArticle(rowData)} />
-            </React.Fragment>
-        );
+     const actionBodyTemplate = (rowData) => {
+        if (userRole !== 'Service') {
+            return (
+                <React.Fragment>
+                    { userRole !== 'Service' && <Button icon="pi pi-pencil" className="p-button-rounded p-button-success mr-2" onClick={() => editArticle(rowData)} /> }
+                    <Button icon="pi pi-trash" className="p-button-rounded p-button-warning" onClick={() => confirmDeleteArticle(rowData)} />
+                </React.Fragment>
+            );
+            }
+            return null;
     };
+
 
     return (
         <div className="datatable-crud-demo">
@@ -183,7 +188,7 @@ const CrudTable = () => {
                     <Column field="quantite" header="Quantité" sortable style={{ minWidth: '12rem' }}></Column>
                     <Column field="nom_site" header="Site" sortable style={{ minWidth: '16rem' }}></Column>
                     <Column field="date_peremption" header="Date de péremption" sortable style={{ minWidth: '16rem' }}></Column>
-                    <Column body={actionBodyTemplate} key="action"></Column>
+                    
                 </DataTable>
             </div>
             <div className="card">
