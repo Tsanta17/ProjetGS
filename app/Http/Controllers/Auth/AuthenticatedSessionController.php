@@ -48,8 +48,9 @@ class AuthenticatedSessionController extends Controller
             ->count();
 
         //COUT
-        $cout = DB::table('commandes')
+        $coutBrute = DB::table('commandes')
             ->sum('budget_disponible');
+        $cout = number_format($coutBrute, 2, ',', '.');
 
         //ARTICLES PERIMES
         $articlePerime = DB::table('articles')
