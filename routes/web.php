@@ -43,7 +43,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         $fournisseur = session('nombreFournisseurs', 0);
         $article = session('nombreArticles', 0);
         $cout = session('coutArticles', 0);
-        $totalCommandes = session('total_commande', 0);
+        $totalCommandes = session('max_commande', 0);
         $commandeParMois = session('commande_par_mois', []);
         $budgetTotalParMois = session('budget_total_par_mois', []);
         $topArticles = session('top_trois', []);
@@ -109,6 +109,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/stockAffichage', [StockController::class, $listeStock]);
     Route::get('/stock', [ServiceController::class, 'listeStockParSite'])->name('stock.liste');
     Route::get('/stock/{stock}/show', [StockController::class, 'show'])->name('stock.show');
+    Route::get('/stock', [StockController::class, 'listeStock']);
     Route::get('/stockperime', [StockController::class, 'listeStockPerime']);
     Route::get('/stockperime/delete/{stock_id}', [StockController::class, 'supprimerListeStockPerime'])->name('deleteStockPerime');
 

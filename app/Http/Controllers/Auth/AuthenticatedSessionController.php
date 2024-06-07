@@ -84,8 +84,8 @@ class AuthenticatedSessionController extends Controller
 
         //Top 3 des commandes
         $topArticles = DB::select("SELECT articles.nom_article, COUNT(*) AS total_commandes FROM (SELECT DISTINCT commandes.reference_article FROM commandes) AS c JOIN articles ON c.reference_article = articles.reference GROUP BY articles.nom_article ORDER BY total_commandes DESC LIMIT 3");
-        $totalCommandes = max(array_column($topArticles, 'total_commandes'));
-
+        // dd($topArticles);
+        $totalCommandes = !empty($topArticles) ? max(array_column($topArticles, 'total_commandes')) : 1;
         session([
             'commande_par_mois' => $commandeParMois,
             'budget_total_par_mois' => $budgetTotalParMois,

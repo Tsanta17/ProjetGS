@@ -24,13 +24,13 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
     return (
         <div className="card">
             <header>
-                <h2>Profile Information</h2>
-                <p className="mt-1 text-sm text-gray-600">Update your account's profile information and email address.</p>
+                <h2>Information du profil</h2>
+                <p className="mt-1 text-sm text-gray-600">Modifier votre profil et adresse email.</p>
             </header>
 
             <form onSubmit={submit} className="mt-6 space-y-6">
                 <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-700">Nom</label>
                     <InputText
                         id="name"
                         className={`mt-1 w-full ${errors.name ? 'p-invalid' : ''}`}
@@ -57,26 +57,26 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
                 {mustVerifyEmail && user.email_verified_at === null && (
                     <div>
                         <p className="text-sm mt-2 text-gray-800">
-                            Your email address is unverified.
+                            Votre adresse email est invérifiable.
                             <a
                                 href={route('verification.send')}
                                 className="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                             >
-                                Click here to re-send the verification email.
+                                Cliquer ici pour reenvoyer l'email de véérification.
                             </a>
                         </p>
 
                         {status === 'verification-link-sent' && (
                             <div className="mt-2 font-medium text-sm text-green-600">
-                                A new verification link has been sent to your email address.
+                                Un nouveau lien de vérification a bien été envoyé dasn votre adresse email.
                             </div>
                         )}
                     </div>
                 )}
 
                 <div className="flex items-center gap-4">
-                    <Button type="submit" disabled={processing} label="Save" className="w-32" />
-                    {recentlySuccessful && <p className="text-sm text-gray-600">Saved.</p>}
+                    <Button type="submit" disabled={processing} label="Sauvegarder" className="w-32" />
+                    {recentlySuccessful && <p className="text-sm text-gray-600">Sauvegardé</p>}
                 </div>
             </form>
         </div>

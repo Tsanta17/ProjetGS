@@ -222,7 +222,9 @@ const Dashboard = ({ fournisseurs, articles, couts, commandeParMois, budgetTotal
                                 </div>
                                 <ul className="list-none p-0 m-0">
 
-                                    {topArticles.map((articles, index) => (
+                                {topArticles.map((articles, index) => {
+                                    const pourcentage = (totalCommandes > 0) ? ((articles.total_commandes / totalCommandes) * 100).toFixed(2) : 0;
+                                    return (
                                         <li key={index} className="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
                                             <div>
                                                 <span className="text-900 font-medium mr-2 mb-1 md:mb-0">{articles.nom_article}</span>
@@ -231,12 +233,13 @@ const Dashboard = ({ fournisseurs, articles, couts, commandeParMois, budgetTotal
                                             <div className="mt-2 md:mt-0 flex align-items-center">
                                                 <div className="surface-300 border-round overflow-hidden w-10rem lg:w-6rem"
                                                     style={{ height: '8px' }}>
-                                                    <div className={`bg-${['cyan', 'orange', 'pink'][index % 3]}-500 h-full`} style={{ width: `${((articles.total_commandes / totalCommandes) * 100).toFixed(2)} %` }} />
+                                                    <div className={`bg-${['cyan', 'orange', 'pink'][index % 3]}-500 h-full`} style={{ width: `${pourcentage} %` }} />
                                                 </div>
-                                                <span className={`text-${['cyan', 'orange', 'pink'][index % 3]}-500 ml-3 font-medium`}>%{((articles.total_commandes / totalCommandes) * 100).toFixed(2)}</span>
+                                                <span className={`text-${['cyan', 'orange', 'pink'][index % 3]}-500 ml-3 font-medium`}>%{pourcentage}</span>
                                             </div>
                                         </li>
-                                    ))}
+                                    );
+                                })}
 
                                     
                                 </ul>
