@@ -75,7 +75,7 @@ class CommandeController extends Controller
     // Ajouter le prix et la quantité à la ligne de commande
     CommandeLigne::create([
         'commande_id' => $commande->commande_id,
-        'article_id' => $commande->article_id,
+        'article_id' => $commande->article->article_id,
         'quantite' => $request->quantite,
         'prix_unitaire' => $request->prix_unitaire,
         'statut' => "ok"
@@ -87,8 +87,9 @@ class CommandeController extends Controller
     // Ajout de la table livraison
     Livraison::create([
         'commande_id' => $commande->commande_id,
-        'numero_lot' => $fournisseur->nom_fournisseur,
+        'nomFournisseur' => $fournisseur->nom_fournisseur,
         'site_id' => $commande->site_id,
+        'quantite' => $request->quantite,
     ]);
 
     return view('commandeEnAttente', [

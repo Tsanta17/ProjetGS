@@ -7,17 +7,17 @@ import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { Toast } from 'primereact/toast';
 
-const AppCrudData = () => {
+const CrudTable = () => {
     const emptyArticle = {
         id: null,
-        reference: '',
         nom_article: '',
-        description: '',
-        date_peremption: '',
-        statut: ''
+        quantite: '',
+        site: '',
+        date_peremption: ''
     };
 
-    const [articles, setArticles] = useState([]);
+    const [listeStock, setListeStock] = useState([]);
+    const [listeStockPerime, setListeStockPerime] = useState([]);
     const [articleDialog, setArticleDialog] = useState(false);
     const [deleteArticleDialog, setDeleteArticleDialog] = useState(false);
     const [deleteArticlesDialog, setDeleteArticlesDialog] = useState(false);
@@ -29,9 +29,11 @@ const AppCrudData = () => {
     const dt = useRef(null);
 
     useEffect(() => {
-        axios.get('/articles')
+        axios.get('/stockAffichage')
             .then(response => {
-                setArticles(response.data);
+                setListeStock(response.data.listeStock);
+                console.log(response.data.listeStock);
+                setListeStockPerime(response.data.listeStockPerime);
             })
             .catch(error => {
                 console.error("There was an error fetching the articles!", error);
@@ -61,7 +63,7 @@ const AppCrudData = () => {
         setSubmitted(true);
 
         if (article.nom_article.trim()) {
-            let _articles = [...articles];
+            let _articles = [...listeStock];
             let _article = {...article};
             if (article.id) {
                 // Mettre à jour l'article existant
@@ -69,7 +71,7 @@ const AppCrudData = () => {
                     .then(response => {
                         const index = _articles.findIndex(a => a.id === article.id);
                         _articles[index] = response.data;
-                        setArticles(_articles);
+                        setListeStock(_articles);
                         setArticleDialog(false);
                         toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Article Updated', life: 3000 });
                     })
@@ -81,7 +83,7 @@ const AppCrudData = () => {
                 axios.post('/articles', article)
                     .then(response => {
                         _articles.push(response.data);
-                        setArticles(_articles);
+                        setListeStock(_articles);
                         setArticleDialog(false);
                         toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Article Created', life: 3000 });
                     })
@@ -105,7 +107,7 @@ const AppCrudData = () => {
     const deleteArticle = () => {
         axios.delete(`/articles/${article.id}`)
             .then(response => {
-                setArticles(articles.filter(a => a.id !== article.id));
+                setListeStock(listeStock.filter(a => a.id !== article.id));
                 setDeleteArticleDialog(false);
                 toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Article Deleted', life: 3000 });
             })
@@ -117,7 +119,7 @@ const AppCrudData = () => {
     const deleteSelectedArticles = () => {
         axios.delete('/articles', { data: { ids: selectedArticles.map(a => a.id) } })
             .then(response => {
-                setArticles(articles.filter(a => !selectedArticles.map(sa => sa.id).includes(a.id)));
+                setListeStock(listeStock.filter(a => !selectedArticles.map(sa => sa.id).includes(a.id)));
                 setDeleteArticlesDialog(false);
                 setSelectedArticles([]);
                 toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Articles Deleted', life: 3000 });
@@ -171,16 +173,28 @@ const AppCrudData = () => {
         <div className="datatable-crud-demo">
             <Toast ref={toast} />
             <div className="card">
-                <DataTable ref={dt} value={articles} selection={selectedArticles} onSelectionChange={(e) => setSelectedArticles(e.value)}
+                <h2>Liste Stock</h2>
+                <DataTable ref={dt} value={listeStock} selection={selectedArticles} onSelectionChange={(e) => setSelectedArticles(e.value)}
                     dataKey="id" paginator rows={10} rowsPerPageOptions={[5, 10, 25]}
                     globalFilter={globalFilter} header={header} responsiveLayout="scroll">
                     <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
-                    <Column field="reference" header="Reference" sortable style={{ minWidth: '12rem' }}></Column>
-                    <Column field="nom_article" header="Nom" sortable style={{ minWidth: '16rem' }}></Column>
-                    <Column field="description" header="Description" sortable style={{ minWidth: '20rem' }}></Column>
-                    <Column field="date_peremption" header="Date Peremption" sortable style={{ minWidth: '12rem' }}></Column>
-                    <Column field="statut" header="Statut" sortable style={{ minWidth: '12rem' }}></Column>
-                    <Column body={actionBodyTemplate}></Column>
+                    <Column field="nom_article" header="Nom de l'article" sortable style={{ minWidth: '16rem' }}></Column>
+                    <Column field="quantite" header="Quantité" sortable style={{ minWidth: '12rem' }}></Column>
+                    <Column field="nom_site" header="Site" sortable style={{ minWidth: '16rem' }}></Column>
+                    <Column field="date_peremption" header="Date de péremption" sortable style={{ minWidth: '16rem' }}></Column>
+                    <Column body={actionBodyTemplate} key="action"></Column>
+                </DataTable>
+
+                <h2>Liste Stock Périmé</h2>
+                <DataTable ref={dt} value={listeStockPerime} selection={selectedArticles} onSelectionChange={(e) => setSelectedArticles(e.value)}
+                    dataKey="id" paginator rows={10} rowsPerPageOptions={[5, 10, 25]}
+                    globalFilter={globalFilter} header={header} responsiveLayout="scroll">
+                    <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
+                    <Column field="nom_article" header="Nom de l'article" sortable style={{ minWidth: '16rem' }}></Column>
+                    <Column field="quantite" header="Quantité" sortable style={{ minWidth: '12rem' }}></Column>
+                    <Column field="nom_site" header="Site" sortable style={{ minWidth: '16rem' }}></Column>
+                    <Column field="date_peremption" header="Date de péremption" sortable style={{ minWidth: '16rem' }}></Column>
+                    <Column body={actionBodyTemplate} key="action"></Column>
                 </DataTable>
             </div>
 
@@ -199,4 +213,4 @@ const AppCrudData = () => {
     );
 }
 
-export default AppCrudData;
+export default CrudTable;

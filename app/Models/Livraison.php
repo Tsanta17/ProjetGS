@@ -13,7 +13,7 @@ class Livraison extends Model
     protected $fillable = [
         'commande_id',
         'date_livraison',
-        'numero_lot',
+        'nomFournisseur',
         'quantite',
         'site_id'
     ];

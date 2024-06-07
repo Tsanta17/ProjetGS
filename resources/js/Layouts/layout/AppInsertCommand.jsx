@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import { useForm } from '@inertiajs/react';
 import { AutoComplete } from 'primereact/autocomplete';
@@ -13,7 +13,7 @@ const FloatLabelDemo = () => {
         nom_article: '',
         description: '',
         date_commande: null,
-        budget_disponible: null,
+        budget_disponible: '',
     };
 
     const { data, setData, post, processing, errors, reset } = useForm(initialState);
@@ -36,6 +36,12 @@ const FloatLabelDemo = () => {
             reset();
         } catch (err) {
             console.error('Erreur lors de l\'ajout de la commande', err);
+            // Afficher les erreurs
+            if (err.response && err.response.data && err.response.data.errors) {
+                Object.keys(err.response.data.errors).forEach(key => {
+                    console.error(`Erreur sur le champ ${key}: ${err.response.data.errors[key]}`);
+                });
+            }
         }
     };
 
@@ -54,6 +60,7 @@ const FloatLabelDemo = () => {
                                 <AutoComplete value={data.reference} field="name" onChange={(e) => setData('reference', e.value)} />
                                 <label htmlFor="autocomplete"><b>Référence</b></label>
                             </span>
+                            {errors.reference && <span className="error">{errors.reference}</span>}
                         </div>
 
                         <div className="field col-12 md:col-4">
@@ -61,6 +68,7 @@ const FloatLabelDemo = () => {
                                 <AutoComplete value={data.nom_article} field="name" onChange={(e) => setData('nom_article', e.value)} />
                                 <label htmlFor="autocomplete"><b>Article</b></label>
                             </span>
+                            {errors.nom_article && <span className="error">{errors.nom_article}</span>}
                         </div>
 
                         <div className="field col-12">
@@ -68,6 +76,7 @@ const FloatLabelDemo = () => {
                                 <InputTextarea id="textarea" value={data.description} onChange={(e) => setData('description', e.target.value)} rows={3} />
                                 <label htmlFor="textarea"><b>Description</b></label>
                             </span>
+                            {errors.description && <span className="error">{errors.description}</span>}
                         </div>
 
                         <div className="field col-12 md:col-4">
@@ -75,13 +84,15 @@ const FloatLabelDemo = () => {
                                 <Calendar id="calendar" value={data.date_commande} onChange={(e) => setData('date_commande', e.value)} />
                                 <label htmlFor="calendar"><b>Date de commande</b></label>
                             </span>
+                            {errors.date_commande && <span className="error">{errors.date_commande}</span>}
                         </div>
 
                         <div className="field col-12 md:col-4">
                             <span className="p-float-label">
-                                <InputNumber inputId="inputnumber" value={data.budget_disponible} onChange={(e) => setData('budget_disponible', e.value)} />
+                                <AutoComplete inputId="inputnumber" value={data.budget_disponible} onChange={(e) => setData('budget_disponible', e.value)} />
                                 <label htmlFor="inputnumber"><b>Budget</b></label>
                             </span>
+                            {errors.budget_disponible && <span className="error">{errors.budget_disponible}</span>}
                         </div>
 
                     </div>

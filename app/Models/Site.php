@@ -25,4 +25,5 @@ class Site extends Model
     public function stocks(){
         return $this->hasMany(Stock::class, 'site_id', 'site_id');
     }
+    
 }

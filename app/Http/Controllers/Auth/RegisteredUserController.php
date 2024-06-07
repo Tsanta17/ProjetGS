@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\Fournisseur;
 use App\Models\Roles;
-use App\Models\Sites;
+use App\Models\Site;
 use App\Models\User;
 use Illuminate\Support\str;
 use App\Providers\RouteServiceProvider;
@@ -27,7 +27,10 @@ class RegisteredUserController extends Controller
      */
     public function create(): Response
     {
-        return Inertia::render('Auth/Register');
+        $site = Site::all();
+        return Inertia::render('Auth/Register', [
+            'sites' => $site
+        ]);
     }
 
     /**

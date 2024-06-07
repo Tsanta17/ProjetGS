@@ -13,7 +13,7 @@ import axios from 'axios';
 import { Head, Link } from '@inertiajs/react';
 import '../../../css/FormDemo.css';
 
-export default function Register() {
+export default function Register({sites}) {
     const { data, setData, post, processing, errors, reset, setError } = useForm({
         name: '',
         email: '',
@@ -81,18 +81,16 @@ export default function Register() {
     };
 
     const roleOptions = [
-        { label: 'Admin', value: 'admin' },
-        { label: 'Manager', value: 'manager' },
-        { label: 'Service', value: 'service' }
+        { label: 'Admin', value: 'Admin' },
+        { label: 'Manager', value: 'Manager' },
+        { label: 'Service', value: 'Service' }
     ];
 
-    const siteOptions = [
-        { label: 'Ploufragan', value: 'ploufragan' },
-        { label: 'Quimper', value: 'quimper' },
-        { label: 'Brest', value: 'brest' },
-        { label: 'Fougères', value: 'fougere' },
-        { label: 'Combourg', value: 'combourg' }
-    ];
+    // Générer les options du dropdown pour les sites
+    const siteOptions = sites.map(site => ({
+        label: site.nom_site,  // ou site.name si vous avez un champ name
+        value: site.site_id
+    }));
 
     const isFormFieldValid = (name) => !!errors[name];
     const getFormErrorMessage = (name) => {

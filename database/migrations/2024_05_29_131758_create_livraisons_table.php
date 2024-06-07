@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('commande_id')->nullable();
             $table->unsignedBigInteger('site_id')->nullable();
             $table->date('date_livraison')->nullable();
-            $table->string('numero_lot')->nullable();
+            $table->string('nomFournisseur')->nullable();
             $table->unsignedInteger('quantite')->nullable();
             $table->timestamps();
 

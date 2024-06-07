@@ -105,10 +105,11 @@ Route::middleware('auth')->group(function () {
     Route::get('commandes/download/{commande}', [CommandeController::class, 'createAndDownloadPDF'])->name('commandes.download');
 
     //stocks
+    $listeStock = (Auth::check() && Auth::user()->role == 'Admin') ? 'listeStockAdmin' : 'listeStock';
+    Route::get('/stockAffichage', [StockController::class, $listeStock]);
     Route::get('/stock', [ServiceController::class, 'listeStockParSite'])->name('stock.liste');
     Route::get('/stock/{stock}/show', [StockController::class, 'show'])->name('stock.show');
-    Route::get('/stock', [StockController::class, 'listeStock']);
-    Route::get('/stockperime', [StockController::class, 'listeSto)çckPerime']);
+    Route::get('/stockperime', [StockController::class, 'listeStockPerime']);
     Route::get('/stockperime/delete/{stock_id}', [StockController::class, 'supprimerListeStockPerime'])->name('deleteStockPerime');
 
 
@@ -119,11 +120,14 @@ Route::middleware('auth')->group(function () {
 
 
     //Livraison
-    Route::get('/livraison', [LivraisonController::class, 'listeLivraison']);
+    $listeLivraison = (Auth::check() && Auth::user()->role == 'Admin') ? 'listeLivraisonAdministrateur' : 'listeLivraison';
+    Route::get('/livraison', [LivraisonController::class, $listeLivraison]);
     Route::post('/livraison/update/{livraison_id}', [LivraisonController::class, 'update'])->name('livraison.update');
-
-
-
+    
+    
+    
+    // Route::get('/Livrer', [LivraisonController::class, 'listeLivraison']);
+    // Route::get('/adminLivraison', [LivraisonController::class, 'listeLivraisonAdministrateur']);
     require __DIR__ . '/auth.php';
 });
 

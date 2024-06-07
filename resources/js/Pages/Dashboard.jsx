@@ -13,13 +13,13 @@ import AppFormSupplier from '@/Layouts/layout/AppFormSupplier';
 import AppHistoric from '@/Layouts/layout/AppHistoric';
 import AppListUser from '@/Layouts/layout/AppListUser';
 import AppDelivery from '@/Layouts/layout/AppDelivery';
+import AppStock from '@/Layouts/layout/AppStock';
 
 
 
-const Dashboard = ({ fournisseurs, articles, couts, commandeParMois, budgetTotalParMois, articlePerime, topArticles, totalCommandes }) => {
-    const { layoutConfig, showForm, DataTable, showInsertCommmand, picklistOrder, showSupplier, showHisto, showUserList, showDelivery } = useContext(LayoutContext);
-const Dashboard = ({fournisseurs, articles, couts, commandeParMois, budgetTotalParMois, articlePerime, topArticles, totalCommandes, userRole}) => {
-    const { layoutConfig, showForm, DataTable, showInsertCommmand, picklistOrder, showSupplier, showHisto, showUserList } = useContext(LayoutContext);
+const Dashboard = ({ fournisseurs, articles, couts, commandeParMois, budgetTotalParMois, articlePerime, topArticles, totalCommandes, userRole}) => {
+    const { layoutConfig, showForm, DataTable, showInsertCommmand, picklistOrder, showSupplier, showHisto, showUserList, showDelivery, showStock } = useContext(LayoutContext);
+
     const [lineOptions, setLineOptions] = useState({});
 
     const applyLightTheme = () => {
@@ -134,12 +134,14 @@ const Dashboard = ({fournisseurs, articles, couts, commandeParMois, budgetTotalP
                     descriptionValue="2+"
                     descriptionText="depuis une semaine">
                 </DashboardInfoCard>
-                <DashboardInfoCard title="Coût" value={couts}
-                    descriptionValue="520"
-                    icon="pi pi-dollar"
-                    iconColor="cyan"
-                    descriptionText="commandes">
-                </DashboardInfoCard>
+                {userRole !== 'Service' && (
+                    <DashboardInfoCard title="Coût" value={couts}
+                        descriptionValue="520"
+                        icon="pi pi-dollar"
+                        iconColor="cyan"
+                        descriptionText="commandes">
+                    </DashboardInfoCard>
+                )}
                 <DashboardInfoCard title="Périmés" value={articlePerime}
                     descriptionValue="85"
                     icon="pi pi-calendar-times"
@@ -196,6 +198,12 @@ const Dashboard = ({fournisseurs, articles, couts, commandeParMois, budgetTotalP
                             <AppDelivery />
                         </div>
                     </div>
+                ) : showStock ? (
+                    <div className="col-12 xl:col-12">
+                        <div className="card">
+                            <AppStock />
+                        </div>
+                    </div>
                 ) : (
 
                     <>
@@ -209,7 +217,7 @@ const Dashboard = ({fournisseurs, articles, couts, commandeParMois, budgetTotalP
                         <div className="col-12 xl:col-6">
                             <div className="card">
                                 <div className="flex justify-content-between align-items-center mb-5">
-                                    <h5>Top commandes { userRole }</h5>
+                                    <h5>Top commandes du type user : { userRole }</h5>
 
                                 </div>
                                 <ul className="list-none p-0 m-0">

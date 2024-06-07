@@ -47,4 +47,11 @@ class User extends Authenticatable
         'password' => 'hashed',
         'approved' => 'boolean',
     ];
+
+    public function site()
+    {
+        return $this->belongsTo(Site::class, 'site', 'site_id');
+    }
+
+
 }
