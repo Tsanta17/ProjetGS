@@ -134,7 +134,7 @@ const CrudTable = () => {
             <h5 className="mx-0 my-1">Articles</h5>
             <span className="p-input-icon-left">
                 <i className="pi pi-search" />
-                <InputText type="search" onInput={(e) => setGlobalFilter(e.target.value)} placeholder="Search..." />
+                <InputText type="search" onInput={(e) => setGlobalFilter(e.target.value)} placeholder="Rechercher..." />
             </span>
         </div>
     );
@@ -173,23 +173,22 @@ const CrudTable = () => {
         <div className="datatable-crud-demo">
             <Toast ref={toast} />
             <div className="card">
-                <h2>Liste Stock</h2>
+                <h4>Liste des stocks</h4>
                 <DataTable ref={dt} value={listeStock} selection={selectedArticles} onSelectionChange={(e) => setSelectedArticles(e.value)}
-                    dataKey="id" paginator rows={10} rowsPerPageOptions={[5, 10, 25]}
+                    dataKey="id" paginator rows={5} rowsPerPageOptions={[5, 10, 25]}
                     globalFilter={globalFilter} header={header} responsiveLayout="scroll">
-                    <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
                     <Column field="nom_article" header="Nom de l'article" sortable style={{ minWidth: '16rem' }}></Column>
                     <Column field="quantite" header="Quantité" sortable style={{ minWidth: '12rem' }}></Column>
                     <Column field="nom_site" header="Site" sortable style={{ minWidth: '16rem' }}></Column>
                     <Column field="date_peremption" header="Date de péremption" sortable style={{ minWidth: '16rem' }}></Column>
                     <Column body={actionBodyTemplate} key="action"></Column>
                 </DataTable>
-
-                <h2>Liste Stock Périmé</h2>
+            </div>
+            <div className="card">
+                <h4 className='text-red-500'>Liste des stocks Périmés</h4>
                 <DataTable ref={dt} value={listeStockPerime} selection={selectedArticles} onSelectionChange={(e) => setSelectedArticles(e.value)}
-                    dataKey="id" paginator rows={10} rowsPerPageOptions={[5, 10, 25]}
+                    dataKey="id" paginator rows={5} rowsPerPageOptions={[5, 10, 25]}
                     globalFilter={globalFilter} header={header} responsiveLayout="scroll">
-                    <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
                     <Column field="nom_article" header="Nom de l'article" sortable style={{ minWidth: '16rem' }}></Column>
                     <Column field="quantite" header="Quantité" sortable style={{ minWidth: '12rem' }}></Column>
                     <Column field="nom_site" header="Site" sortable style={{ minWidth: '16rem' }}></Column>
