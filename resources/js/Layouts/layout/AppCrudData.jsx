@@ -34,7 +34,7 @@ const AppCrudData = () => {
                 setArticles(response.data);
             })
             .catch(error => {
-                console.error("There was an error fetching the articles!", error);
+                console.error("Erreur de mis en liste des articles!", error);
             });
     }, []);
 
@@ -71,10 +71,10 @@ const AppCrudData = () => {
                         _articles[index] = response.data;
                         setArticles(_articles);
                         setArticleDialog(false);
-                        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Article Updated', life: 3000 });
+                        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Article modifié', life: 3000 });
                     })
                     .catch(error => {
-                        console.error("There was an error updating the article!", error);
+                        console.error("Erreur à l'ajout de l'article!!", error);
                     });
             } else {
                 // Créer un nouvel article
@@ -83,10 +83,10 @@ const AppCrudData = () => {
                         _articles.push(response.data);
                         setArticles(_articles);
                         setArticleDialog(false);
-                        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Article Created', life: 3000 });
+                        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Article crée', life: 3000 });
                     })
                     .catch(error => {
-                        console.error("There was an error creating the article!", error);
+                        console.error("Erreur à l'ajout de l'article!", error);
                     });
             }
         }
@@ -107,10 +107,10 @@ const AppCrudData = () => {
             .then(response => {
                 setArticles(articles.filter(a => a.id !== article.id));
                 setDeleteArticleDialog(false);
-                toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Article Deleted', life: 3000 });
+                toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Article supprimé', life: 3000 });
             })
             .catch(error => {
-                console.error("There was an error deleting the article!", error);
+                console.error("Erreur de suppression!", error);
             });
     }
 
@@ -120,10 +120,10 @@ const AppCrudData = () => {
                 setArticles(articles.filter(a => !selectedArticles.map(sa => sa.id).includes(a.id)));
                 setDeleteArticlesDialog(false);
                 setSelectedArticles([]);
-                toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Articles Deleted', life: 3000 });
+                toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Article supprimé', life: 3000 });
             })
             .catch(error => {
-                console.error("There was an error deleting the articles!", error);
+                console.error("Erreur de supression!", error);
             });
     }
 
@@ -132,37 +132,37 @@ const AppCrudData = () => {
             <h5 className="mx-0 my-1">Articles</h5>
             <span className="p-input-icon-left">
                 <i className="pi pi-search" />
-                <InputText type="search" onInput={(e) => setGlobalFilter(e.target.value)} placeholder="Search..." />
+                <InputText type="search" onInput={(e) => setGlobalFilter(e.target.value)} placeholder="Rechercher..." />
             </span>
         </div>
     );
 
     const articleDialogFooter = (
         <React.Fragment>
-            <Button label="Cancel" icon="pi pi-times" className="p-button-text" onClick={hideDialog} />
-            <Button label="Save" icon="pi pi-check" className="p-button-text" onClick={saveArticle} />
+            <Button label="Annuler" icon="pi pi-times" className="p-button-text" onClick={hideDialog} />
+            <Button label="Sauvegarder" icon="pi pi-check" className="p-button-text" onClick={saveArticle} />
         </React.Fragment>
     );
 
     const deleteArticleDialogFooter = (
         <React.Fragment>
-            <Button label="No" icon="pi pi-times" className="p-button-text" onClick={hideDeleteArticleDialog} />
-            <Button label="Yes" icon="pi pi-check" className="p-button-text" onClick={deleteArticle} />
+            <Button label="Non" icon="pi pi-times" className="p-button-text" onClick={hideDeleteArticleDialog} />
+            <Button label="Oui" icon="pi pi-check" className="p-button-text" onClick={deleteArticle} />
         </React.Fragment>
     );
 
     const deleteArticlesDialogFooter = (
         <React.Fragment>
-            <Button label="No" icon="pi pi-times" className="p-button-text" onClick={hideDeleteArticlesDialog} />
-            <Button label="Yes" icon="pi pi-check" className="p-button-text" onClick={deleteSelectedArticles} />
+            <Button label="Non" icon="pi pi-times" className="p-button-text" onClick={hideDeleteArticlesDialog} />
+            <Button label="Oui" icon="pi pi-check" className="p-button-text" onClick={deleteSelectedArticles} />
         </React.Fragment>
     );
 
     const actionBodyTemplate = (rowData) => {
         return (
             <React.Fragment>
-                <Button icon="pi pi-pencil" className="p-button-rounded p-button-success mr-2" onClick={() => editArticle(rowData)} />
-                <Button icon="pi pi-trash" className="p-button-rounded p-button-warning" onClick={() => confirmDeleteArticle(rowData)} />
+                
+                <Button icon="pi pi-trash" className="p-button-rounded p-button-danger" onClick={() => confirmDeleteArticle(rowData)} />
             </React.Fragment>
         );
     }
@@ -172,28 +172,26 @@ const AppCrudData = () => {
             <Toast ref={toast} />
             <div className="card">
                 <DataTable ref={dt} value={articles} selection={selectedArticles} onSelectionChange={(e) => setSelectedArticles(e.value)}
-                    dataKey="id" paginator rows={10} rowsPerPageOptions={[5, 10, 25]}
+                    dataKey="id" paginator rows={5} rowsPerPageOptions={[5, 10, 25]}
                     globalFilter={globalFilter} header={header} responsiveLayout="scroll">
-                    <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
                     <Column field="reference" header="Reference" sortable style={{ minWidth: '12rem' }}></Column>
                     <Column field="nom_article" header="Nom" sortable style={{ minWidth: '16rem' }}></Column>
                     <Column field="description" header="Description" sortable style={{ minWidth: '20rem' }}></Column>
                     <Column field="date_peremption" header="Date Peremption" sortable style={{ minWidth: '12rem' }}></Column>
-                    <Column field="statut" header="Statut" sortable style={{ minWidth: '12rem' }}></Column>
-                    <Column body={actionBodyTemplate}></Column>
+                    <Column header="Action" body={actionBodyTemplate}></Column>
                 </DataTable>
             </div>
 
             <Dialog visible={articleDialog} style={{ width: '450px' }} header="Article Details" modal className="p-fluid" footer={articleDialogFooter} onHide={hideDialog}>
-                {/* Input fields for article details */}
+                {/* Input du details article */}
             </Dialog>
 
             <Dialog visible={deleteArticleDialog} style={{ width: '450px' }} header="Confirm" modal footer={deleteArticleDialogFooter} onHide={hideDeleteArticleDialog}>
-                {/* Confirmation dialog content */}
+                {/* Confirmation dialog*/}
             </Dialog>
 
             <Dialog visible={deleteArticlesDialog} style={{ width: '450px' }} header="Confirm" modal footer={deleteArticlesDialogFooter} onHide={hideDeleteArticlesDialog}>
-                {/* Confirmation dialog content */}
+                {/* Confirmation dialog */}
             </Dialog>
         </div>
     );

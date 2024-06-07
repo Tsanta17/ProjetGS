@@ -44,7 +44,7 @@ const AppMenu = ({ userRole  }) => {
                         },
                         {
                             label: 'Liste',
-                            icon: 'pi pi-fw pi-file',
+                            icon: 'pi pi-fw pi-list',
                             command: () => handleMenuItemClick('userList'),
                         }
                     ]

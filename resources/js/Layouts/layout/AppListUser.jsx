@@ -48,7 +48,7 @@ export default function BasicDemo() {
         return (
             <span className="p-input-icon-left">
                 <i className="pi pi-search" />
-                <InputText type="search" value={value || ''} onChange={onGlobalFilterChange} placeholder="Global Search" />
+                <InputText type="search" value={value || ''} onChange={onGlobalFilterChange} placeholder="Rechercher..." />
             </span>
         );
     };

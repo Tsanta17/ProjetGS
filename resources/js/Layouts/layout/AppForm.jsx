@@ -38,7 +38,7 @@ const AppForm = () => {
     };
 
     const handleSubmit = async () => {
-        // Convert date to the correct format
+        // Conversion de date 
         const formattedDate = formData.expirationDate ? format(formData.expirationDate, 'yyyy-MM-dd') : null;
 
         const dataToSubmit = {
@@ -128,8 +128,8 @@ const AppForm = () => {
                     </div>
 
                     <div className="col-12">
-                        <Button label="Submit" icon="pi pi-check" onClick={handleSubmit} />
-                        <Button label="Cancel" icon="pi pi-times" className="p-button-secondary ml-2" onClick={handleReset} />
+                        <Button label="Enregistrer" icon="pi pi-check" className="mb-2" onClick={handleSubmit} />
+                        <Button label="Annuler" icon="pi pi-times" className="p-button-secondary" onClick={handleReset} />
                     </div>
                 </div>
                 {error && <p style={{ color: 'red' }}>{error}</p>}

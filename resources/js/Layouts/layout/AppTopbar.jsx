@@ -31,7 +31,7 @@ const AppTopbar = forwardRef((props, ref) => {
                 <i className="pi pi-bars" />
             </button>
 
-            <i className="pi pi-bell mr-4 p-text-secondary p-overlay-badge" style={{ fontSize: '2rem' }}><Badge value="2" ></Badge></i>
+            
 
             <button ref={topbarmenubuttonRef} type="button" className="p-link layout-topbar-menu-button layout-topbar-button" onClick={showProfileSidebar}>
                 <i className="pi pi-user" />
