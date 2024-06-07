@@ -7,9 +7,11 @@ import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import { InputNumber } from 'primereact/inputnumber';
 import { ToggleButton } from 'primereact/togglebutton';
+import { useUser } from '@/Layouts/layout/context/usercontext';
 import axios from 'axios';
 
-export default function AppCheckOrder() {
+export default function AppCheckOrder( {userRole} ) {
+
     // State variables
     const [source, setSource] = useState([]); 
     const [target, setTarget] = useState([]); 
@@ -86,19 +88,72 @@ export default function AppCheckOrder() {
     };
 
     // Fonction pour gérer le changement dans le PickList
-    const onChange = (event) => {
-        // Vérifie si des commandes validées sont tentées d'être déplacées vers la source
-        const invalidMove = event.source.some(item => target.some(targetItem => targetItem.commande_id === item.commande_id));
+    // const onChange = (event) => {
+    //     // Vérifie si des commandes sont tentées d'être déplacées directement de la source vers le target sans validation
+    //     const attemptedMoveToTarget = event.target.some(item => source.includes(item) && !sourceSelection.includes(item));
+    //     const attemptedMoveToSource = event.source.some(item => target.includes(item));
 
-        if (invalidMove) {
-            toast.current.show({ severity: 'warn', summary: 'Invalid Move', detail: 'Cannot move validated items back to pending list', life: 3000 });
+    //     if (attemptedMoveToTarget || attemptedMoveToSource) {
+    //         toast.current.show({ severity: 'warn', summary: 'Invalid Move', detail: 'You must use the "Move Selected" button to move items to the validated list', life: 3000 });
+    //         // Annule le déplacement en restaurant les états précédents de source et target
+    //         setSource(prevSource => [...prevSource]);
+    //         setTarget(prevTarget => [...prevTarget]);
+    //         return;
+    //     }
+
+    //     // Si le déplacement est valide, met à jour les sources et cibles
+    //     setSource(event.source);
+    //     setTarget(event.target);
+    // };
+
+    const onChange = (event) => {
+        // Vérifie si des commandes sont tentées d'être déplacées directement de la source vers le target sans validation
+        const attemptedMoveToTarget = event.target.some(item => source.includes(item) && !sourceSelection.includes(item));
+        const attemptedMoveToSource = event.source.some(item => target.includes(item));
+    
+        // Vérifie si l'utilisateur est un "Service"
+        const isService = userRole === 'Service';
+    
+        // Si l'utilisateur est un "Service" et qu'il tente de déplacer des articles du source vers le target
+        if (isService && attemptedMoveToTarget) {
+            // Afficher une alerte indiquant à l'utilisateur qu'il n'a pas l'autorisation
+            toast.current.show({ severity: 'warn', summary: 'Invalid Move', detail: 'Vous n\'avez pas l\'autorisation de déplacer des articles vers la liste validée.', life: 3000 });
+            // Annuler le déplacement en restaurant les états précédents de source et target
+            setSource(prevSource => [...prevSource]);
+            setTarget(prevTarget => [...prevTarget]);
             return;
         }
-
+    
+        if (attemptedMoveToTarget || attemptedMoveToSource) {
+            toast.current.show({ severity: 'warn', summary: 'Invalid Move', detail: 'You must use the "Move Selected" button to move items to the validated list', life: 3000 });
+            // Annule le déplacement en restaurant les états précédents de source et target
+            setSource(prevSource => [...prevSource]);
+            setTarget(prevTarget => [...prevTarget]);
+            return;
+        }
+    
         // Si le déplacement est valide, met à jour les sources et cibles
         setSource(event.source);
         setTarget(event.target);
     };
+    
+    // Fonction pour gérer le déplacement par sélection
+    // const moveSelected = () => {
+    //     // Vérifie si l'utilisateur est un "Service"
+    //     const isService = userRole === 'Service';
+    
+    //     // Si l'utilisateur est un "Service", affiche une alerte et retourne
+    //     if (isService) {
+    //         alert("Vous n'avez pas l'autorisation de déplacer des articles vers la liste validée.");
+    //         return;
+    //     }
+    
+    //     // Déplace les articles sélectionnés
+    //     setSource(prevSource => prevSource.filter(item => !sourceSelection.includes(item)));
+    //     setTarget(prevTarget => [...prevTarget, ...sourceSelection]);
+    //     setSourceSelection([]);
+    //     setShowDialog(false);
+    // };
 
     // Modèle d'élément pour le PickList
     const itemTemplate = (item, isSource) => {
@@ -114,6 +169,7 @@ export default function AppCheckOrder() {
         };
 
         const isSelected = sourceSelection.some(i => i.commande_id === item.commande_id);
+        const isService = userRole === 'Service';
 
         return (
             <div className="flex flex-wrap p-2 align-items-center gap-3">
@@ -129,7 +185,11 @@ export default function AppCheckOrder() {
                     <span className="font-bold text-900">${item.budget_disponible}</span>
                     <div className="flex align-items-center gap-2">
                         {isSource ? (
-                            <ToggleButton checked={isSelected} onChange={handleToggle} onLabel="Sélectionné" offLabel="Select" />
+                            userRole === 'Service' ? (
+                                <span className="text-900" style={{ fontSize: '1.2rem', color: 'red' }} disabled>En attente</span>
+                            ) : (
+                                <ToggleButton checked={isSelected} onChange={handleToggle} onLabel="Sélectionné" offLabel="Select" />
+                            )
                         ) : (
                             <i className="pi pi-check" style={{ fontSize: '1.5rem', color: 'green' }}></i>
                         )}
@@ -149,77 +209,78 @@ export default function AppCheckOrder() {
     const dialogFooter = (
         <React.Fragment>
             <Button label="Annuler" icon="pi pi-times" onClick={() => setShowDialog(false)} className="p-button-text" />
-            <Button label="Approuver" icon="pi pi-check" onClick={validateCommande} disabled={sourceSelection.length === 0 || !form.supplier || !form.quantity || !form.unitPrice} />
-        </React.Fragment>
-    );
+            <Button label="Approuver" icon="pi pi-check" onClick={validateCommande} disabled={sourceSelection.length === 0 || !form.supplier
+        || !form.quantity || !form.unitPrice} />
+                </React.Fragment>
+            );
 
-    return (
-        <>
-            <Toast ref={toast} />
-            <div className="card">
-                <PickList
-                    dataKey="commande_id"
-                    source={source}
-                    target={target}
-                    sourceSelection={sourceSelection}
-                    targetSelection={targetSelection}
-                    onSourceSelectionChange={(e) => setSourceSelection(e.value)}
-                    onTargetSelectionChange={(e) => setTargetSelection(e.value)}
-                    onChange={onChange}
-                    itemTemplate={(item) => itemTemplate(item, source.includes(item))}
-                    filter filterBy="nom_article"
-                    breakpoint="1280px"
-                    sourceHeader="En attente"
-                    targetHeader="Validée"
-                    sourceStyle={{ height: '24rem' }}
-                    targetStyle={{ height: '24rem' }}
-                    sourceFilterPlaceholder="Recherche par nom"
-                    targetFilterPlaceholder="Recherche par nom"
-                />
-                <Button
-                    label="Approuver"
-                    icon="pi pi-arrow-right"
-                    onClick={openDialog}
-                    disabled={sourceSelection.length === 0 || targetSelection.length > 0} // Désactiver si un article dans target est sélectionné
-                    className="p-button-success"
-                    style={{ marginTop: '1rem' }}
-                />
-            </div>
-
-            <Dialog visible={showDialog} style={{ width: '450px' }} header="Vérification des Détails" modal footer={dialogFooter} onHide={() => setShowDialog(false)}>
-                {commandeDetails && (
-                    <div className="p-fluid">
-                        <div className="field">
-                            <label>Nom du site</label>
-                            <InputText value={commandeDetailSite.nom_site} readOnly />
-                        </div>
-                        <div className="field">
-                            <label>Budget disponible</label>
-                            <InputText value={commandeDetails.budget_disponible} readOnly />
-                        </div>
-                        <div className="field">
-                            <label>Article</label>
-                            <InputText value={commandeDetailArticle.nom_article} readOnly />
-                        </div>
-                        <div className="field">
-                            <label>Référence de l'article</label>
-                            <InputText value={commandeDetails.reference_article} readOnly />
-                        </div>
-                        <div className="field">
-                            <label>Fournisseur</label>
-                            <Dropdown value={form.supplier} options={supplierList} onChange={handleFormChange} optionLabel="label" optionValue="value" placeholder="Select a Supplier" name="supplier" />
-                        </div>
-                        <div className="field">
-                            <label>Quantité</label>
-                            <InputText value={form.quantity} onChange={handleFormChange} name="quantity" />
-                        </div>
-                        <div className="field">
-                            <label>Prix Unitaire</label>
-                            <InputNumber value={form.unitPrice} onValueChange={(e) => setForm(prevForm => ({ ...prevForm, unitPrice: e.value }))} mode="currency" currency="USD" locale="en-US" name="unitPrice" />
-                        </div>
+            return (
+                <>
+                    <Toast ref={toast} />
+                    <div className="card">
+                        <PickList
+                            dataKey="commande_id"
+                            source={source}
+                            target={target}
+                            sourceSelection={sourceSelection}
+                            targetSelection={targetSelection}
+                            onSourceSelectionChange={(e) => setSourceSelection(e.value)}
+                            onTargetSelectionChange={(e) => setTargetSelection(e.value)}
+                            onChange={onChange}
+                            itemTemplate={(item) => itemTemplate(item, source.includes(item))}
+                            filter filterBy="nom_article"
+                            breakpoint="1280px"
+                            sourceHeader="En attente"
+                            targetHeader="Validée"
+                            sourceStyle={{ height: '24rem' }}
+                            targetStyle={{ height: '24rem' }}
+                            sourceFilterPlaceholder="Recherche par nom"
+                            targetFilterPlaceholder="Recherche par nom"
+                        />
+                        {userRole !== 'Service' && <Button
+                            label="Approuver"
+                            icon="pi pi-arrow-right"
+                            onClick={openDialog}
+                            disabled={sourceSelection.length === 0 || targetSelection.length > 0} // Désactiver si un article dans target est sélectionné
+                            className="p-button-success"
+                            style={{ marginTop: '1rem' }}
+                        />}
                     </div>
-                )}
-            </Dialog>
-        </>
-    );
+
+                    <Dialog visible={showDialog} style={{ width: '450px' }} header="Vérification des Détails" modal footer={dialogFooter} onHide={() => setShowDialog(false)}>
+                        {commandeDetails && (
+                            <div className="p-fluid">
+                                <div className="field">
+                                    <label>Nom du site</label>
+                                    <InputText value={commandeDetailSite.nom_site} readOnly />
+                                </div>
+                                <div className="field">
+                                    <label>Budget disponible</label>
+                                    <InputText value={commandeDetails.budget_disponible} readOnly />
+                                </div>
+                                <div className="field">
+                                    <label>Article</label>
+                                    <InputText value={commandeDetailArticle.nom_article} readOnly />
+                                </div>
+                                <div className="field">
+                                    <label>Référence de l'article</label>
+                                    <InputText value={commandeDetails.reference_article} readOnly />
+                                </div>
+                                <div className="field">
+                                    <label>Fournisseur</label>
+                                    <Dropdown value={form.supplier} options={supplierList} onChange={handleFormChange} optionLabel="label" optionValue="value" placeholder="Select a Supplier" name="supplier" />
+                                </div>
+                                <div className="field">
+                                    <label>Quantité</label>
+                                    <InputText value={form.quantity} onChange={handleFormChange} name="quantity" />
+                                </div>
+                                <div className="field">
+                                    <label>Prix Unitaire</label>
+                                    <InputNumber value={form.unitPrice} onValueChange={(e) => setForm(prevForm => ({ ...prevForm, unitPrice: e.value }))} mode="currency" currency="USD" locale="en-US" name="unitPrice" />
+                                </div>
+                            </div>
+                        )}
+                    </Dialog>
+                </>
+            );
 }

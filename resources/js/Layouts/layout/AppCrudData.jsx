@@ -7,7 +7,7 @@ import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { Toast } from 'primereact/toast';
 
-const AppCrudData = () => {
+const AppCrudData = ({ userRole }) => {
     const emptyArticle = {
         id: null,
         reference: '',
@@ -103,15 +103,16 @@ const AppCrudData = () => {
     }
 
     const deleteArticle = () => {
-        axios.delete(`/articles/${article.id}`)
+        axios.get(`/destroyArticle/${article.article_id}`)
             .then(response => {
-                setArticles(articles.filter(a => a.id !== article.id));
+                setArticles(articles.filter(a => a.article_id !== article.article_id));
                 setDeleteArticleDialog(false);
                 toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Article supprimé', life: 3000 });
             })
             .catch(error => {
                 console.error("Erreur de suppression!", error);
             });
+            console.log(article);
     }
 
     const deleteSelectedArticles = () => {
@@ -162,7 +163,7 @@ const AppCrudData = () => {
         return (
             <React.Fragment>
                 
-                <Button icon="pi pi-trash" className="p-button-rounded p-button-danger" onClick={() => confirmDeleteArticle(rowData)} />
+                { userRole !== 'Service' && <Button icon="pi pi-trash" className="p-button-rounded p-button-danger" onClick={() => confirmDeleteArticle(rowData)} />}
             </React.Fragment>
         );
     }

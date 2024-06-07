@@ -14,7 +14,7 @@ import { LayoutContext } from "./context/layoutcontext";
 import { PrimeReactContext } from "primereact/api";
 // import { usePathname, useSearchParams } from "next/navigation";
 
-const Layout = ({ children }) => {
+const Layout = ({ children, userRole }) => {
     const { layoutConfig, layoutState, setLayoutState } = useContext(LayoutContext);
     const { setRipple } = useContext(PrimeReactContext);
     const topbarRef = useRef(null);
@@ -144,7 +144,7 @@ const Layout = ({ children }) => {
             <div className={containerClass}>
                 <AppTopbar ref={topbarRef} />
                 <div ref={sidebarRef} className="layout-sidebar">
-                    <AppSidebar />
+                    <AppSidebar userRole={userRole}/>
                 </div>
                 <div className="layout-main-container">
                     <div className="layout-main">{children}</div>

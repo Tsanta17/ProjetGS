@@ -6,7 +6,7 @@ import { MenuProvider } from './context/menucontext';
 import { Link } from "@inertiajs/react";
 import usePageState from './UsePageState'; // Import du hook personnalisé
 
-const AppMenu = () => {
+const AppMenu = ({ userRole  }) => {
     const { layoutConfig, setShowForm, setDataTable, setShowInsertCommmand, setPicklistOrder, setShowSupplier, setShowHisto, setShowUserList, setShowDelivery, setShowStock } = useContext(LayoutContext);
     const { currentPage, setPage } = usePageState(); // Utilisation du hook
 
@@ -36,6 +36,7 @@ const AppMenu = () => {
                 {
                     label: 'Utilisateur',
                     icon: 'pi pi-user',
+                    visible: userRole == 'Admin',
                     items: [
                         {
                             label: 'New',
@@ -57,7 +58,8 @@ const AppMenu = () => {
                             label: 'Ajout d\'articles',
                             icon: 'pi pi-fw pi-plus',
                             to: route('article.page'),
-                            command: () => handleMenuItemClick('form')
+                            command: () => handleMenuItemClick('form'),
+                            visible: userRole !== 'Service'
                         },
                         {
                             label: 'Liste',
@@ -92,6 +94,7 @@ const AppMenu = () => {
                     label: 'Fournisseur',
                     icon: 'pi pi-fw pi-arrow-right-arrow-left',
                     command: () => handleMenuItemClick('supplierForm'),
+                    visible: userRole !== 'Service'
                 },
                 {
                     label: 'Stock',
@@ -102,6 +105,7 @@ const AppMenu = () => {
                     label: 'Historique',
                     icon: 'pi pi-fw pi-history',
                     command: () => handleMenuItemClick('historic'),
+                    visible: userRole == 'Admin' 
                 }
             ]
         },
@@ -111,8 +115,23 @@ const AppMenu = () => {
         <MenuProvider>
             <ul className="layout-menu">
                 {model.map((item, i) => {
+                        if (!item?.separator) {
+                            return (
+                                <AppMenuitem
+                                    item={item}
+                                    root={true}
+                                    index={i}
+                                    key={item.label}
+                                    visible={item.visible !== false} // Check visibility
+                                />
+                            );
+                        } else {
+                            return <li className="menu-separator" key={i}></li>;
+                        }
+                    })}
+                {/* {model.map((item, i) => {
                     return !item?.seperator ? <AppMenuitem item={item} root={true} index={i} key={item.label} /> : <li className="menu-separator"></li>;
-                })}
+                })} */}
             </ul>
         </MenuProvider>
     );

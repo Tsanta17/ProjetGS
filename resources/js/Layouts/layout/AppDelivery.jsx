@@ -7,7 +7,7 @@ import { Calendar } from 'primereact/calendar';
 import { ToggleButton } from 'primereact/togglebutton';
 import axios from 'axios';
 
-export default function AppManageDelivery() {
+export default function AppManageDelivery({ userRole }) {
     // State variables
     const [source, setSource] = useState([]); // Articles en attente de livraison
     const [target, setTarget] = useState([]); // Articles livrés
@@ -16,6 +16,8 @@ export default function AppManageDelivery() {
     const [form, setForm] = useState({ expiryDate: null }); // Formulaire avec date de péremption
     const [showDialog, setShowDialog] = useState(false); // Affichage du dialogue
     const toast = useRef(null); // Référence pour le composant Toast
+
+    const isService = userRole === 'Service';
 
     // Effect hook pour récupérer les données lors du montage du composant
     useEffect(() => {
@@ -103,6 +105,9 @@ export default function AppManageDelivery() {
                     <div className="flex align-items-center gap-2">
                         <span>{item.quantite}</span>
                         {isSource ? (
+                            isService ? (
+                                <span className="text-900" style={{ fontSize: '1.2rem', color: 'green' }} disabled>Non livré</span>
+                            ) : (
                             <ToggleButton
                                 checked={sourceSelection.some(i => i.livraison_id === item.livraison_id)}
                                 onChange={(e) => {
@@ -115,7 +120,7 @@ export default function AppManageDelivery() {
                                 }}
                                 onLabel="Sélectionné" offLabel="Select"
                             />
-                        ) : (
+                        ) ) : (
                             <span>{new Date(item.date_livraison).toLocaleDateString('fr-FR')} <i className="pi pi-check" style={{ fontSize: '1.5rem', color: 'green' }}></i></span>
                         )}
                     </div>
@@ -161,14 +166,14 @@ export default function AppManageDelivery() {
                     sourceFilterPlaceholder="Search by name"
                     targetFilterPlaceholder="Search by name"
                 />
-                <Button
+                {userRole !== 'Service' && <Button
                     label="Move Selected"
                     icon="pi pi-arrow-right"
                     onClick={openDialog}
                     disabled={sourceSelection.length === 0 || targetSelection.length > 0} // Désactiver si un article dans target est sélectionné
                     className="p-button-success"
                     style={{ marginTop: '1rem' }}
-                />
+                />}
             </div>
 
             <Dialog visible={showDialog} style={{ width: '450px' }} header="Validation des Détails" modal footer={dialogFooter} onHide={() => setShowDialog(false)}>

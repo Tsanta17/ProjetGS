@@ -118,7 +118,7 @@ const Dashboard = ({ fournisseurs, articles, couts, commandeParMois, budgetTotal
     };
 
     return (
-        <Layout>
+        <Layout userRole={userRole}>
             <div className="grid">
                 <DashboardInfoCard title="Fournisseurs"
                     value={fournisseurs}
@@ -159,7 +159,7 @@ const Dashboard = ({ fournisseurs, articles, couts, commandeParMois, budgetTotal
                 ) : DataTable ? (
                     <div className="col-12 xl:col-12">
                         <div className="card">
-                            <AppCrudData />
+                            <AppCrudData userRole={userRole}/>
                         </div>
                     </div>
                 ) : showInsertCommmand ? (
@@ -171,7 +171,7 @@ const Dashboard = ({ fournisseurs, articles, couts, commandeParMois, budgetTotal
                 ) : picklistOrder ? (
                     <div className="col-12 xl:col-12">
                         <div className="card">
-                            <AppCheckOrder />
+                            <AppCheckOrder userRole={userRole} />
                         </div>
                     </div>
                 ) : showSupplier ? (
@@ -195,13 +195,13 @@ const Dashboard = ({ fournisseurs, articles, couts, commandeParMois, budgetTotal
                 ) : showDelivery ? (
                     <div className="col-12 xl:col-12">
                         <div className="card">
-                            <AppDelivery />
+                            <AppDelivery userRole={userRole}/>
                         </div>
                     </div>
                 ) : showStock ? (
                     <div className="col-12 xl:col-12">
                         <div className="card">
-                            <AppStock />
+                            <AppStock userRole={userRole}/>
                         </div>
                     </div>
                 ) : (
