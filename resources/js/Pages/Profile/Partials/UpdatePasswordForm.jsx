@@ -37,16 +37,16 @@ export default function UpdatePasswordForm({ className = '' }) {
     return (
         <div className="card">
             <header>
-                <h2>Update Password</h2>
+                <h2>Modifier mot de passe</h2>
 
                 <p className="mt-1 text-sm text-gray-600">
-                    Ensure your account is using a long, random password to stay secure.
+                    Utilisation d'un mot de passe long peut vous sécuriser.
                 </p>
             </header>
 
             <form onSubmit={updatePassword} className="mt-6 space-y-6">
                 <div>
-                    <label htmlFor="current_password" className="block text-sm font-medium text-gray-700">Current Password</label>
+                    <label htmlFor="current_password" className="block text-sm font-medium text-gray-700">Mot de passe Actuel</label>
                     <InputText
                         id="current_password"
                         ref={currentPasswordInput}
@@ -60,7 +60,7 @@ export default function UpdatePasswordForm({ className = '' }) {
                 </div>
 
                 <div>
-                    <label htmlFor="password" className="block text-sm font-medium text-gray-700">New Password</label>
+                    <label htmlFor="password" className="block text-sm font-medium text-gray-700">Nouveau mot de passe</label>
                     <InputText
                         id="password"
                         ref={passwordInput}
@@ -74,7 +74,7 @@ export default function UpdatePasswordForm({ className = '' }) {
                 </div>
 
                 <div>
-                    <label htmlFor="password_confirmation" className="block text-sm font-medium text-gray-700">Confirm Password</label>
+                    <label htmlFor="password_confirmation" className="block text-sm font-medium text-gray-700">Confirmation Mot de passe</label>
                     <InputText
                         id="password_confirmation"
                         value={data.password_confirmation}
@@ -87,8 +87,8 @@ export default function UpdatePasswordForm({ className = '' }) {
                 </div>
 
                 <div className="flex items-center gap-4">
-                    <Button type="submit" disabled={processing} label="Save" className="w-32" />
-                    {recentlySuccessful && <p className="text-sm text-gray-600">Saved.</p>}
+                    <Button type="submit" disabled={processing} label="Sauvegarder" className="w-32" />
+                    {recentlySuccessful && <p className="text-sm text-gray-600">Sauvegardé</p>}
                 </div>
             </form>
         </div>
