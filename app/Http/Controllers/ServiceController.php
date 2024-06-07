@@ -25,6 +25,7 @@ class ServiceController extends Controller
     public function getCommandesList()
     {
         $user = auth()->user();
+
         $listeCommandes = Commande::with('article', 'site')
             ->where('site_id', $user->site)
             ->get()

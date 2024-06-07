@@ -32,8 +32,8 @@ const CrudTable = () => {
         axios.get('/stockAffichage')
             .then(response => {
                 setListeStock(response.data.listeStock);
-                console.log(response.data.listeStock);
                 setListeStockPerime(response.data.listeStockPerime);
+                console.log(response.data.listeStockPerime);
             })
             .catch(error => {
                 console.error("There was an error fetching the articles!", error);
@@ -44,20 +44,20 @@ const CrudTable = () => {
         setArticle(emptyArticle);
         setSubmitted(false);
         setArticleDialog(true);
-    }
+    };
 
     const hideDialog = () => {
         setSubmitted(false);
         setArticleDialog(false);
-    }
+    };
 
     const hideDeleteArticleDialog = () => {
         setDeleteArticleDialog(false);
-    }
+    };
 
     const hideDeleteArticlesDialog = () => {
         setDeleteArticlesDialog(false);
-    }
+    };
 
     const saveArticle = () => {
         setSubmitted(true);
@@ -92,29 +92,31 @@ const CrudTable = () => {
                     });
             }
         }
-    }
+    };
 
     const editArticle = (article) => {
         setArticle({...article});
         setArticleDialog(true);
-    }
+    };
 
     const confirmDeleteArticle = (article) => {
         setArticle(article);
         setDeleteArticleDialog(true);
-    }
+    };
 
     const deleteArticle = () => {
-        axios.delete(`/articles/${article.id}`)
+        axios.get(`/stockperime/delete/${article.stock_id}`)
             .then(response => {
-                setListeStock(listeStock.filter(a => a.id !== article.id));
+                setListeStockPerime(listeStockPerime.filter(a => a.stock_id !== article.stock_id));
                 setDeleteArticleDialog(false);
+                setArticle(emptyArticle);
                 toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Article Deleted', life: 3000 });
             })
             .catch(error => {
                 console.error("There was an error deleting the article!", error);
             });
-    }
+            console.log(article);
+    };
 
     const deleteSelectedArticles = () => {
         axios.delete('/articles', { data: { ids: selectedArticles.map(a => a.id) } })
@@ -127,7 +129,7 @@ const CrudTable = () => {
             .catch(error => {
                 console.error("There was an error deleting the articles!", error);
             });
-    }
+    };
 
     const header = (
         <div className="table-header">
@@ -167,7 +169,7 @@ const CrudTable = () => {
                 <Button icon="pi pi-trash" className="p-button-rounded p-button-warning" onClick={() => confirmDeleteArticle(rowData)} />
             </React.Fragment>
         );
-    }
+    };
 
     return (
         <div className="datatable-crud-demo">
@@ -178,7 +180,7 @@ const CrudTable = () => {
                     dataKey="id" paginator rows={10} rowsPerPageOptions={[5, 10, 25]}
                     globalFilter={globalFilter} header={header} responsiveLayout="scroll">
                     <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
-                    <Column field="nom_article" header="Nom de l'article" sortable style={{ minWidth: '16rem' }}></Column>
+                    <Column field="nom_article" header="Nom de l'article" sortable style={{ minWidth: '16rem' }}></Column>            
                     <Column field="quantite" header="Quantité" sortable style={{ minWidth: '12rem' }}></Column>
                     <Column field="nom_site" header="Site" sortable style={{ minWidth: '16rem' }}></Column>
                     <Column field="date_peremption" header="Date de péremption" sortable style={{ minWidth: '16rem' }}></Column>
@@ -203,14 +205,20 @@ const CrudTable = () => {
             </Dialog>
 
             <Dialog visible={deleteArticleDialog} style={{ width: '450px' }} header="Confirm" modal footer={deleteArticleDialogFooter} onHide={hideDeleteArticleDialog}>
-                {/* Confirmation dialog content */}
+                <div className="confirmation-content">
+                    <i className="pi pi-exclamation-triangle p-mr-3" style={{ fontSize: '2rem'}} />
+                    {article && <span>Êtes-vous sûr de vouloir supprimer <b>{article.nom_article}</b>?</span>}
+                </div>
             </Dialog>
 
             <Dialog visible={deleteArticlesDialog} style={{ width: '450px' }} header="Confirm" modal footer={deleteArticlesDialogFooter} onHide={hideDeleteArticlesDialog}>
-                {/* Confirmation dialog content */}
+                <div className="confirmation-content">
+                    <i className="pi pi-exclamation-triangle p-mr-3" style={{ fontSize: '2rem'}} />
+                    {selectedArticles && <span>Êtes-vous sûr de vouloir supprimer les articles sélectionnés?</span>}
+                </div>
             </Dialog>
         </div>
     );
-}
+};
 
 export default CrudTable;
