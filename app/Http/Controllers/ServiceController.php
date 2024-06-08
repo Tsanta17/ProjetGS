@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Services\HistoryService;
 
 
 class ServiceController extends Controller
@@ -21,6 +22,13 @@ class ServiceController extends Controller
     //     $listeCommandes = commande::all();
     //     return response()->json($listeCommandes);
     // }
+
+    protected $historyService;
+
+    public function __construct(HistoryService $historyService)
+    {
+        $this->historyService = $historyService;
+    }
 
     public function getCommandesList()
     {
@@ -62,69 +70,66 @@ class ServiceController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    // public function store(Request $request)
-    // {
-    //     $validatedData = $request->validate([
-    //         'nom_article' => 'required|string|max:255',
-    //         'description' => 'nullable|string',
-    //         'reference' => 'required|string|max:255|unique:articles,reference',
-    //         'date_commande' => 'required|date',
-    //         'budget_disponible' => 'required|numeric',
-    //     ]);
-
-    //     $user = Auth::user();
-    //     $siteId = $user->site;
-
-    //     $statut = 'En attente';
-
-    //     // Créer et sauvegarder l'article en premier
-    //     $article = new Article();
-    //     $article->nom_article = $validatedData['nom_article'];
-    //     $article->description = $validatedData['description'];
-    //     $article->reference = $validatedData['reference'];
-    //     $article->site_id = $siteId;
-    //     $article->save();
-
-    //     // Ensuite, créer et sauvegarder la commande
-    //     $commande = new Commande();
-    //     $commande->site_id = $siteId;
-    //     $commande->date_commande = $validatedData['date_commande'];
-    //     $commande->reference_article = $article->reference; // Utiliser la référence de l'article créé
-    //     $commande->statut = $statut;
-    //     $commande->user_id = $user->id;
-    //     $commande->budget_disponible = $validatedData['budget_disponible'];
-    //     $commande->save();
-
-    //     return redirect()->back()->with('success', 'Commande effectuée avec succès');
-    // }
-
     public function store(Request $request)
-{
-    $user = Auth::user();
-    $siteId = $user->site;
+    {
+        $user = Auth::user();
+        $siteId = $user->site;
+        $statut = 'En attente';
 
-    $statut = 'En attente';
+        // Créer et sauvegarder l'article en premier
+        $article = new Article();
+        $article->nom_article = $request->nom_article;
+        $article->description = $request->description;
+        $article->reference = $request->reference;
+        $article->site_id = $siteId;
+        $article->save();
 
-    // Créer et sauvegarder l'article en premier
-    $article = new Article();
-    $article->nom_article = $request->nom_article;
-    $article->description = $request->description;
-    $article->reference = $request->reference;
-    $article->site_id = $siteId;
-    $article->save();
+        // Ensuite, créer et sauvegarder la commande
+        $commande = new Commande();
+        $commande->site_id = $siteId;
+        $commande->date_commande = $request->date_commande;
+        $commande->reference_article = $article->reference; // Utiliser la référence de l'article créé
+        $commande->statut = $statut;
+        $commande->user_id = $user->id;
+        $commande->budget_disponible = $request->budget_disponible;
+        $commande->save();
 
-    // Ensuite, créer et sauvegarder la commande
-    $commande = new Commande();
-    $commande->site_id = $siteId;
-    $commande->date_commande = $request->date_commande;
-    $commande->reference_article = $article->reference; // Utiliser la référence de l'article créé
-    $commande->statut = $statut;
-    $commande->user_id = $user->id;
-    $commande->budget_disponible = $request->budget_disponible;
-    $commande->save();
+        // Enregistrer l'action dans l'historique
+        $this->historyService->logAction('Insertion', 'Commande d\'un article', $article->article_id);
 
-    return redirect()->back()->with('success', 'Commande effectuée avec succès');
-}
+        return redirect()->back()->with('success', 'Commande effectuée avec succès');
+    }
+
+//     public function store(Request $request)
+// {
+//     $user = Auth::user();
+//     $siteId = $user->site;
+
+//     $statut = 'En attente';
+
+//     // Créer et sauvegarder l'article en premier
+//     $article = new Article();
+//     $article->nom_article = $request->nom_article;
+//     $article->description = $request->description;
+//     $article->reference = $request->reference;
+//     $article->site_id = $siteId;
+//     $article->save();
+
+//     // Ensuite, créer et sauvegarder la commande
+//     $commande = new Commande();
+//     $commande->site_id = $siteId;
+//     $commande->date_commande = $request->date_commande;
+//     $commande->reference_article = $article->reference; // Utiliser la référence de l'article créé
+//     $commande->statut = $statut;
+//     $commande->user_id = $user->id;
+//     $commande->budget_disponible = $request->budget_disponible;
+//     $commande->save();
+
+//     // Enregistrer l'action dans l'historique
+//     $this->historyService->logAction('Action effectuée', 'Commande d\'une article', $article_id);
+
+//     return redirect()->back()->with('success', 'Commande effectuée avec succès');
+// }
 
 
 
@@ -297,6 +302,7 @@ class ServiceController extends Controller
                 ->where('site_id', $user->site)
                 //->where('departement', '!=', $user->departement) 
                 ->get();
+
             
             return response()->json(['stocks' => $listeStockParSite]);
         }

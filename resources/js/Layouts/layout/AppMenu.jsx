@@ -97,13 +97,13 @@ const AppMenu = ({ userRole  }) => {
                     icon: 'pi pi-fw pi-arrows-h',
                     items: [
                         {
-                            label: 'ajouter',
+                            label: 'Demande affectation',
                             icon: 'pi pi-fw pi-arrows-h',
                             command: () => handleMenuItemClick('affectation'),
                         },
                         {
-                            label: 'Liste',
-                            icon: 'pi pi-fw pi-arrows-h',
+                            label: 'Liste & Validation',
+                            icon: 'pi pi-fw pi-list',
                             command: () => handleMenuItemClick('listAffectation'),
                         }
                     ]

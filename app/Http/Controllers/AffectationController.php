@@ -7,24 +7,23 @@ use App\Models\Article;
 use App\Models\Stock;
 use App\Models\User;
 use App\Models\Site;
+use App\Services\HistoryService;
 use Illuminate\Http\Request;
 use Picqer\Barcode\BarcodeGeneratorPNG;
 use Picqer\Barcode\BarcodeGeneratorHTML;
 
 class AffectationController extends Controller
 {
+
+    protected $historyService;
+
+    public function __construct(HistoryService $historyService)
+    {
+        $this->historyService = $historyService;
+    }
+
     //filtrer les affectations en attente par site, , 'article','stock', 'user'
-    // public function listeAffectation(){
-    //     $user = auth()->user();
-    //     $affectationEnAttente = Affectation::with('site', 'article', 'user', 'stock')
-    //         ->where('site_id', $user->site)
-    //         ->where('statut', 'en_attente')
-    //         ->get();
-    //         return view('AffectationEnAttente', [
-    //             'user' => $user,
-    //             'affectationEnAttente' => $affectationEnAttente
-    //         ]);
-    // }
+   
     public function listeAffectation()
     {
         $user = auth()->user();
@@ -110,5 +109,11 @@ class AffectationController extends Controller
                     'statut' => 'en_attente',
                     'stock_id' => $stock->stock_id
             ]);
+
+            $article = Article::findOrFail($stock->article->article_id);
+
+        // Enregistrer l'action dans l'historique
+        $this->historyService->logAction('Demande d\'Affectation', 'Envoyer une demande d\'affectation de Stock', $article->article_id);
+
         }
 }

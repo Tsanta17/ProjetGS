@@ -7,12 +7,21 @@ use App\Models\CommandeLigne;
 use App\Models\Fournisseur;
 use App\Models\Livraison;
 use App\Models\User;
+use App\Services\HistoryService;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
 class CommandeController extends Controller
 {
+
+    protected $historyService;
+
+    public function __construct(HistoryService $historyService)
+    {
+        $this->historyService = $historyService;
+    }
+
     //liste des commandes pour le manager d'un site
     public function commandeParSite(){
 
@@ -52,50 +61,53 @@ class CommandeController extends Controller
     //validation d'une commande
 
     public function validateCommande($commande, Request $request)
-{
-    // Validation des champs supplémentaires
-    $request->validate([
-        'prix_unitaire' => 'required|numeric',
-        'quantite' => 'required|numeric',
-        'fournisseur' => 'required|exists:fournisseurs,fournisseur_id'
-    ]);
+    {
+        // Validation des champs supplémentaires
+        $request->validate([
+            'prix_unitaire' => 'required|numeric',
+            'quantite' => 'required|numeric',
+            'fournisseur' => 'required|exists:fournisseurs,fournisseur_id'
+        ]);
 
-    // Récupérer la commande
-    $commande = Commande::findOrFail($commande);
+        // Récupérer la commande
+        $commande = Commande::findOrFail($commande);
 
-    // Mettre à jour le champ statut de la commande
-    $commande->statut = "validee";
-    $commande->save();
+        // Mettre à jour le champ statut de la commande
+        $commande->statut = "validee";
+        $commande->save();
 
-    // Mettre à jour le champ fournisseur_id de l'article
-    $article = $commande->article;
-    $article->fournisseur_id = $request->input('fournisseur');
-    $article->save();
+        // Mettre à jour le champ fournisseur_id de l'article
+        $article = $commande->article;
+        $article->fournisseur_id = $request->input('fournisseur');
+        $article->save();
 
-    // Ajouter le prix et la quantité à la ligne de commande
-    CommandeLigne::create([
-        'commande_id' => $commande->commande_id,
-        'article_id' => $commande->article->article_id,
-        'quantite' => $request->quantite,
-        'prix_unitaire' => $request->prix_unitaire,
-        'statut' => "ok"
-    ]);
+        // Ajouter le prix et la quantité à la ligne de commande
+        CommandeLigne::create([
+            'commande_id' => $commande->commande_id,
+            'article_id' => $commande->article->article_id,
+            'quantite' => $request->quantite,
+            'prix_unitaire' => $request->prix_unitaire,
+            'statut' => "ok"
+        ]);
 
-    // Récupérer le fournisseur
-    $fournisseur = Fournisseur::findOrFail($request->input('fournisseur'));
+        // Récupérer le fournisseur
+        $fournisseur = Fournisseur::findOrFail($request->input('fournisseur'));
 
-    // Ajout de la table livraison
-    Livraison::create([
-        'commande_id' => $commande->commande_id,
-        'nomFournisseur' => $fournisseur->nom_fournisseur,
-        'site_id' => $commande->site_id,
-        'quantite' => $request->quantite,
-    ]);
+        // Ajout de la table livraison
+        Livraison::create([
+            'commande_id' => $commande->commande_id,
+            'nomFournisseur' => $fournisseur->nom_fournisseur,
+            'site_id' => $commande->site_id,
+            'quantite' => $request->quantite,
+        ]);
 
-    return view('commandeEnAttente', [
-        'commande' => $commande
-    ]);
-}
+        // Enregistrer l'action dans l'historique
+        $this->historyService->logAction('Approbation Commande', 'Validation d\'une commande', $article->article_id);
+
+        return view('commandeEnAttente', [
+            'commande' => $commande
+        ]);
+    }
 
 
     // public function validateCommande($commande, Request $request){

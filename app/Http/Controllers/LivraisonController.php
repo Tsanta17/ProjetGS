@@ -9,6 +9,7 @@ use App\Models\Article;
 use App\Models\Commande;
 use App\Models\User;
 use App\Models\Stock;
+use App\Services\HistoryService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -18,50 +19,13 @@ use Picqer\Barcode\BarcodeGeneratorHTML;
 
 class LivraisonController extends Controller
 {
-    //lister livraison en attente et valider
-    // public function listeLivraison()
-    // {
-    //     //liste livraison en attente = commande validée
+   
+    protected $historyService;
 
-    //     $user = Auth::user();
-    //     $userid=$user->id;  
-    //     echo $userid;
-    //     $listeLivraisonAttente = DB::select
-    //     ('
-    //     SELECT
-    //     l.livraison_id,l.quantite,l.nomFournisseur,a.nom_article,s.nom_site
-    //     FROM livraisons l
-    //     JOIN commandes c ON l.commande_id = c.commande_id
-    //     JOIN users u ON c.user_id = u.id
-    //     JOIN sites s ON u.site = s.site_id AND l.site_id = s.site_id
-    //     JOIN articles a ON a.reference = c.reference_article 
-    //     WHERE (u.id = ?) AND (l.date_livraison IS NULL)
-    //     ORDER BY l.livraison_id;
-    //     ',[$userid]);
-
-
-    //     //liste livraison valider chaque site
-
-    //     $listeLivraisonValider = DB::select
-    //     ('
-    //     SELECT
-    //     l.livraison_id,l.quantite,l.nomFournisseur,a.nom_article,s.nom_site
-    //     FROM livraisons l 
-    //     JOIN commandes c ON l.commande_id = c.commande_id
-    //     JOIN users u ON c.user_id = u.id
-    //     JOIN sites s ON u.site = s.site_id AND l.site_id = s.site_id
-    //     JOIN articles a ON a.reference = c.reference_article 
-    //     WHERE u.id = :userid AND (l.date_livraison IS NOT NULL)
-    //     ORDER BY l.livraison_id;
-    //     ',['userid'=> $user->id]);
-    //     //return view('bonLivraison', compact('listeLivraisonAttente','listeLivraisonValider'));
-
-    //     return response()->json([
-    //         'listeLivraisonAttente' => $listeLivraisonAttente,
-    //         'listeLivraisonValider' => $listeLivraisonValider,
-    //     ]);
-        
-    // }
+    public function __construct(HistoryService $historyService)
+    {
+        $this->historyService = $historyService;
+    }
 
     // Fonction dans le contrôleur
 public function listeLivraison()
@@ -178,6 +142,9 @@ public function listeLivraison()
         //update date de livraison pour valider la livraison
         $livraison->date_livraison = Carbon::now();
         $livraison->save();
+
+        // Enregistrer l'action dans l'historique
+        $this->historyService->logAction('Approbation Livraison', 'L\'article à été livré', $article->article_id);
 
         return redirect('livraison');
     }

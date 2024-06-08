@@ -20,10 +20,10 @@ const AppAffectation = () => {
     const toast = React.useRef(null);
 
     useEffect(() => {
-        axios.get('/stock')
+        axios.get('/stockAffectation')
             .then(response => {
                 setStocks(response.data.stocks);
-                console.log(response.data);
+                console.log(response.data.stocks);
                 setLoading(false);
             })
             .catch(error => {

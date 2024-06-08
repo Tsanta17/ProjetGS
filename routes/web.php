@@ -6,6 +6,7 @@ use App\Http\Controllers\CommandeController;
 use App\Http\Controllers\FournisseurController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\LivraisonController;
@@ -107,7 +108,7 @@ Route::middleware('auth')->group(function () {
     //stocks
     $listeStock = (Auth::check() && Auth::user()->role == 'Admin') ? 'listeStockAdmin' : 'listeStock';
     Route::get('/stockAffichage', [StockController::class, $listeStock]);
-    Route::get('/stock', [ServiceController::class, 'listeStockParSite'])->name('stock.liste');
+    Route::get('/stockAffectation', [ServiceController::class, 'listeStockParSite'])->name('stock.liste');
     Route::get('/stock/{stock}/show', [StockController::class, 'show'])->name('stock.show');
     Route::get('/stock', [StockController::class, 'listeStock']);
     Route::get('/stockperime', [StockController::class, 'listeStockPerime']);
@@ -126,7 +127,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/livraison/update/{livraison_id}', [LivraisonController::class, 'update'])->name('livraison.update');
     
     // afficher historique
-    Route::get('/historiqueDetail/{article_id}',[HistoriqueArticleController::class, 'getDetails'])->name('article.details');
+    Route::get('/historique', [HistoryController::class, 'index'])->name('historique.index');
+    //Route::get('/historiqueDetail/{article_id}',[HistoriqueArticleController::class, 'getDetails'])->name('article.details');
 
     
     // Route::get('/Livrer', [LivraisonController::class, 'listeLivraison']);
