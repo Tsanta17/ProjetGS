@@ -125,7 +125,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/livraison', [LivraisonController::class, $listeLivraison]);
     Route::post('/livraison/update/{livraison_id}', [LivraisonController::class, 'update'])->name('livraison.update');
     
-    
+    // afficher historique
+    Route::get('/historiqueDetail/{article_id}',[HistoriqueArticleController::class, 'getDetails'])->name('article.details');
+
     
     // Route::get('/Livrer', [LivraisonController::class, 'listeLivraison']);
     // Route::get('/adminLivraison', [LivraisonController::class, 'listeLivraisonAdministrateur']);

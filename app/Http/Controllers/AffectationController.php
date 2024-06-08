@@ -5,22 +5,41 @@ namespace App\Http\Controllers;
 use App\Models\Affectation;
 use App\Models\Article;
 use App\Models\Stock;
+use App\Models\User;
+use App\Models\Site;
 use Illuminate\Http\Request;
+use Picqer\Barcode\BarcodeGeneratorPNG;
+use Picqer\Barcode\BarcodeGeneratorHTML;
 
 class AffectationController extends Controller
 {
-    //filtrer les affectations en attente par site
-    public function listeAffectation(){
+    //filtrer les affectations en attente par site, , 'article','stock', 'user'
+    // public function listeAffectation(){
+    //     $user = auth()->user();
+    //     $affectationEnAttente = Affectation::with('site', 'article', 'user', 'stock')
+    //         ->where('site_id', $user->site)
+    //         ->where('statut', 'en_attente')
+    //         ->get();
+    //         return view('AffectationEnAttente', [
+    //             'user' => $user,
+    //             'affectationEnAttente' => $affectationEnAttente
+    //         ]);
+    // }
+    public function listeAffectation()
+    {
         $user = auth()->user();
-        $affectationEnAttente = Affectation::with('site')
+        
+        $affectationsEnAttente = Affectation::with('site', 'article', 'user', 'stock')
             ->where('site_id', $user->site)
             ->where('statut', 'en_attente')
             ->get();
-            return view('AffectationEnAttente', [
-                'user' => $user,
-                'affectationEnAttente' => $affectationEnAttente
-            ]);
+        
+        return response()->json([
+            'user' => $user,
+            'affectationsEnAttente' => $affectationsEnAttente
+        ]);
     }
+
     //validation d'un affectation par manager
     public function validateAffectation($affectation){
         //mettre à jour le champs statut affectation
@@ -46,38 +65,50 @@ class AffectationController extends Controller
         $stock->quantite = $resteStock;
         $stock->update();
 
-        //ajouter le prix et la quantite à la ligne de commande et créer un code barre
-        Stock::create([
-            'article_id' => $affectation->article_id,
-            'site_id' => $affectation->site_id,
-            'quantite' => $quantiteAffectation,
-            'departement' => $affectation->departement,
-        ]);
+        //Génerer un code-barres unique pour ce stock en utilisant son ID
+        $generateur = new BarcodeGeneratorPNG();
+        $code_barre = uniqid();
+        $code_barre_image = 'data:image/png;base64,'.base64_encode($generateur->getBarcode($code_barre, $generateur::TYPE_CODE_128));
+
+        //créer un stock correspond au affectation
+        try {
+            Stock::create([
+                'article_id' => $affectation->article_id,
+                'site_id' => $affectation->site_id,
+                'quantite' => $quantiteAffectation,
+                'departement' => $affectation->departement,
+                'code_barre' => $code_barre_image
+            ]);
+        } catch (\Exception $e) {
+            dd($e->getMessage(), $e->getTraceAsString());
+        }
+        // return response($code_barre_image)->header('Content-type', 'image/png');
+        // redirect()->route('stock.barcode');
     }
-    //création d'un affectation
+    //création d'une affectation
     public function store(Request $request){
         //validation des données
         $request->validate([
             'stock_id' => 'required|exists:stocks,stock_id',
             'quantite' => 'required|integer|min:1'
-        ]);
-    //chercher le stock par id
-    $stock = Stock::findOrFail($request->stock_id);
+            ]);
+        //chercher le stock par id
+        $stock = Stock::findOrFail($request->stock_id);
 
-    //check si le request quantite exceeds l'available quantite
-        if($request->quantite > $stock->quantite){
-            return $erreur = "quantite demandé excède la quantite disponible";
+        //check si le request quantite exceeds l'available quantite
+            if($request->quantite > $stock->quantite){
+                return $erreur = "quantite demandé excède la quantite disponible";
+            }
+
+            //création de nouveau affectation
+            Affectation::create([
+                    'quantite' => $request->quantite,
+                    'article_id' => $stock->article->article_id,
+                    'site_id' => $stock->site->site_id,
+                    'user_id' => auth()->id(),
+                    'departement' => auth()->user()->departement,
+                    'statut' => 'en_attente',
+                    'stock_id' => $stock->stock_id
+            ]);
         }
-
-        //création de nouveau affectation
-        Affectation::create([
-                'quantite' => $request->quantite,
-                'article_id' => $stock->article->article_id,
-                'site_id' => $stock->site->site_id,
-                'user_id' => auth()->id(),
-                'departement' => auth()->user()->departement,
-                'statut' => 'en_attente',
-                'stock_id' => $stock->stock_id
-        ]);
-    }
 }

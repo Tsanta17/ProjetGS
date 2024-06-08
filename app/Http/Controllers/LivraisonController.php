@@ -11,9 +11,10 @@ use App\Models\User;
 use App\Models\Stock;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-use Picqer\Barcode\BarcodeGeneratorJPG;
-use Picqer\Barcode\BarcodeGeneratorPNG;
 use Illuminate\Support\Facades\Auth;
+
+use Picqer\Barcode\BarcodeGeneratorPNG;
+use Picqer\Barcode\BarcodeGeneratorHTML;
 
 class LivraisonController extends Controller
 {
@@ -150,7 +151,10 @@ public function listeLivraison()
 
 
         //$generator = new BarcodeGeneratorPNG();
-        $codeBarre = uniqid();
+        $generateur = new BarcodeGeneratorPNG();
+        $code_barre = uniqid();
+        $code_barre_image = 'data:image/png;base64,'.base64_encode($generateur->getBarcode($code_barre, $generateur::TYPE_CODE_128));
+
         //$codeBarreImage = 'stock_id:image/png;base64,'. base64_encode($generator->getBarcode($codeBarre,$generator::TYPE_CODE_128));
 
         $livraison = Livraison::select('livraison_id', 'date_livraison', 'site_id', 'quantite', 'commande_id')->where('livraison_id', $livraison_id)->first();
@@ -164,8 +168,7 @@ public function listeLivraison()
         $stock->site_id = $livraison->site_id;
         $stock->departement = $user->departement;
         $stock->quantite = $livraison->quantite;
-        //$stock->code_barre = $codeBarre;
-        //$stock->code_barre = $codeBarreImage;
+        $stock->code_barre = $code_barre_image;
         $stock->save();
 
         //update date de peremption dans la table articles

@@ -33,7 +33,7 @@ class StockController extends Controller
         $listeStock = DB::select
         ('
         SELECT DISTINCT
-        st.stock_id,st.quantite,a.nom_article,a.date_peremption,s.nom_site 
+        st.stock_id,st.quantite,st.departement,st.code_barre,a.nom_article,a.date_peremption,s.nom_site 
         FROM stocks st 
         JOIN articles a ON st.article_id = a.article_id AND st.site_id = a.site_id 
         JOIN sites s ON st.site_id = s.site_id 
@@ -45,7 +45,7 @@ class StockController extends Controller
         $listeStockPerime = DB::select
         ('
         SELECT DISTINCT
-        st.stock_id,st.quantite,a.nom_article,a.date_peremption,s.nom_site 
+        st.stock_id,st.quantite,st.departement,st.code_barre,a.nom_article,a.date_peremption,s.nom_site 
         FROM stocks st 
         JOIN articles a ON st.article_id = a.article_id AND st.site_id = a.site_id 
         JOIN sites s ON st.site_id = s.site_id 
@@ -70,7 +70,7 @@ class StockController extends Controller
         $listeStockPerime = DB::select
         ('
         SELECT DISTINCT
-        st.stock_id,st.quantite,a.nom_article,a.date_peremption,s.nom_site 
+        st.stock_id,st.quantite,st.departement,st.code_barre,a.nom_article,a.date_peremption,s.nom_site 
         FROM stocks st 
         JOIN articles a ON st.article_id = a.article_id AND st.site_id = a.site_id 
         JOIN sites s ON st.site_id = s.site_id 
@@ -84,7 +84,7 @@ class StockController extends Controller
         $listeStockEncourPerime = DB::select
         ('
         SELECT DISTINCT
-        st.stock_id,st.quantite,a.nom_article,a.date_peremption,s.nom_site 
+        st.stock_id,st.quantite,st.departement,st.code_barre,a.nom_article,a.date_peremption,s.nom_site 
         FROM stocks st 
         JOIN articles a ON st.article_id = a.article_id AND st.site_id = a.site_id 
         JOIN sites s ON st.site_id = s.site_id 

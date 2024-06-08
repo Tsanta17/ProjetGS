@@ -1,64 +1,93 @@
-import React from 'react';
-import { Card } from 'primereact/card';
+import React, { useState, useEffect } from 'react';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
-import { Timeline } from 'primereact/timeline';
-import { Tag } from 'primereact/tag';
-import { Divider } from 'primereact/divider';
-import '../../../css/FormDemo.css';  // Assurez-vous d'ajouter un fichier CSS pour les styles personnalisés
+import { Dialog } from 'primereact/dialog';
+import axios from 'axios';
+import '../../../css/DataTable.css';
 
-const AppHistoric = () => {
+const AppHistorique = () => {
+    const [historique, setHistorique] = useState([]);
+    const [selectedAction, setSelectedAction] = useState(null);
+    const [globalFilterValue, setGlobalFilterValue] = useState('');
+    const [loading, setLoading] = useState(true);
+    const [dialogVisible, setDialogVisible] = useState(false);
 
-    const activities = [
-        {
-            title: 'User Login',
-            description: 'User John Doe logged in.',
-            markerColor: '#ff9800',
-            tagSeverity: 'info',
-            tagText: 'Login',
-            date: '2024-05-25'
-        },
-        {
-            title: 'File Upload',
-            description: 'User John Doe uploaded a file.',
-            markerColor: '#4caf50',
-            tagSeverity: 'success',
-            tagText: 'Upload',
-            date: '2024-05-26'
-        },
-        {
-            title: 'Password Change',
-            description: 'User John Doe changed their password.',
-            markerColor: '#f44336',
-            tagSeverity: 'warning',
-            tagText: 'Security',
-            date: '2024-05-27'
-        }
-    ];
+    useEffect(() => {
+        axios.get('/historique')
+            .then(response => {
+                setHistorique(response.data);
+                setLoading(false);
+            })
+            .catch(error => {
+                console.error("There was an error fetching the history data!", error);
+                setLoading(false);
+            });
+    }, []);
 
-    const customizedMarker = (item) => {
+    const onGlobalFilterChange = (e) => {
+        const value = e.target.value;
+        setGlobalFilterValue(value);
+    }
+
+    const renderHeader = () => {
         return (
-            <span className="custom-marker shadow-1" style={{ backgroundColor: item.markerColor }}></span>
+            <div className="flex justify-content-between align-items-center">
+                <h5 className="m-0">Historique des Actions</h5>
+                <span className="p-input-icon-left">
+                    <i className="pi pi-search" />
+                    <InputText value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Rechercher..." />
+                </span>
+            </div>
+        );
+    }
+
+    const actionBodyTemplate = (rowData) => {
+        return (
+            <Button label="Détails" className="p-button-rounded p-button-info" onClick={() => openDialog(rowData)} />
         );
     };
 
-    const customizedContent = (item) => {
-        return (
-            <Card title={item.title}>
-                <p>{item.description}</p>
-                <Tag className="mt-2" severity={item.tagSeverity}>{item.tagText}</Tag>
-            </Card>
-        );
-    };
+    const openDialog = (action) => {
+        setSelectedAction(action);
+        setDialogVisible(true);
+    }
+
+    const header = renderHeader();
 
     return (
-        <div className="activity-history">
+        <div className="datatable-doc-demo">
             <div className="card">
-                <h5>Activity History</h5>
-                <Timeline value={activities} align="alternate" className="customized-timeline"
-                    marker={customizedMarker} content={customizedContent} />
+                <DataTable value={historique} paginator className="p-datatable-customers" header={header} rows={10}
+                    paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink" rowsPerPageOptions={[10, 25, 50]}
+                    dataKey="id" rowHover globalFilterFields={['date', 'user', 'action', 'description']} loading={loading} responsiveLayout="scroll"
+                    emptyMessage="Aucune action trouvée." currentPageReportTemplate="Affichage {first} à {last} de {totalRecords} entrées"
+                    filters={{ global: { value: globalFilterValue, matchMode: 'contains' } }}>
+
+                    <Column field="date" header="Date" sortable style={{ minWidth: '8rem' }} />
+                    <Column field="user" header="Utilisateur" sortable style={{ minWidth: '12rem' }} />
+                    <Column field="action" header="Action" sortable style={{ minWidth: '10rem' }} />
+                    <Column field="description" header="Description" sortable style={{ minWidth: '20rem' }} />
+                    <Column body={actionBodyTemplate} headerStyle={{ width: '8rem', textAlign: 'center' }} bodyStyle={{ textAlign: 'center', overflow: 'visible' }} />
+                </DataTable>
+
+                <Dialog header="Détails de l'Action" visible={dialogVisible} style={{ width: '50vw' }} onHide={() => setDialogVisible(false)}>
+                    {selectedAction && (
+                        <div>
+                            <div><strong>Date: </strong>{selectedAction.date}</div>
+                            <div><strong>Utilisateur: </strong>{selectedAction.user}</div>
+                            <div><strong>Action: </strong>{selectedAction.action}</div>
+                            <div><strong>Description: </strong>{selectedAction.description}</div>
+                            {selectedAction.details && (
+                                <div><strong>Détails: </strong>{selectedAction.details}</div>
+                            )}
+                        </div>
+                    )}
+                </Dialog>
             </div>
         </div>
     );
-};
+}
 
-export default AppHistoric;
+export default AppHistorique;

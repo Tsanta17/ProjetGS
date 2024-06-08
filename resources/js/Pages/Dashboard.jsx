@@ -14,11 +14,13 @@ import AppHistoric from '@/Layouts/layout/AppHistoric';
 import AppListUser from '@/Layouts/layout/AppListUser';
 import AppDelivery from '@/Layouts/layout/AppDelivery';
 import AppStock from '@/Layouts/layout/AppStock';
+import AppAffectation from '@/Layouts/layout/AppAffectation';
+import AppListAffectation from '@/Layouts/layout/AppListAffectation'
 
 
 
 const Dashboard = ({ fournisseurs, articles, couts, commandeParMois, budgetTotalParMois, articlePerime, topArticles, totalCommandes, userRole}) => {
-    const { layoutConfig, showForm, DataTable, showInsertCommmand, picklistOrder, showSupplier, showHisto, showUserList, showDelivery, showStock } = useContext(LayoutContext);
+    const { layoutConfig, showForm, DataTable, showInsertCommmand, picklistOrder, showSupplier, showHisto, showUserList, showDelivery, showStock, showAffectation, showListAffectation } = useContext(LayoutContext);
 
     const [lineOptions, setLineOptions] = useState({});
 
@@ -204,6 +206,18 @@ const Dashboard = ({ fournisseurs, articles, couts, commandeParMois, budgetTotal
                             <AppStock userRole={userRole}/>
                         </div>
                     </div>
+                ) : showAffectation ? (
+                    <div className="col-12 xl:col-12">
+                        <div className="card">
+                            <AppAffectation userRole={userRole}/>
+                        </div>
+                    </div>
+                ) : showListAffectation ? (
+                    <div className="col-12 xl:col-12">
+                        <div className="card">
+                            <AppListAffectation userRole={userRole}/>
+                        </div>
+                    </div> 
                 ) : (
 
                     <>

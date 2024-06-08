@@ -7,7 +7,7 @@ import { Link } from "@inertiajs/react";
 import usePageState from './UsePageState'; // Import du hook personnalisé
 
 const AppMenu = ({ userRole  }) => {
-    const { layoutConfig, setShowForm, setDataTable, setShowInsertCommmand, setPicklistOrder, setShowSupplier, setShowHisto, setShowUserList, setShowDelivery, setShowStock } = useContext(LayoutContext);
+    const { layoutConfig, setShowForm, setDataTable, setShowInsertCommmand, setPicklistOrder, setShowSupplier, setShowHisto, setShowUserList, setShowDelivery, setShowStock, setShowAffectation, setshowListAffectation } = useContext(LayoutContext);
     const { currentPage, setPage } = usePageState(); // Utilisation du hook
 
     const handleMenuItemClick = (page) => {
@@ -21,6 +21,8 @@ const AppMenu = ({ userRole  }) => {
         setShowUserList(page === 'userList');
         setShowDelivery(page === 'delivery');
         setShowStock(page === 'stock');
+        setShowAffectation(page === 'affectation');
+        setshowListAffectation(page === 'listAffectation');
     };
 
     const model = [
@@ -89,6 +91,22 @@ const AppMenu = ({ userRole  }) => {
                     label: 'Livraison',
                     icon: 'pi pi-fw pi-cart-plus',
                     command: () => handleMenuItemClick('delivery'),
+                },
+                {
+                    label: 'Affectation',
+                    icon: 'pi pi-fw pi-arrows-h',
+                    items: [
+                        {
+                            label: 'ajouter',
+                            icon: 'pi pi-fw pi-arrows-h',
+                            command: () => handleMenuItemClick('affectation'),
+                        },
+                        {
+                            label: 'Liste',
+                            icon: 'pi pi-fw pi-arrows-h',
+                            command: () => handleMenuItemClick('listAffectation'),
+                        }
+                    ]
                 },
                 {
                     label: 'Fournisseur',

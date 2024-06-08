@@ -13,7 +13,9 @@ const CrudTable = ({ userRole }) => {
         nom_article: '',
         quantite: '',
         site: '',
-        date_peremption: ''
+        date_peremption: '',
+        departement:'',
+        code_barre: null
     };
 
     const [listeStock, setListeStock] = useState([]);
@@ -33,7 +35,7 @@ const CrudTable = ({ userRole }) => {
             .then(response => {
                 setListeStock(response.data.listeStock);
                 setListeStockPerime(response.data.listeStockPerime);
-                console.log(response.data.listeStockPerime);
+                console.log(response.data);
             })
             .catch(error => {
                 console.error("There was an error fetching the articles!", error);
@@ -66,7 +68,6 @@ const CrudTable = ({ userRole }) => {
             let _articles = [...listeStock];
             let _article = {...article};
             if (article.id) {
-                // Mettre à jour l'article existant
                 axios.put(`/articles/${article.id}`, article)
                     .then(response => {
                         const index = _articles.findIndex(a => a.id === article.id);
@@ -79,7 +80,6 @@ const CrudTable = ({ userRole }) => {
                         console.error("There was an error updating the article!", error);
                     });
             } else {
-                // Créer un nouvel article
                 axios.post('/articles', article)
                     .then(response => {
                         _articles.push(response.data);
@@ -156,25 +156,26 @@ const CrudTable = ({ userRole }) => {
     );
 
     const deleteArticlesDialogFooter = (
-        
         <React.Fragment>
             <Button label="No" icon="pi pi-times" className="p-button-text" onClick={hideDeleteArticlesDialog} />
             <Button label="Yes" icon="pi pi-check" className="p-button-text" onClick={deleteSelectedArticles} />
         </React.Fragment>
     );
 
-     const actionBodyTemplate = (rowData) => {
+    const codeBarreTemplate = (rowData) => {
+        return <img src={rowData.code_barre} alt="Code Barre" style={{ width: '100px', height: 'auto' }} />;
+    };
+
+    const actionBodyTemplate = (rowData) => {
         if (userRole !== 'Service') {
             return (
                 <React.Fragment>
-                    { userRole !== 'Service' && <Button icon="pi pi-pencil" className="p-button-rounded p-button-success mr-2" onClick={() => editArticle(rowData)} /> }
-                    <Button icon="pi pi-trash" className="p-button-rounded p-button-warning" onClick={() => confirmDeleteArticle(rowData)} />
+                    { userRole !== 'Service' && <Button icon="pi pi-trash" className="p-button-rounded p-button-warning" onClick={() => confirmDeleteArticle(rowData)} /> }
                 </React.Fragment>
             );
             }
             return null;
     };
-
 
     return (
         <div className="datatable-crud-demo">
@@ -187,8 +188,9 @@ const CrudTable = ({ userRole }) => {
                     <Column field="nom_article" header="Nom de l'article" sortable style={{ minWidth: '16rem' }}></Column>
                     <Column field="quantite" header="Quantité" sortable style={{ minWidth: '12rem' }}></Column>
                     <Column field="nom_site" header="Site" sortable style={{ minWidth: '16rem' }}></Column>
+                    <Column field="departement" header="Departement" sortable style={{ minWidth: '16rem' }}></Column>
                     <Column field="date_peremption" header="Date de péremption" sortable style={{ minWidth: '16rem' }}></Column>
-                    
+                    <Column body={codeBarreTemplate} header="Barre Code" sortable style={{ minWidth: '16rem' }}></Column>
                 </DataTable>
             </div>
             <div className="card">
@@ -199,7 +201,9 @@ const CrudTable = ({ userRole }) => {
                     <Column field="nom_article" header="Nom de l'article" sortable style={{ minWidth: '16rem' }}></Column>
                     <Column field="quantite" header="Quantité" sortable style={{ minWidth: '12rem' }}></Column>
                     <Column field="nom_site" header="Site" sortable style={{ minWidth: '16rem' }}></Column>
+                    <Column field="departement" header="Departement" sortable style={{ minWidth: '16rem' }}></Column>
                     <Column field="date_peremption" header="Date de péremption" sortable style={{ minWidth: '16rem' }}></Column>
+                    <Column body={codeBarreTemplate} header="Barre Code" sortable style={{ minWidth: '16rem' }}></Column>
                     <Column body={actionBodyTemplate} key="action"></Column>
                 </DataTable>
             </div>

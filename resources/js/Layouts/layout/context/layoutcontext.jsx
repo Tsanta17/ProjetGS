@@ -31,6 +31,8 @@ export const LayoutProvider = ({ children }) => {
     const [showUserList, setShowUserList] = useState(false);
     const [showDelivery, setShowDelivery] = useState(false);
     const [showStock, setShowStock] = useState(false);
+    const [showAffectation, setShowAffectation] = useState(false);
+    const [showListAffectation, setshowListAffectation] = useState(false);
 
     const onMenuToggle = () => {
         if (isOverlay()) {
@@ -80,7 +82,11 @@ export const LayoutProvider = ({ children }) => {
         showDelivery, 
         setShowDelivery, 
         showStock, 
-        setShowStock
+        setShowStock, 
+        showAffectation, 
+        setShowAffectation,
+        showListAffectation, 
+        setshowListAffectation
     };
 
     return <LayoutContext.Provider value={value}>{children}</LayoutContext.Provider>;

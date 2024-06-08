@@ -53,5 +53,13 @@ class User extends Authenticatable
         return $this->belongsTo(Site::class, 'site', 'site_id');
     }
 
+    /**
+     * Get the affectations for the user.
+     */
+    public function affectations()
+    {
+        return $this->hasMany(Affectation::class, 'id', 'user_id');
+    }
+
 
 }

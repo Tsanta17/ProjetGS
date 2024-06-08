@@ -16,4 +16,9 @@ class Article extends Model
     public function affectation(){
         return $this->hasMany(Affectation::class, 'article_id', 'article_id');
     }
+
+    public function stocks()
+    {
+        return $this->hasMany(Stock::class, 'article_id', 'article_id');
+    }
 }

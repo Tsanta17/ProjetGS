@@ -13,7 +13,6 @@ class Affectation extends Model
         'stock_id',
         'quantite',
         'statut',
-        'affectation_id',
         'date_affectation',
         'article_id',
         'site_id',
@@ -28,7 +27,11 @@ class Affectation extends Model
         return $this->belongsTo(Site::class, 'site_id', 'site_id');
     }
     public function stock(){
-        $this->belongsTo(Stock::class, 'stock_id', 'stock_id');
+        return $this->belongsTo(Stock::class, 'stock_id', 'stock_id');
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'id', 'user_id');
     }
 
 }
