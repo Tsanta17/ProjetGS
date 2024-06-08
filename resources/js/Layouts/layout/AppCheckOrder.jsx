@@ -54,8 +54,8 @@ export default function AppCheckOrder( {userRole} ) {
                 setForm({ supplier: null, quantity: '', unitPrice: '' });
                 setShowDialog(true);
             } catch (error) {
-                console.error('There was an error fetching the commande details!', error);
-                toast.current.show({ severity: 'error', summary: 'Error', detail: 'Unable to fetch commande details', life: 3000 });
+                console.error('Il y a un erreur à la recupératin des details de commandes!', error);
+                toast.current.show({ severity: 'error', summary: 'Error', detail: 'Impossible de récuperer les details du commande', life: 3000 });
             }
         }
     };
@@ -73,8 +73,8 @@ export default function AppCheckOrder( {userRole} ) {
                 moveSelected();
                 toast.current.show({ severity: 'success', summary: 'Success', detail: 'Commande validée', life: 3000 });
             } catch (error) {
-                console.error('There was an error validating the commande!', error);
-                toast.current.show({ severity: 'error', summary: 'Error', detail: 'Unable to validate commande', life: 3000 });
+                console.error('Il y a un erreur à la validation du commande!', error);
+                toast.current.show({ severity: 'error', summary: 'Error', detail: 'Impossible de valider la commande', life: 3000 });
             }
         }
     };
@@ -87,24 +87,6 @@ export default function AppCheckOrder( {userRole} ) {
         setShowDialog(false);
     };
 
-    // Fonction pour gérer le changement dans le PickList
-    // const onChange = (event) => {
-    //     // Vérifie si des commandes sont tentées d'être déplacées directement de la source vers le target sans validation
-    //     const attemptedMoveToTarget = event.target.some(item => source.includes(item) && !sourceSelection.includes(item));
-    //     const attemptedMoveToSource = event.source.some(item => target.includes(item));
-
-    //     if (attemptedMoveToTarget || attemptedMoveToSource) {
-    //         toast.current.show({ severity: 'warn', summary: 'Invalid Move', detail: 'You must use the "Move Selected" button to move items to the validated list', life: 3000 });
-    //         // Annule le déplacement en restaurant les états précédents de source et target
-    //         setSource(prevSource => [...prevSource]);
-    //         setTarget(prevTarget => [...prevTarget]);
-    //         return;
-    //     }
-
-    //     // Si le déplacement est valide, met à jour les sources et cibles
-    //     setSource(event.source);
-    //     setTarget(event.target);
-    // };
 
     const onChange = (event) => {
         // Vérifie si des commandes sont tentées d'être déplacées directement de la source vers le target sans validation
@@ -125,7 +107,7 @@ export default function AppCheckOrder( {userRole} ) {
         }
     
         if (attemptedMoveToTarget || attemptedMoveToSource) {
-            toast.current.show({ severity: 'warn', summary: 'Invalid Move', detail: 'You must use the "Move Selected" button to move items to the validated list', life: 3000 });
+            toast.current.show({ severity: 'warn', summary: 'Invalid Move', detail: 'Vous devez utiliser le bouton "Approuver" pour la liste séléctionner', life: 3000 });
             // Annule le déplacement en restaurant les états précédents de source et target
             setSource(prevSource => [...prevSource]);
             setTarget(prevTarget => [...prevTarget]);
@@ -137,24 +119,6 @@ export default function AppCheckOrder( {userRole} ) {
         setTarget(event.target);
     };
     
-    // Fonction pour gérer le déplacement par sélection
-    // const moveSelected = () => {
-    //     // Vérifie si l'utilisateur est un "Service"
-    //     const isService = userRole === 'Service';
-    
-    //     // Si l'utilisateur est un "Service", affiche une alerte et retourne
-    //     if (isService) {
-    //         alert("Vous n'avez pas l'autorisation de déplacer des articles vers la liste validée.");
-    //         return;
-    //     }
-    
-    //     // Déplace les articles sélectionnés
-    //     setSource(prevSource => prevSource.filter(item => !sourceSelection.includes(item)));
-    //     setTarget(prevTarget => [...prevTarget, ...sourceSelection]);
-    //     setSourceSelection([]);
-    //     setShowDialog(false);
-    // };
-
     // Modèle d'élément pour le PickList
     const itemTemplate = (item, isSource) => {
         const nom_article = item.article.nom_article;
@@ -188,7 +152,7 @@ export default function AppCheckOrder( {userRole} ) {
                             userRole === 'Service' ? (
                                 <span className="text-900" style={{ fontSize: '1.2rem', color: 'red' }} disabled>En attente</span>
                             ) : (
-                                <ToggleButton checked={isSelected} onChange={handleToggle} onLabel="Sélectionné" offLabel="Select" />
+                                <ToggleButton checked={isSelected} onChange={handleToggle} onLabel="Sélectionné" offLabel="Selectionner" />
                             )
                         ) : (
                             <i className="pi pi-check" style={{ fontSize: '1.5rem', color: 'green' }}></i>
@@ -268,7 +232,7 @@ export default function AppCheckOrder( {userRole} ) {
                                 </div>
                                 <div className="field">
                                     <label>Fournisseur</label>
-                                    <Dropdown value={form.supplier} options={supplierList} onChange={handleFormChange} optionLabel="label" optionValue="value" placeholder="Select a Supplier" name="supplier" />
+                                    <Dropdown value={form.supplier} options={supplierList} onChange={handleFormChange} optionLabel="label" optionValue="value" placeholder="Selectionnez un fournisseur" name="supplier" />
                                 </div>
                                 <div className="field">
                                     <label>Quantité</label>
