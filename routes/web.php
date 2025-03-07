@@ -86,7 +86,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/servicesListes', [ServiceController::class, 'getCommandesList']);
     Route::post('/ajoutCommande', [ServiceController::class, 'store']);
 
-    //Fournisseur
+    //FOURNISSEUR
     Route::get('/fournisseur', [FournisseurController::class, 'index'])->name('fournisseur.index');
     Route::post('/fournisseur/create', [FournisseurController::class, 'store'])->name('fournisseur.store');
     Route::get('/fournisseur/{fournisseur}/show', [FournisseurController::class, 'show'])->name('fournisseur.show');
