@@ -27,7 +27,7 @@ const AppMenu = ({ userRole  }) => {
 
     const model = [
         {
-            label: 'Home',
+            label: 'Menu',
             items: [
                 {
                     label: 'Dashboard',
